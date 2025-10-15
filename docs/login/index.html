@@ -25,19 +25,19 @@
     </div>
   </header>
 
-  <main class="container auth">
+  <main class="container auth" aria-labelledby="login-heading">
     <div class="auth-grid">
       <section class="auth-copy">
-        <h1>Área do cliente</h1>
-        <p>Entre com seu e-mail para acompanhar pedidos, atualizar dados e acessar benefícios exclusivos da comunidade <strong>M.E FIT</strong>.</p>
-        <ul class="auth-benefits">
+        <h1 id="login-heading">Área do cliente</h1>
+        <p id="login-intro">Entre com seu e-mail para acompanhar pedidos, atualizar dados e acessar benefícios exclusivos da comunidade <strong>M.E FIT</strong>.</p>
+        <ul class="auth-benefits" id="login-benefits">
           <li>Histórico completo de compras e downloads de notas fiscais.</li>
           <li>Gerencie assinaturas, pagamentos e endereços de entrega.</li>
           <li>Acesso antecipado a coleções, eventos e conteúdos premium.</li>
         </ul>
       </section>
 
-      <section class="auth-card" aria-labelledby="login-title">
+      <section class="auth-card" aria-labelledby="login-title" aria-describedby="login-benefits">
         <h2 id="login-title">Entrar na conta</h2>
         <form class="form" onsubmit="event.preventDefault(); alert('Login demo. Integre com sua API.');">
           <label>E-mail
