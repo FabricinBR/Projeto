@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Produtos</title>
+  <title>M.E FIT — Perguntas frequentes</title>
   <link href="assets/css/style.css" rel="stylesheet">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Catálogo de produtos M.E FIT.">
+  <meta name="description" content="FAQ com dúvidas frequentes sobre compras na M.E FIT.">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav" aria-label="Navegação principal">
-        <a href="./">Início</a>
-        <a href="./produtos.html" class="active">Produtos</a>
+        <a href="./index.html">Início</a>
+        <a href="./produtos.html">Produtos</a>
         <a href="./sobre.html">Sobre</a>
         <a href="./contato.html">Contato</a>
         <a href="./login/">Login</a>
@@ -25,10 +25,44 @@
   </header>
 
   <main class="container">
-    <h1>Produtos</h1>
-    <p>Exemplo de grade de produtos. Você pode integrar depois com API ou arquivo JSON.</p>
+    <h1>Perguntas frequentes</h1>
+    <p>Encontre respostas rápidas sobre pedidos, pagamentos, frete e políticas da M.E FIT.</p>
 
-    <div id="product-grid" class="product-grid"></div>
+    <section aria-labelledby="faq-pedidos">
+      <h2 id="faq-pedidos">Pedidos e entregas</h2>
+      <details open>
+        <summary>Como acompanho o status do meu pedido?</summary>
+        <p>Após a confirmação do pagamento, enviamos um e-mail com o código de rastreio. Você também pode acompanhar em <a href="./rastrear-pedido.html">Rastrear pedido</a>.</p>
+      </details>
+      <details>
+        <summary>Qual o prazo de entrega?</summary>
+        <p>Os prazos variam conforme o CEP. Consulte estimativas e modalidades em nossa <a href="./politica-de-frete.html">Política de frete</a>.</p>
+      </details>
+    </section>
+
+    <section aria-labelledby="faq-pagamentos">
+      <h2 id="faq-pagamentos">Pagamentos</h2>
+      <details>
+        <summary>Quais formas de pagamento são aceitas?</summary>
+        <p>Aceitamos cartões de crédito das principais bandeiras, Pix e boleto. Saiba mais em <a href="./pagamentos-e-seguranca.html">Pagamentos e segurança</a>.</p>
+      </details>
+      <details>
+        <summary>Posso parcelar minha compra?</summary>
+        <p>Sim, parcelamos em até 10x sem juros com valor mínimo por parcela. Consulte as condições atualizadas na página de produto.</p>
+      </details>
+    </section>
+
+    <section aria-labelledby="faq-trocas">
+      <h2 id="faq-trocas">Trocas e devoluções</h2>
+      <details>
+        <summary>Qual o prazo para solicitar troca?</summary>
+        <p>Você tem até 30 dias corridos após o recebimento. Confira o passo a passo completo em <a href="./trocas-e-devolucoes.html">Trocas e devoluções</a>.</p>
+      </details>
+      <details>
+        <summary>Há custo para devolver um produto?</summary>
+        <p>Não cobramos frete na primeira troca. Para mais detalhes consulte nossas políticas.</p>
+      </details>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">
@@ -96,21 +130,5 @@
   </footer>
 
   <script src="assets/js/app.js"></script>
-  <script>
-    const produtos = [
-      { id: 1, nome: "Legging Tech", preco: 129.90, img: "assets/img/sample1.png" },
-      { id: 2, nome: "Top Performance", preco: 89.90, img: "assets/img/sample2.png" },
-      { id: 3, nome: "Camiseta Dry", preco: 69.90, img: "assets/img/sample3.png" }
-    ];
-    const grid = document.getElementById('product-grid');
-    grid.innerHTML = produtos.map(p => `
-      <article class="p-card">
-        <div class="p-thumb"><img src="${p.img}" alt="${p.nome}" loading="lazy"></div>
-        <h3>${p.nome}</h3>
-        <p class="price">${p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-        <button class="btn btn-primary">Adicionar</button>
-      </article>
-    `).join('');
-  </script>
 </body>
 </html>

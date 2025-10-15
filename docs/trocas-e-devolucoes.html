@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Produtos</title>
+  <title>M.E FIT — Trocas e devoluções</title>
   <link href="assets/css/style.css" rel="stylesheet">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Catálogo de produtos M.E FIT.">
+  <meta name="description" content="Saiba como solicitar trocas e devoluções na M.E FIT.">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav" aria-label="Navegação principal">
-        <a href="./">Início</a>
-        <a href="./produtos.html" class="active">Produtos</a>
+        <a href="./index.html">Início</a>
+        <a href="./produtos.html">Produtos</a>
         <a href="./sobre.html">Sobre</a>
         <a href="./contato.html">Contato</a>
         <a href="./login/">Login</a>
@@ -25,10 +25,32 @@
   </header>
 
   <main class="container">
-    <h1>Produtos</h1>
-    <p>Exemplo de grade de produtos. Você pode integrar depois com API ou arquivo JSON.</p>
+    <h1>Trocas e devoluções</h1>
+    <p>Nosso compromisso é garantir que sua experiência de compra seja perfeita. Confira abaixo os prazos e condições para solicitar trocas ou devoluções.</p>
 
-    <div id="product-grid" class="product-grid"></div>
+    <section aria-labelledby="troca-prazo">
+      <h2 id="troca-prazo">Prazos</h2>
+      <ul>
+        <li><strong>Troca por tamanho ou cor:</strong> até 30 dias corridos após o recebimento.</li>
+        <li><strong>Defeito de fabricação:</strong> até 90 dias corridos, conforme CDC.</li>
+        <li><strong>Arrependimento:</strong> até 7 dias corridos após o recebimento do produto.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="troca-etapas">
+      <h2 id="troca-etapas">Como solicitar</h2>
+      <ol>
+        <li>Acesse a área <a href="./login/">Minha conta</a> e selecione o pedido.</li>
+        <li>Escolha a opção <em>Trocar ou devolver</em> e informe o motivo.</li>
+        <li>Receba a autorização por e-mail com o código de postagem gratuito.</li>
+        <li>Embale o produto em perfeitas condições e poste nos Correios em até 7 dias.</li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="troca-condicoes">
+      <h2 id="troca-condicoes">Condições importantes</h2>
+      <p>Os itens devem estar sem indícios de uso, com etiqueta afixada e nota fiscal. Produtos personalizados não possuem troca, exceto em caso de defeito.</p>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">
@@ -96,21 +118,5 @@
   </footer>
 
   <script src="assets/js/app.js"></script>
-  <script>
-    const produtos = [
-      { id: 1, nome: "Legging Tech", preco: 129.90, img: "assets/img/sample1.png" },
-      { id: 2, nome: "Top Performance", preco: 89.90, img: "assets/img/sample2.png" },
-      { id: 3, nome: "Camiseta Dry", preco: 69.90, img: "assets/img/sample3.png" }
-    ];
-    const grid = document.getElementById('product-grid');
-    grid.innerHTML = produtos.map(p => `
-      <article class="p-card">
-        <div class="p-thumb"><img src="${p.img}" alt="${p.nome}" loading="lazy"></div>
-        <h3>${p.nome}</h3>
-        <p class="price">${p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-        <button class="btn btn-primary">Adicionar</button>
-      </article>
-    `).join('');
-  </script>
 </body>
 </html>

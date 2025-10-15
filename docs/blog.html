@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Produtos</title>
+  <title>M.E FIT — Blog</title>
   <link href="assets/css/style.css" rel="stylesheet">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Catálogo de produtos M.E FIT.">
+  <meta name="description" content="Novidades, dicas de treino e bem-estar da M.E FIT.">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav" aria-label="Navegação principal">
-        <a href="./">Início</a>
-        <a href="./produtos.html" class="active">Produtos</a>
+        <a href="./index.html">Início</a>
+        <a href="./produtos.html">Produtos</a>
         <a href="./sobre.html">Sobre</a>
         <a href="./contato.html">Contato</a>
         <a href="./login/">Login</a>
@@ -25,10 +25,20 @@
   </header>
 
   <main class="container">
-    <h1>Produtos</h1>
-    <p>Exemplo de grade de produtos. Você pode integrar depois com API ou arquivo JSON.</p>
+    <h1>Blog M.E FIT</h1>
+    <p>Conteúdo exclusivo com dicas de treinos, nutrição e lifestyle esportivo. Confira as últimas matérias:</p>
 
-    <div id="product-grid" class="product-grid"></div>
+    <article class="card" style="margin-bottom:20px;">
+      <h2>5 aquecimentos rápidos para treinos intensos</h2>
+      <p>Potencialize seus treinos com uma rotina de aquecimento focada em mobilidade e ativação muscular.</p>
+      <a class="btn btn-outline" href="#">Ler matéria</a>
+    </article>
+    <article class="card" style="margin-bottom:20px;">
+      <h2>Guia de cuidados para peças tecnológicas</h2>
+      <p>Aprenda a lavar e conservar tecidos inteligentes para manter a performance por mais tempo.</p>
+      <a class="btn btn-outline" href="#">Ler matéria</a>
+    </article>
+    <p>Em breve, novos artigos semanais com convidados especiais. Assine nossa newsletter e receba em primeira mão.</p>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">
@@ -96,21 +106,5 @@
   </footer>
 
   <script src="assets/js/app.js"></script>
-  <script>
-    const produtos = [
-      { id: 1, nome: "Legging Tech", preco: 129.90, img: "assets/img/sample1.png" },
-      { id: 2, nome: "Top Performance", preco: 89.90, img: "assets/img/sample2.png" },
-      { id: 3, nome: "Camiseta Dry", preco: 69.90, img: "assets/img/sample3.png" }
-    ];
-    const grid = document.getElementById('product-grid');
-    grid.innerHTML = produtos.map(p => `
-      <article class="p-card">
-        <div class="p-thumb"><img src="${p.img}" alt="${p.nome}" loading="lazy"></div>
-        <h3>${p.nome}</h3>
-        <p class="price">${p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-        <button class="btn btn-primary">Adicionar</button>
-      </article>
-    `).join('');
-  </script>
 </body>
 </html>
