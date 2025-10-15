@@ -1,3 +1,11 @@
+const ready = (callback) => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', callback, { once: true });
+  } else {
+    callback();
+  }
+};
+
 const updateYear = () => {
   const targets = document.querySelectorAll('#year, [data-current-year]');
   if (!targets.length) return;
@@ -8,7 +16,9 @@ const updateYear = () => {
   });
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+const initLoginForm = () => {
+  const loginForm = document.querySelector('#login-form');
+  if (!loginForm) return;
 
   const emailInput = loginForm.querySelector('input[name="email"]');
   const passwordInput = loginForm.querySelector('input[name="password"]');
@@ -42,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.dataset.originalText = submitButton.textContent ?? '';
       }
       submitButton.textContent = 'Entrando...';
+    } else if (submitButton.dataset.originalText) {
+      submitButton.textContent = submitButton.dataset.originalText;
+    }
 
     submitButton.disabled = loading;
   };
@@ -53,8 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleButton.textContent = shouldReveal ? 'Ocultar' : 'Mostrar';
       toggleButton.setAttribute('aria-pressed', shouldReveal ? 'true' : 'false');
       passwordInput.focus();
-      if (shouldReveal) {
-      }
     });
   }
 
@@ -113,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
+      window.setTimeout(() => {
         window.location.href = '../index.html';
       }, 1000);
     } catch (error) {
@@ -122,4 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
       setLoading(false);
     }
   });
+};
+
+ready(() => {
+  updateYear();
+  initLoginForm();
 });
