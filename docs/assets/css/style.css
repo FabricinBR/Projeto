@@ -159,7 +159,7 @@ a:hover{text-decoration:underline}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:20px 0 40px}
 .p-card{background:var(--card);border:1px solid var(--border);padding:16px;border-radius:14px;display:grid;gap:12px}
 .p-thumb{width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,var(--primary-2),transparent);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.p-thumb img{max-width:90%;height:auto;display:block;mix-blend:screen;opacity:.85}
+.p-thumb img{max-width:90%;height:auto;display:block;mix-blend-mode:screen;opacity:.85}
 .p-card h3{margin:0;font-size:18px}
 .p-card p{margin:0}
 .p-card .product-meta{color:var(--muted);font-size:14px}
