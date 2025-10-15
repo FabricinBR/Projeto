@@ -196,4 +196,3 @@ const initProducts = () => {
 };
 
 ready(initProducts);
-document.addEventListener('mefit:ready', initProducts);
