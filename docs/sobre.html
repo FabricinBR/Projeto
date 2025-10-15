@@ -24,14 +24,132 @@
     </div>
   </header>
 
-  <main class="container">
-    <h1>Sobre a M.E FIT</h1>
-    <p>Este é um boilerplate para você iniciar seu site. Personalize cores, fontes e conteúdo.</p>
-    <ul>
-      <li>Estrutura pronta para GitHub Pages (pasta <code>docs/</code>).</li>
-      <li>Identidade visual lilás/roxo aplicada no CSS.</li>
-      <li>Links e assets com caminhos relativos.</li>
-    </ul>
+  <main>
+    <section class="about-hero container" aria-labelledby="sobre-title">
+      <div class="about-hero-grid">
+        <div class="about-hero-copy">
+          <span class="about-eyebrow">Quem somos</span>
+          <h1 id="sobre-title">Sobre a M.E FIT</h1>
+          <p>Moda esportiva de alta performance em paleta lilás e roxo, unindo tecnologia, conforto e design para acompanhar cada repetição, corrida e momento de autocuidado.</p>
+          <div class="about-hero-actions">
+            <a class="btn btn-primary" href="./produtos.html">Ver catálogo</a>
+            <a class="btn btn-outline" href="./contato.html">Falar com a equipe</a>
+          </div>
+        </div>
+        <aside class="about-hero-panel" aria-labelledby="missao">
+          <h2 id="missao">Nossa missão</h2>
+          <p class="about-hero-lead">Potencializar o seu bem-estar com peças funcionais, confortáveis e bonitas, pensadas para quem treina de verdade e vive em movimento.</p>
+          <ul class="about-metrics">
+            <li>
+              <strong>+120</strong>
+              <span>modelos testados por atletas parceiros antes de chegar à loja</span>
+            </li>
+            <li>
+              <strong>92%</strong>
+              <span>dos clientes voltam a comprar em até 6 meses</span>
+            </li>
+            <li>
+              <strong>8 anos</strong>
+              <span>produzindo moda esportiva com responsabilidade e transparência</span>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="about-sections container" aria-labelledby="sobre-pilares">
+      <div class="about-section-header">
+        <h2 id="sobre-pilares">O que nos move</h2>
+        <p>O processo criativo da M.E FIT começa nos treinos, com feedback constante de atletas, educadores físicos e da comunidade que veste a marca todos os dias.</p>
+      </div>
+      <div class="about-grid">
+        <article class="about-card">
+          <h3>Tecnologia &amp; conforto</h3>
+          <p>Selecionamos tecidos respiráveis, com compressão na medida, controle de umidade e proteção UV para acompanhar diferentes modalidades.</p>
+        </article>
+        <article class="about-card">
+          <h3>Modelagem inteligente</h3>
+          <p>Desenvolvemos ergonomia que abraça o corpo, do PP ao GG, com ajustes específicos para treinos de força, corrida, yoga e treinos funcionais.</p>
+        </article>
+        <article class="about-card">
+          <h3>Qualidade real</h3>
+          <p>Cada peça passa por costuras reforçadas, testes de uso intensivo e controle de qualidade em pequenos lotes para garantir durabilidade.</p>
+        </article>
+        <article class="about-card">
+          <h3>Design autoral</h3>
+          <p>Identidade visual própria com base nos tons lilás e roxo da M.E FIT, apresentando lançamentos sazonais e colaborações exclusivas.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="about-commitment container" aria-labelledby="responsabilidade">
+      <div class="about-callout">
+        <h2 id="responsabilidade">Responsabilidade que gera impacto</h2>
+        <p>Operamos com fornecedores auditados, rastreamos o uso de matéria-prima e reduzimos desperdícios em todas as etapas, da criação à entrega.</p>
+        <ul>
+          <li>Redução de sobras de tecido com aproveitamento inteligente de moldes.</li>
+          <li>Programas de logística reversa e reciclagem de peças em fim de vida útil.</li>
+          <li>Embalagens com menor impacto ambiental e impressões em tinta à base d’água.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="about-timeline container" aria-labelledby="trajetoria">
+      <div class="about-section-header">
+        <h2 id="trajetoria">Nossa trajetória</h2>
+        <p>Cada coleção nasce de experimentos práticos e das conversas com quem vive esporte diariamente.</p>
+      </div>
+      <ol class="about-timeline-list">
+        <li>
+          <time datetime="2016">2016</time>
+          <p>Laboratório de pesquisa com atletas parceiros e protótipos produzidos em lotes piloto.</p>
+        </li>
+        <li>
+          <time datetime="2018">2018</time>
+          <p>Lançamento oficial da M.E FIT com a coleção Boreal e expansão para o e-commerce.</p>
+        </li>
+        <li>
+          <time datetime="2020">2020</time>
+          <p>Implementamos o controle de qualidade reforçado e o canal direto de atendimento via WhatsApp.</p>
+        </li>
+        <li>
+          <time datetime="2022">2022</time>
+          <p>Programa de logística reversa e parceria com tecelagens certificadas.</p>
+        </li>
+        <li>
+          <time datetime="2024">2024</time>
+          <p>Quatro hubs logísticos no Brasil garantem entregas ágeis com menor pegada de carbono.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="about-support container" aria-labelledby="atendimento">
+      <div class="about-section-header">
+        <h2 id="atendimento">Estamos aqui para você</h2>
+        <p>Precisa de ajuda com tamanhos, trocas ou cuidados com as peças? Nosso time responde rápido e acompanha todo o pós-compra.</p>
+      </div>
+      <div class="about-support-grid">
+        <p class="about-support-text">Fale com a M.E FIT de segunda a sexta, 9h às 18h, pelos canais abaixo.</p>
+        <div class="about-contact-grid">
+          <div>
+            <span class="about-contact-label">WhatsApp</span>
+            <a class="about-contact-value" href="https://wa.me/5511999999999">(11) 99999-9999</a>
+          </div>
+          <div>
+            <span class="about-contact-label">E-mail</span>
+            <a class="about-contact-value" href="mailto:atendimento@mefit.com">atendimento@mefit.com</a>
+          </div>
+          <div>
+            <span class="about-contact-label">Endereço</span>
+            <strong class="about-contact-value">Rua Energia 123, São Paulo – SP</strong>
+          </div>
+          <div>
+            <span class="about-contact-label">Horário</span>
+            <strong class="about-contact-value">Seg a Sex, 9h–18h</strong>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">
