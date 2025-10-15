@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "nome": "Legging UltraFlex",
+    "categoria": "Legging",
+    "preco": 189.9,
+    "tamanhos": ["P", "M", "G"],
+    "cores": ["Preto", "Roxo"],
+    "descricao": "Legging com compressão graduada e tecido respirável para treinos de alta intensidade.",
+    "imagem": "assets/img/sample1.png"
+  },
+  {
+    "id": 2,
+    "nome": "Top Energy Mesh",
+    "categoria": "Top",
+    "preco": 119.5,
+    "tamanhos": ["PP", "P", "M"],
+    "cores": ["Uva"],
+    "descricao": "Top com recortes em mesh e bojo removível, ideal para treinos em dias quentes.",
+    "imagem": "assets/img/sample2.png"
+  },
+  {
+    "id": 3,
+    "nome": "Camiseta Dry Move",
+    "categoria": "Camiseta",
+    "preco": 99.9,
+    "tamanhos": ["P", "M", "G", "GG"],
+    "cores": ["Lilás", "Preto"],
+    "descricao": "Tecnologia dry fit que afasta o suor e mantém o conforto durante a corrida.",
+    "imagem": "assets/img/sample3.png"
+  },
+  {
+    "id": 4,
+    "nome": "Shorts Run Free",
+    "categoria": "Shorts",
+    "preco": 139.0,
+    "tamanhos": ["P", "M", "G"],
+    "cores": ["Preto"],
+    "descricao": "Shorts com bolso interno para chaves e detalhes refletivos para treinos noturnos.",
+    "imagem": "assets/img/sample1.png"
+  },
+  {
+    "id": 5,
+    "nome": "Jaqueta Storm Shield",
+    "categoria": "Jaqueta",
+    "preco": 259.9,
+    "tamanhos": ["M", "G", "GG"],
+    "cores": ["Grafite"],
+    "descricao": "Jaqueta corta-vento impermeável com interior em fleece leve para aquecimento rápido.",
+    "imagem": "assets/img/sample2.png"
+  },
+  {
+    "id": 6,
+    "nome": "Macacão Sculpt",
+    "categoria": "Macacão",
+    "preco": 229.9,
+    "tamanhos": ["P", "M"],
+    "cores": ["Roxo"],
+    "descricao": "Macacão de alta sustentação com recortes estratégicos para modelagem natural.",
+    "imagem": "assets/img/sample3.png"
+  },
+  {
+    "id": 7,
+    "nome": "Regata Breeze",
+    "categoria": "Regata",
+    "preco": 79.9,
+    "tamanhos": ["PP", "P", "M", "G"],
+    "cores": ["Branco", "Vinho"],
+    "descricao": "Regata com microperfurações que aumentam a circulação de ar em treinos outdoor.",
+    "imagem": "assets/img/sample1.png"
+  },
+  {
+    "id": 8,
+    "nome": "Bermuda Pocket Fit",
+    "categoria": "Bermuda",
+    "preco": 149.9,
+    "tamanhos": ["M", "G", "GG"],
+    "cores": ["Preto", "Azul"],
+    "descricao": "Bermuda com bolsos laterais estruturados para levar celular sem perder estabilidade.",
+    "imagem": "assets/img/sample2.png"
+  },
+  {
+    "id": 9,
+    "nome": "Calça Jogger Soft",
+    "categoria": "Calça",
+    "preco": 199.0,
+    "tamanhos": ["P", "M", "G", "GG"],
+    "cores": ["Cinza"],
+    "descricao": "Jogger com toque macio e punhos ajustáveis para pré e pós-treino.",
+    "imagem": "assets/img/sample3.png"
+  },
+  {
+    "id": 10,
+    "nome": "Top Impact Zip",
+    "categoria": "Top",
+    "preco": 139.9,
+    "tamanhos": ["P", "M", "G"],
+    "cores": ["Preto", "Magenta"],
+    "descricao": "Top com zíper frontal e faixa elástica interna que garante suporte de impacto alto.",
+    "imagem": "assets/img/sample1.png"
+  }
+]
