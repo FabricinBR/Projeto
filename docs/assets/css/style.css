@@ -102,7 +102,18 @@ a:hover{text-decoration:underline}
 .p-thumb img{max-width:90%;height:auto;display:block;mix-blend:screen;opacity:.85}
 .price{color:var(--primary-2);font-weight:700}
 .form{display:grid;gap:12px;max-width:520px;margin:12px 0 36px}
+.form label{font-weight:600;display:block}
 .form input,.form textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#100a18;color:var(--text)}
+.form input:focus-visible,.form textarea:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.password-field{display:grid;gap:6px}
+.password-input{display:flex;align-items:center;gap:12px}
+.password-input input{flex:1}
+.password-toggle{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(26,19,43,.95);color:var(--primary-2);font-weight:600;cursor:pointer;transition:background .2s ease,color .2s ease}
+.password-toggle:hover,.password-toggle:focus-visible{background:rgba(124,77,255,.2);color:#fff;outline:none}
+.password-toggle[aria-pressed="true"]{background:rgba(124,77,255,.35);color:#fff}
+.form-feedback{margin:0;padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.4;display:none;border:1px solid transparent}
+.form-feedback.is-error{display:block;background:rgba(255,128,171,.12);border-color:rgba(255,128,171,.35);color:var(--accent)}
+.form-feedback.is-success{display:block;background:rgba(124,77,255,.12);border-color:rgba(124,77,255,.35);color:var(--primary-2)}
 code{background:#100a18;padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
 .auth{padding:56px 0 72px}
 .auth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:start}
@@ -121,6 +132,8 @@ code{background:#100a18;padding:2px 6px;border-radius:6px;border:1px solid var(-
 .link-alt:hover{text-decoration:underline}
 .auth-signup{margin:8px 0 0;font-size:14px;color:var(--muted)}
 .auth-signup a{color:var(--primary-2);font-weight:600}
+.auth-intro{margin:0 0 12px;color:var(--muted);line-height:1.5}
+.auth-note{margin:16px 0 0;color:var(--muted);font-size:14px}
 @media (max-width:600px){
   .hero-copy h1{font-size:28px}
   .form-row{flex-direction:column;align-items:flex-start}
