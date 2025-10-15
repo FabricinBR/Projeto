@@ -1,6 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
+const ready = (callback) => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', callback, { once: true });
+  } else {
+    callback();
+  }
+};
+
+const initLogin = () => {
   const loginForm = document.getElementById('login-form');
-  if (!loginForm) return;
+  if (!loginForm || loginForm.dataset.enhanced === 'true') return;
+  loginForm.dataset.enhanced = 'true';
 
   const emailInput = loginForm.querySelector('input[name="email"]');
   const passwordInput = loginForm.querySelector('input[name="password"]');
@@ -48,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleButton.setAttribute('aria-pressed', shouldReveal ? 'true' : 'false');
       passwordInput.focus();
       if (shouldReveal) {
-        const caret = passwordInput.value.length;
-        passwordInput.setSelectionRange(caret, caret);
+        const length = passwordInput.value.length;
+        passwordInput.setSelectionRange(length, length);
       }
     });
   }
@@ -111,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
-      setTimeout(() => {
+      window.setTimeout(() => {
         window.location.href = '../index.html';
       }, 1000);
     } catch (error) {
@@ -121,4 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setLoading(false);
     }
   });
-});
+};
+
+ready(initLogin);
+document.addEventListener('mefit:ready', initLogin);

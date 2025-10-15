@@ -1,6 +1,22 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const yearEl = document.getElementById('year');
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
+const ready = (callback) => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', callback, { once: true });
+  } else {
+    callback();
   }
+};
+
+const updateYear = () => {
+  const targets = document.querySelectorAll('#year, [data-current-year]');
+  if (!targets.length) return;
+
+  const currentYear = String(new Date().getFullYear());
+  targets.forEach((element) => {
+    element.textContent = currentYear;
+  });
+};
+
+ready(() => {
+  updateYear();
+  document.dispatchEvent(new CustomEvent('mefit:ready'));
 });

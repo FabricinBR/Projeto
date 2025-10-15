@@ -1,6 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
+const ready = (callback) => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', callback, { once: true });
+  } else {
+    callback();
+  }
+};
+
+const initProducts = () => {
   const productGrid = document.querySelector('[data-product-grid]');
-  if (!productGrid) return;
+  if (!productGrid || productGrid.dataset.enhanced === 'true') return;
+  productGrid.dataset.enhanced = 'true';
 
   const filtersForm = document.querySelector('[data-product-filters]');
   const searchInput = document.querySelector('[data-product-search]');
@@ -16,7 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const source = productGrid.getAttribute('data-source');
   let allProducts = [];
 
-  const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const formatCurrency = (value) => value.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  });
 
   const updateCount = (visible, total) => {
     if (!countEl) return;
@@ -181,4 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   loadProducts();
-});
+};
+
+ready(initProducts);
+document.addEventListener('mefit:ready', initProducts);
