@@ -33,6 +33,24 @@ a:hover{text-decoration:underline}
 .btn{display:inline-block;padding:10px 16px;border-radius:12px;border:1px solid var(--border);font-weight:600}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent}
 .btn-outline{color:var(--text);background:transparent}
+.showcases{padding:24px 0 16px;display:grid;gap:32px}
+.showcases-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;background:rgba(26,19,43,.75);border:1px solid var(--border);padding:24px;border-radius:18px;flex-wrap:wrap}
+.showcases-heading p{color:var(--muted);margin:6px 0 0}
+.showcase-block{display:grid;gap:18px;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:18px}
+.showcase-header h3{margin:0 0 4px;font-size:22px}
+.showcase-header p{margin:0;color:var(--muted)}
+.showcase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.showcase-card{position:relative;background:rgba(21,16,38,.75);border:1px solid var(--border);padding:20px;border-radius:16px;display:grid;gap:12px}
+.showcase-thumb{width:100%;aspect-ratio:4/3;border-radius:12px;background:linear-gradient(135deg,rgba(124,77,255,.45),transparent);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.showcase-thumb img{max-width:90%;height:auto;mix-blend-mode:screen;opacity:.9}
+.showcase-card h4{margin:0;font-size:18px}
+.showcase-copy{margin:0;color:var(--muted);line-height:1.45}
+.badge{position:absolute;top:16px;left:16px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,128,171,.85);color:#100a18;padding:4px 10px;border-radius:999px;font-weight:700}
+.combo .showcase-thumb{aspect-ratio:1/1}
+.combo-benefits{display:grid;gap:6px;margin:0}
+.combo-benefits div{display:flex;align-items:center;justify-content:space-between;background:rgba(16,10,24,.85);border:1px solid var(--border);padding:8px 12px;border-radius:10px}
+.combo-benefits dt{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.combo-benefits dd{margin:0;font-weight:600}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:24px 0 56px}
 .card{background:var(--card);border:1px solid var(--border);padding:16px;border-radius:14px}
 .site-footer{border-top:1px solid var(--border);padding:28px 0;margin-top:40px;background:rgba(0,0,0,.1)}
