@@ -1,4 +1,4 @@
-const ready = (callback) => {
+const onDocumentReady = (callback) => {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', callback, { once: true });
   } else {
@@ -195,4 +195,4 @@ const initProducts = () => {
   loadProducts();
 };
 
-ready(initProducts);
+onDocumentReady(initProducts);
