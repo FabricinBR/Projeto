@@ -23,11 +23,33 @@
     </div>
   </header>
 
-  <main class="container">
-    <h1>Produtos</h1>
-    <p>Exemplo de grade de produtos. Você pode integrar depois com API ou arquivo JSON.</p>
+  <main>
+    <section class="hero container products-hero" aria-labelledby="catalogo-title">
+      <h1 id="catalogo-title">Catálogo completo</h1>
+      <p>
+        Explore vitrines temáticas com os principais lançamentos, kits combinados e itens curingas da
+        M.E FIT. Tudo pronto para você conectar uma API ou abastecer com o seu próprio CMS quando quiser.
+      </p>
+      <div class="chip-row" id="category-chips" aria-label="Categorias em destaque"></div>
+    </section>
 
-    <div id="product-grid" class="product-grid"></div>
+    <section class="showcases container" aria-labelledby="showcases-title">
+      <header class="showcases-heading">
+        <div>
+          <h2 id="showcases-title">Vitrines de produtos</h2>
+          <p>Linhas selecionadas automaticamente: é só atualizar os dados e manter a vitrine sempre atual.</p>
+        </div>
+      </header>
+      <div id="showcase-list"></div>
+    </section>
+
+    <section class="container product-section" aria-labelledby="catalog-grid-title">
+      <header class="product-section-header">
+        <h2 id="catalog-grid-title">Todos os produtos</h2>
+        <p>Lista completa com itens disponíveis para compra. Integre depois com carrinho ou estoque em tempo real.</p>
+      </header>
+      <div id="product-grid" class="product-grid" aria-live="polite"></div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -38,20 +60,234 @@
 
   <script src="assets/js/app.js"></script>
   <script>
-    const produtos = [
-      { id: 1, nome: "Legging Tech", preco: 129.90, img: "assets/img/sample1.png" },
-      { id: 2, nome: "Top Performance", preco: 89.90, img: "assets/img/sample2.png" },
-      { id: 3, nome: "Camiseta Dry", preco: 69.90, img: "assets/img/sample3.png" }
+    const categoriasDestaque = [
+      'Lançamentos',
+      'Treino funcional',
+      'Yoga & Flow',
+      'Outdoor',
+      'Acessórios inteligentes'
     ];
+
+    const vitrines = [
+      {
+        titulo: 'Lançamentos da temporada',
+        descricao: 'Peças recém-chegadas com tecidos tecnológicos e acabamento premium.',
+        itens: [
+          {
+            nome: 'Legging Aurora',
+            preco: 139.9,
+            descricao: 'Cintura alta com sustentação gradual e proteção UV50+.',
+            img: 'assets/img/sample1.png',
+            selo: 'Novo'
+          },
+          {
+            nome: 'Top Horizon',
+            preco: 99.9,
+            descricao: 'Recortes ergonômicos e alças reguláveis para treinos intensos.',
+            img: 'assets/img/sample2.png',
+            selo: 'Coleção cápsula'
+          },
+          {
+            nome: 'Jaqueta Boreal',
+            preco: 219.9,
+            descricao: 'Camada leve, respirável e resistente à água para outdoor.',
+            img: 'assets/img/sample3.png',
+            selo: 'Edição limitada'
+          }
+        ]
+      },
+      {
+        titulo: 'Essenciais para o dia a dia',
+        descricao: 'Itens curingas para compor looks versáteis com máximo conforto.',
+        itens: [
+          {
+            nome: 'Legging Flex Move',
+            preco: 119.9,
+            descricao: 'Textura canelada, compressão média e costuras reforçadas.',
+            img: 'assets/img/sample1.png'
+          },
+          {
+            nome: 'Camiseta Dry Shift',
+            preco: 69.9,
+            descricao: 'Tecnologia dry com toque gelado e acabamento antibacteriano.',
+            img: 'assets/img/sample2.png'
+          },
+          {
+            nome: 'Short Pulse',
+            preco: 79.9,
+            descricao: 'Cós duplo, bolsos laterais e tecido leve para mobilidade.',
+            img: 'assets/img/sample1.png'
+          }
+        ]
+      },
+      {
+        titulo: 'Combos e kits coordenados',
+        descricao: 'Ofertas especiais com benefícios extras para quem compra o conjunto.',
+        itens: [
+          {
+            nome: 'Power Duo',
+            preco: 229.9,
+            descricao: 'Top estruturado + legging compressiva para máximo suporte.',
+            img: 'assets/img/sample1.png',
+            beneficios: [
+              { titulo: 'Desconto', valor: '15% no kit' },
+              { titulo: 'Brinde', valor: 'Faixa elástica média' }
+            ]
+          },
+          {
+            nome: 'Flow Pack',
+            preco: 189.9,
+            descricao: 'Camiseta dry + short leve com recortes respiráveis.',
+            img: 'assets/img/sample2.png',
+            beneficios: [
+              { titulo: 'Frete', valor: 'Grátis Brasil' },
+              { titulo: 'Parcelamento', valor: 'até 6x sem juros' }
+            ]
+          },
+          {
+            nome: 'Outdoor Pro',
+            preco: 349.9,
+            descricao: 'Jaqueta corta-vento + calça repelente com ajuste térmico.',
+            img: 'assets/img/sample3.png',
+            beneficios: [
+              { titulo: 'Garantia', valor: '365 dias' },
+              { titulo: 'Bônus', valor: 'Workshop online de trail' }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const catalogoCompleto = [
+      {
+        nome: 'Legging Aurora',
+        preco: 139.9,
+        descricao: 'Legging com compressão progressiva e recortes anatômicos.',
+        img: 'assets/img/sample1.png'
+      },
+      {
+        nome: 'Top Horizon',
+        preco: 99.9,
+        descricao: 'Top com alças ajustáveis e tecido respirável de secagem rápida.',
+        img: 'assets/img/sample2.png'
+      },
+      {
+        nome: 'Jaqueta Boreal',
+        preco: 219.9,
+        descricao: 'Jaqueta corta-vento leve, dobrável e resistente à água.',
+        img: 'assets/img/sample3.png'
+      },
+      {
+        nome: 'Short Pulse',
+        preco: 79.9,
+        descricao: 'Short com bolsos laterais e cós duplo para treinos outdoor.',
+        img: 'assets/img/sample1.png'
+      },
+      {
+        nome: 'Camiseta Dry Shift',
+        preco: 69.9,
+        descricao: 'Malha com acabamento antibacteriano e toque gelado.',
+        img: 'assets/img/sample2.png'
+      },
+      {
+        nome: 'Legging Flex Move',
+        preco: 119.9,
+        descricao: 'Textura canelada, compressão média e costuras reforçadas.',
+        img: 'assets/img/sample1.png'
+      },
+      {
+        nome: 'Top Sculpt',
+        preco: 94.9,
+        descricao: 'Suporte alto, estrutura anatômica e bojo removível.',
+        img: 'assets/img/sample2.png'
+      },
+      {
+        nome: 'Calça Trail Storm',
+        preco: 199.9,
+        descricao: 'Material repelente, joelhos articulados e zíper lateral.',
+        img: 'assets/img/sample3.png'
+      },
+      {
+        nome: 'Colete Breeze',
+        preco: 149.9,
+        descricao: 'Colete acolchoado ultraleve com painéis respiráveis.',
+        img: 'assets/img/sample3.png'
+      }
+    ];
+
+    const formatarPreco = (valor) => new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
+
+    const chips = document.getElementById('category-chips');
+    if (chips) {
+      chips.innerHTML = categoriasDestaque
+        .map((categoria) => `<span class="chip">${categoria}</span>`)
+        .join('');
+    }
+
+    const criarCardVitrine = (item) => {
+      const beneficiosAtivos = Array.isArray(item.beneficios) && item.beneficios.length > 0;
+
+      return `
+        <article class="showcase-card${beneficiosAtivos ? ' combo' : ''}">
+          ${item.selo ? `<div class="badge">${item.selo}</div>` : ''}
+          <div class="showcase-thumb">
+            <img src="${item.img}" alt="${item.nome}" loading="lazy">
+          </div>
+          <h4>${item.nome}</h4>
+          <p class="showcase-copy">${item.descricao}</p>
+          ${item.preco ? `<span class="price">${formatarPreco(item.preco)}</span>` : ''}
+          ${beneficiosAtivos
+            ? `<dl class="combo-benefits">
+                ${item.beneficios
+                  .map((beneficio) => `
+                    <div>
+                      <dt>${beneficio.titulo}</dt>
+                      <dd>${beneficio.valor}</dd>
+                    </div>
+                  `)
+                  .join('')}
+              </dl>`
+            : ''}
+        </article>
+      `;
+    };
+
+    const showcaseList = document.getElementById('showcase-list');
+    if (showcaseList) {
+      showcaseList.innerHTML = vitrines
+        .map((vitrine) => `
+          <div class="showcase-block">
+            <div class="showcase-header">
+              <h3>${vitrine.titulo}</h3>
+              <p>${vitrine.descricao}</p>
+            </div>
+            <div class="showcase-grid">
+              ${vitrine.itens.map((item) => criarCardVitrine(item)).join('')}
+            </div>
+          </div>
+        `)
+        .join('');
+    }
+
     const grid = document.getElementById('product-grid');
-    grid.innerHTML = produtos.map(p => `
-      <article class="p-card">
-        <div class="p-thumb"><img src="${p.img}" alt="${p.nome}"></div>
-        <h3>${p.nome}</h3>
-        <p class="price">R$ ${p.preco.toFixed(2)}</p>
-        <button class="btn btn-primary">Adicionar</button>
-      </article>
-    `).join('');
+    if (grid) {
+      grid.innerHTML = catalogoCompleto
+        .map((produto) => `
+          <article class="p-card">
+            <div class="p-thumb">
+              <img src="${produto.img}" alt="${produto.nome}" loading="lazy">
+            </div>
+            <h3>${produto.nome}</h3>
+            <p>${produto.descricao}</p>
+            <span class="price">${formatarPreco(produto.preco)}</span>
+            <button class="btn btn-primary" type="button">Adicionar ao carrinho</button>
+          </article>
+        `)
+        .join('');
+    }
   </script>
 </body>
 </html>
