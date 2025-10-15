@@ -24,11 +24,60 @@
     </div>
   </header>
 
-  <main class="container">
-    <h1>Produtos</h1>
-    <p>Exemplo de grade de produtos. Você pode integrar depois com API ou arquivo JSON.</p>
+  <main class="container product-layout">
+    <header class="product-header">
+      <h1>Catálogo de produtos</h1>
+      <p>Explore a coleção oficial M.E FIT com dados reais e filtros avançados para encontrar a peça ideal.</p>
+    </header>
 
-    <div id="product-grid" class="product-grid"></div>
+    <section class="product-filters" aria-label="Filtros do catálogo">
+      <form class="filter-form" data-product-filters>
+        <div class="filter-group">
+          <label for="buscar-produto">Buscar por nome</label>
+          <input id="buscar-produto" type="search" placeholder="Digite o nome do produto" autocomplete="off" data-product-search>
+        </div>
+
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label for="filtrar-categoria">Categoria</label>
+            <select id="filtrar-categoria" data-filter-category>
+              <option value="">Todas as categorias</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filtrar-tamanho">Tamanho</label>
+            <select id="filtrar-tamanho" data-filter-size>
+              <option value="">Todos os tamanhos</option>
+            </select>
+          </div>
+
+          <fieldset class="filter-group">
+            <legend>Preço</legend>
+            <div class="price-inputs">
+              <label class="visually-hidden" for="preco-min">Preço mínimo</label>
+              <input id="preco-min" type="number" min="0" step="0.5" placeholder="Mín." data-filter-min-price>
+              <span aria-hidden="true">–</span>
+              <label class="visually-hidden" for="preco-max">Preço máximo</label>
+              <input id="preco-max" type="number" min="0" step="0.5" placeholder="Máx." data-filter-max-price>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="filter-actions">
+          <button type="reset" class="btn btn-outline" data-product-clear>Limpar filtros</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="product-results" aria-live="polite">
+      <div class="product-toolbar">
+        <p class="result-count" data-product-count>Carregando produtos...</p>
+      </div>
+      <div class="product-grid" data-product-grid data-source="assets/data/produtos.json"></div>
+      <p class="product-empty" data-product-empty hidden>Nenhum produto encontrado com os filtros selecionados.</p>
+      <p class="product-loading" data-product-loading hidden>Carregando catálogo completo...</p>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">
@@ -96,21 +145,5 @@
   </footer>
 
   <script src="assets/js/app.js"></script>
-  <script>
-    const produtos = [
-      { id: 1, nome: "Legging Tech", preco: 129.90, img: "assets/img/sample1.png" },
-      { id: 2, nome: "Top Performance", preco: 89.90, img: "assets/img/sample2.png" },
-      { id: 3, nome: "Camiseta Dry", preco: 69.90, img: "assets/img/sample3.png" }
-    ];
-    const grid = document.getElementById('product-grid');
-    grid.innerHTML = produtos.map(p => `
-      <article class="p-card">
-        <div class="p-thumb"><img src="${p.img}" alt="${p.nome}" loading="lazy"></div>
-        <h3>${p.nome}</h3>
-        <p class="price">${p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-        <button class="btn btn-primary">Adicionar</button>
-      </article>
-    `).join('');
-  </script>
 </body>
 </html>
