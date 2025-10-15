@@ -3,35 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Contato</title>
+  <title>M.E FIT — Pagamentos e segurança</title>
   <link href="assets/css/style.css" rel="stylesheet">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Contato M.E FIT.">
+  <meta name="description" content="Formas de pagamento aceitas e segurança das transações na M.E FIT.">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav">
-        <a href="./">Início</a>
+        <a href="./index.html">Início</a>
         <a href="./produtos.html">Produtos</a>
         <a href="./sobre.html">Sobre</a>
-        <a href="./contato.html" class="active">Contato</a>
+        <a href="./contato.html">Contato</a>
         <a href="./login/">Login</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <h1>Contato</h1>
-    <form class="form" onsubmit="event.preventDefault(); alert('Mensagem enviada (demo)!');">
-      <label>Nome <input type="text" required></label>
-      <label>Email <input type="email" required></label>
-      <label>Mensagem <textarea rows="5" required></textarea></label>
-      <button class="btn btn-primary">Enviar</button>
-    </form>
+    <h1>Pagamentos e segurança</h1>
+    <p>Nossas transações são processadas em ambiente criptografado para garantir a proteção dos seus dados.</p>
+
+    <section aria-labelledby="pag-formas">
+      <h2 id="pag-formas">Formas de pagamento</h2>
+      <ul>
+        <li>Cartões de crédito: Visa, MasterCard, Elo, Amex e Hipercard.</li>
+        <li>Pix com confirmação em poucos segundos.</li>
+        <li>Boleto bancário com vencimento em 2 dias úteis.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="pag-seguranca">
+      <h2 id="pag-seguranca">Segurança</h2>
+      <p>Utilizamos certificação SSL, tokenização de cartões e monitoramento antifraude em tempo real. Seus dados não ficam armazenados em nossos servidores.</p>
+    </section>
+
+    <section aria-labelledby="pag-parcelamento">
+      <h2 id="pag-parcelamento">Parcelamento</h2>
+      <p>Parcelamos em até 10x sem juros com parcela mínima de R$ 30. Promoções especiais podem aumentar o número de parcelas sem custo adicional.</p>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">

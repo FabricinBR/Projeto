@@ -3,35 +3,66 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Contato</title>
+  <title>M.E FIT — Perguntas frequentes</title>
   <link href="assets/css/style.css" rel="stylesheet">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Contato M.E FIT.">
+  <meta name="description" content="FAQ com dúvidas frequentes sobre compras na M.E FIT.">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav">
-        <a href="./">Início</a>
+        <a href="./index.html">Início</a>
         <a href="./produtos.html">Produtos</a>
         <a href="./sobre.html">Sobre</a>
-        <a href="./contato.html" class="active">Contato</a>
+        <a href="./contato.html">Contato</a>
         <a href="./login/">Login</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <h1>Contato</h1>
-    <form class="form" onsubmit="event.preventDefault(); alert('Mensagem enviada (demo)!');">
-      <label>Nome <input type="text" required></label>
-      <label>Email <input type="email" required></label>
-      <label>Mensagem <textarea rows="5" required></textarea></label>
-      <button class="btn btn-primary">Enviar</button>
-    </form>
+    <h1>Perguntas frequentes</h1>
+    <p>Encontre respostas rápidas sobre pedidos, pagamentos, frete e políticas da M.E FIT.</p>
+
+    <section aria-labelledby="faq-pedidos">
+      <h2 id="faq-pedidos">Pedidos e entregas</h2>
+      <details open>
+        <summary>Como acompanho o status do meu pedido?</summary>
+        <p>Após a confirmação do pagamento, enviamos um e-mail com o código de rastreio. Você também pode acompanhar em <a href="./rastrear-pedido.html">Rastrear pedido</a>.</p>
+      </details>
+      <details>
+        <summary>Qual o prazo de entrega?</summary>
+        <p>Os prazos variam conforme o CEP. Consulte estimativas e modalidades em nossa <a href="./politica-de-frete.html">Política de frete</a>.</p>
+      </details>
+    </section>
+
+    <section aria-labelledby="faq-pagamentos">
+      <h2 id="faq-pagamentos">Pagamentos</h2>
+      <details>
+        <summary>Quais formas de pagamento são aceitas?</summary>
+        <p>Aceitamos cartões de crédito das principais bandeiras, Pix e boleto. Saiba mais em <a href="./pagamentos-e-seguranca.html">Pagamentos e segurança</a>.</p>
+      </details>
+      <details>
+        <summary>Posso parcelar minha compra?</summary>
+        <p>Sim, parcelamos em até 10x sem juros com valor mínimo por parcela. Consulte as condições atualizadas na página de produto.</p>
+      </details>
+    </section>
+
+    <section aria-labelledby="faq-trocas">
+      <h2 id="faq-trocas">Trocas e devoluções</h2>
+      <details>
+        <summary>Qual o prazo para solicitar troca?</summary>
+        <p>Você tem até 30 dias corridos após o recebimento. Confira o passo a passo completo em <a href="./trocas-e-devolucoes.html">Trocas e devoluções</a>.</p>
+      </details>
+      <details>
+        <summary>Há custo para devolver um produto?</summary>
+        <p>Não cobramos frete na primeira troca. Para mais detalhes consulte nossas políticas.</p>
+      </details>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">

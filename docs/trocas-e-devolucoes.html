@@ -3,35 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Contato</title>
+  <title>M.E FIT — Trocas e devoluções</title>
   <link href="assets/css/style.css" rel="stylesheet">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Contato M.E FIT.">
+  <meta name="description" content="Saiba como solicitar trocas e devoluções na M.E FIT.">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav">
-        <a href="./">Início</a>
+        <a href="./index.html">Início</a>
         <a href="./produtos.html">Produtos</a>
         <a href="./sobre.html">Sobre</a>
-        <a href="./contato.html" class="active">Contato</a>
+        <a href="./contato.html">Contato</a>
         <a href="./login/">Login</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <h1>Contato</h1>
-    <form class="form" onsubmit="event.preventDefault(); alert('Mensagem enviada (demo)!');">
-      <label>Nome <input type="text" required></label>
-      <label>Email <input type="email" required></label>
-      <label>Mensagem <textarea rows="5" required></textarea></label>
-      <button class="btn btn-primary">Enviar</button>
-    </form>
+    <h1>Trocas e devoluções</h1>
+    <p>Nosso compromisso é garantir que sua experiência de compra seja perfeita. Confira abaixo os prazos e condições para solicitar trocas ou devoluções.</p>
+
+    <section aria-labelledby="troca-prazo">
+      <h2 id="troca-prazo">Prazos</h2>
+      <ul>
+        <li><strong>Troca por tamanho ou cor:</strong> até 30 dias corridos após o recebimento.</li>
+        <li><strong>Defeito de fabricação:</strong> até 90 dias corridos, conforme CDC.</li>
+        <li><strong>Arrependimento:</strong> até 7 dias corridos após o recebimento do produto.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="troca-etapas">
+      <h2 id="troca-etapas">Como solicitar</h2>
+      <ol>
+        <li>Acesse a área <a href="./login/">Minha conta</a> e selecione o pedido.</li>
+        <li>Escolha a opção <em>Trocar ou devolver</em> e informe o motivo.</li>
+        <li>Receba a autorização por e-mail com o código de postagem gratuito.</li>
+        <li>Embale o produto em perfeitas condições e poste nos Correios em até 7 dias.</li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="troca-condicoes">
+      <h2 id="troca-condicoes">Condições importantes</h2>
+      <p>Os itens devem estar sem indícios de uso, com etiqueta afixada e nota fiscal. Produtos personalizados não possuem troca, exceto em caso de defeito.</p>
+    </section>
   </main>
 
   <footer class="site-footer" aria-label="Rodapé">
