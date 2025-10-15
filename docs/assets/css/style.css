@@ -62,6 +62,24 @@ a:hover{text-decoration:underline}
 .form{display:grid;gap:12px;max-width:520px;margin:12px 0 36px}
 .form input,.form textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#100a18;color:var(--text)}
 code{background:#100a18;padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
+.auth{padding:56px 0 72px}
+.auth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:start}
+.auth-copy{display:grid;gap:16px}
+.auth-copy p{color:var(--muted);margin:0}
+.auth-benefits{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.auth-benefits li{display:flex;gap:10px;align-items:flex-start;color:var(--muted);line-height:1.5}
+.auth-benefits li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+.auth-card{background:rgba(21,16,38,.9);border:1px solid var(--border);padding:28px;border-radius:18px;box-shadow:0 24px 60px rgba(7,4,15,.45)}
+.auth-card h2{margin:0 0 12px}
+.auth-card .form{margin:0}
+.form-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.check input{width:auto;height:auto}
+.link-alt{color:var(--primary-2);font-weight:600}
+.link-alt:hover{text-decoration:underline}
+.auth-signup{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.auth-signup a{color:var(--primary-2);font-weight:600}
 @media (max-width:600px){
   .hero h1{font-size:28px}
+  .form-row{flex-direction:column;align-items:flex-start}
 }
