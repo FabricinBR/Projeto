@@ -1,4 +1,9 @@
-const ready = (callback) => {
+const registerReady = (callback) => {
+  if (window.MEFIT?.onReady) {
+    window.MEFIT.onReady(callback);
+    return;
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', callback, { once: true });
   } else {
@@ -195,5 +200,4 @@ const initProducts = () => {
   loadProducts();
 };
 
-document.addEventListener('mefit:ready', initProducts);
-ready(initProducts);
+registerReady(initProducts);

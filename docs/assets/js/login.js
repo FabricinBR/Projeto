@@ -1,4 +1,9 @@
-const ready = (callback) => {
+const registerReady = (callback) => {
+  if (window.MEFIT?.onReady) {
+    window.MEFIT.onReady(callback);
+    return;
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', callback, { once: true });
   } else {
@@ -136,5 +141,4 @@ const enhanceLoginForm = () => {
   });
 };
 
-ready(enhanceLoginForm);
-document.addEventListener('mefit:ready', enhanceLoginForm);
+registerReady(enhanceLoginForm);
