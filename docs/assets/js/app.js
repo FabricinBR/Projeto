@@ -9,13 +9,6 @@ const updateYear = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateYear();
-
-  const loginForm = document.getElementById('login-form');
-  if (!loginForm || loginForm.dataset.enhanced === 'true') {
-    return;
-  }
-  loginForm.dataset.enhanced = 'true';
 
   const emailInput = loginForm.querySelector('input[name="email"]');
   const passwordInput = loginForm.querySelector('input[name="password"]');
@@ -44,15 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const setLoading = (loading) => {
     if (!submitButton) return;
-
     if (loading) {
       if (!submitButton.dataset.originalText) {
         submitButton.dataset.originalText = submitButton.textContent ?? '';
       }
       submitButton.textContent = 'Entrando...';
-    } else if (submitButton.dataset.originalText) {
-      submitButton.textContent = submitButton.dataset.originalText;
-    }
 
     submitButton.disabled = loading;
   };
@@ -65,8 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleButton.setAttribute('aria-pressed', shouldReveal ? 'true' : 'false');
       passwordInput.focus();
       if (shouldReveal) {
-        const length = passwordInput.value.length;
-        passwordInput.setSelectionRange(length, length);
       }
     });
   }
@@ -109,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       setLoading(true);
-      await new Promise((resolve) => window.setTimeout(resolve, 600));
-
       const demoEmail = 'demo@mefit.com';
       const demoPassword = 'demo123';
       const isDemoLogin = email.toLowerCase() === demoEmail && password === demoPassword;
@@ -128,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
-      window.setTimeout(() => {
         window.location.href = '../index.html';
       }, 1000);
     } catch (error) {
