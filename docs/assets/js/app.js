@@ -1,9 +1,14 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const y = document.getElementById('year');
-  if (y) y.textContent = new Date().getFullYear();
+const updateYear = () => {
+  const targets = document.querySelectorAll('#year, [data-current-year]');
+  if (!targets.length) return;
 
-  const loginForm = document.getElementById('login-form');
-  if (!loginForm) return;
+  const currentYear = String(new Date().getFullYear());
+  targets.forEach((element) => {
+    element.textContent = currentYear;
+  });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
 
   const emailInput = loginForm.querySelector('input[name="email"]');
   const passwordInput = loginForm.querySelector('input[name="password"]');
@@ -37,11 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.dataset.originalText = submitButton.textContent ?? '';
       }
       submitButton.textContent = 'Entrando...';
-    } else {
-      if (submitButton.dataset.originalText) {
-        submitButton.textContent = submitButton.dataset.originalText;
-      }
-    }
+
     submitButton.disabled = loading;
   };
 
@@ -53,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleButton.setAttribute('aria-pressed', shouldReveal ? 'true' : 'false');
       passwordInput.focus();
       if (shouldReveal) {
-        passwordInput.setSelectionRange(passwordInput.value.length, passwordInput.value.length);
       }
     });
   }
@@ -96,8 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 600));
-
       const demoEmail = 'demo@mefit.com';
       const demoPassword = 'demo123';
       const isDemoLogin = email.toLowerCase() === demoEmail && password === demoPassword;
@@ -115,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
-      setTimeout(() => {
         window.location.href = '../index.html';
       }, 1000);
     } catch (error) {
