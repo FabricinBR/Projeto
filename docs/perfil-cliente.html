@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>M.E FIT — Perfil do cliente</title>
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <meta name="description" content="Central de perfil do cliente M.E FIT com resumo da conta, endereços, assinaturas e suporte especializado.">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-grid">
+      <div class="brand">
+        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+      </div>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="./">Início</a>
+        <a href="./produtos.html">Produtos</a>
+        <a href="./carrinho.html">Carrinho</a>
+        <a href="./perfil-cliente.html" class="active" aria-current="page">Perfil</a>
+        <a href="./sobre.html">Sobre</a>
+        <a href="./contato.html">Contato</a>
+        <a href="./login/">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="profile-hero container" aria-labelledby="perfil-title">
+      <div class="profile-hero-grid">
+        <div class="profile-summary">
+          <p class="profile-eyebrow">Bem-vindo de volta</p>
+          <h1 id="perfil-title">Marina Esteves</h1>
+          <p class="profile-intro">Aqui você acompanha pedidos em andamento, preferências de treino e benefícios do seu plano <strong>M.E FIT Prime</strong>.</p>
+          <ul class="profile-tags" aria-label="Status da conta">
+            <li class="status-pill">Cliente Prime</li>
+            <li class="status-pill status-pill--positive">Recompensas ativas</li>
+            <li class="status-pill status-pill--muted">Pontuação: 2.480 pts</li>
+          </ul>
+        </div>
+        <aside class="profile-status" aria-labelledby="atividade-title">
+          <h2 id="atividade-title">Resumo rápido</h2>
+          <dl class="profile-stats">
+            <div>
+              <dt>Última compra</dt>
+              <dd>15 ago 2023 · Pedido #ME9031</dd>
+            </div>
+            <div>
+              <dt>Entregas em andamento</dt>
+              <dd>2 pedidos (previsão 22 ago)</dd>
+            </div>
+            <div>
+              <dt>Assinatura</dt>
+              <dd>Renovação automática em 30 set</dd>
+            </div>
+          </dl>
+          <div class="profile-actions">
+            <a class="btn btn-primary" href="./carrinho.html">Continuar comprando</a>
+            <a class="btn btn-outline" href="./rastrear-pedido.html">Rastrear entrega</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="profile-sections container" aria-label="Detalhes da conta">
+      <div class="profile-grid">
+        <article class="profile-card" aria-labelledby="dados-pessoais">
+          <header>
+            <h2 id="dados-pessoais">Dados pessoais</h2>
+            <button class="profile-link" type="button">Editar</button>
+          </header>
+          <dl class="profile-data">
+            <div>
+              <dt>E-mail</dt>
+              <dd>marina.esteves@mefit.com</dd>
+            </div>
+            <div>
+              <dt>Telefone</dt>
+              <dd>(11) 98888-7766</dd>
+            </div>
+            <div>
+              <dt>Preferência de treino</dt>
+              <dd>Funcional · 4x por semana</dd>
+            </div>
+            <div>
+              <dt>Tamanho favorito</dt>
+              <dd>M (superior) · P (inferior)</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="profile-card" aria-labelledby="enderecos">
+          <header>
+            <h2 id="enderecos">Endereços</h2>
+            <button class="profile-link" type="button">Gerenciar</button>
+          </header>
+          <ul class="profile-list">
+            <li>
+              <strong>Casa · Principal</strong>
+              <p>Rua Energia 123 · São Paulo · SP · 04512-000</p>
+              <span>Entrega padrão em até 2 dias úteis</span>
+            </li>
+            <li>
+              <strong>Estúdio de pilates</strong>
+              <p>Av. Horizonte 450 · São Paulo · SP · 01234-200</p>
+              <span>Utilizado para retirar kits semanais</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="profile-card" aria-labelledby="pagamentos">
+          <header>
+            <h2 id="pagamentos">Pagamentos</h2>
+            <button class="profile-link" type="button">Adicionar</button>
+          </header>
+          <ul class="profile-list">
+            <li>
+              <strong>Cartão Visa final 0921</strong>
+              <p>Preferido · Validade 08/2026</p>
+              <span>Autorizado para compras e assinatura</span>
+            </li>
+            <li>
+              <strong>Pix — Conta Banco Aurora</strong>
+              <p>Chave: marina.aurora@bank.com</p>
+              <span>Disponível para pagamentos únicos</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="profile-card" aria-labelledby="objetivos">
+          <header>
+            <h2 id="objetivos">Objetivos de treino</h2>
+            <button class="profile-link" type="button">Atualizar</button>
+          </header>
+          <ul class="profile-list profile-list--goals">
+            <li>
+              <strong>Corrida de rua</strong>
+              <p>Progresso: 12 km · prova alvo 21 km</p>
+              <span>Equipamentos recomendados enviados mensalmente</span>
+            </li>
+            <li>
+              <strong>Força e mobilidade</strong>
+              <p>Treinos híbridos em casa 3x por semana</p>
+              <span>Conteúdo exclusivo desbloqueado no app</span>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="profile-orders container" aria-labelledby="pedidos-title">
+      <div class="profile-orders-header">
+        <div>
+          <h2 id="pedidos-title">Histórico de pedidos</h2>
+          <p>Acompanhe lançamentos, notas fiscais e devoluções diretamente por aqui.</p>
+        </div>
+        <a class="btn btn-outline" href="./faq.html#compras">Ver perguntas frequentes</a>
+      </div>
+
+      <div class="order-table" role="region" aria-live="polite">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Pedido</th>
+              <th scope="col">Data</th>
+              <th scope="col">Status</th>
+              <th scope="col">Total</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">#ME9031</th>
+              <td>15 ago 2023</td>
+              <td><span class="status-pill status-pill--positive">Em rota</span></td>
+              <td>R$ 429,80</td>
+              <td><a class="profile-link" href="./rastrear-pedido.html">Rastrear</a></td>
+            </tr>
+            <tr>
+              <th scope="row">#ME9018</th>
+              <td>28 jul 2023</td>
+              <td><span class="status-pill">Entregue</span></td>
+              <td>R$ 289,90</td>
+              <td><a class="profile-link" href="./trocas-e-devolucoes.html">Solicitar troca</a></td>
+            </tr>
+            <tr>
+              <th scope="row">#ME8995</th>
+              <td>09 jul 2023</td>
+              <td><span class="status-pill status-pill--muted">Finalizado</span></td>
+              <td>R$ 189,90</td>
+              <td><a class="profile-link" href="./pagamentos-e-seguranca.html">Recibo</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="profile-support container" aria-labelledby="suporte-title">
+      <div class="profile-support-grid">
+        <div>
+          <h2 id="suporte-title">Suporte dedicado</h2>
+          <p>Conte com nossa equipe para ajustar assinaturas, resolver imprevistos e receber recomendações sob medida.</p>
+        </div>
+        <div class="profile-support-actions">
+          <a class="btn btn-primary" href="mailto:concierge@mefit.com">Falar com concierge</a>
+          <a class="btn btn-outline" href="https://wa.me/551199999999" target="_blank" rel="noopener">Atendimento via WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" aria-label="Rodapé">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
+          <p>
+            Moda esportiva de alta performance para impulsionar a sua rotina de treinos,
+            com peças versáteis e tecnológicas.
+          </p>
+          <div class="footer-contact">
+            <span>Atendimento: seg a sex, 9h às 18h</span>
+            <a href="tel:+551199999999">+55 (11) 99999-9999</a>
+            <a href="mailto:atendimento@mefit.com">atendimento@mefit.com</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Comprar</h3>
+          <ul class="footer-links">
+            <li><a href="./index.html">Início</a></li>
+            <li><a href="./produtos.html">Catálogo completo</a></li>
+            <li><a href="./carrinho.html">Carrinho</a></li>
+            <li><a href="./perfil-cliente.html">Perfil</a></li>
+            <li><a href="./login/">Minha conta</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Atendimento</h3>
+          <ul class="footer-links">
+            <li><a href="./contato.html">Contato</a></li>
+            <li><a href="./faq.html">Perguntas frequentes</a></li>
+            <li><a href="./trocas-e-devolucoes.html">Trocas e devoluções</a></li>
+            <li><a href="./rastrear-pedido.html">Rastrear pedido</a></li>
+            <li><a href="./politica-de-frete.html">Política de frete</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Institucional</h3>
+          <ul class="footer-links">
+            <li><a href="./sobre.html">Sobre a M.E FIT</a></li>
+            <li><a href="./blog.html">Blog</a></li>
+            <li><a href="./trabalhe-conosco.html">Trabalhe conosco</a></li>
+            <li><a href="./programa-de-afiliados.html">Programa de afiliados</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Políticas</h3>
+          <ul class="footer-links">
+            <li><a href="./politica-de-privacidade.html">Política de privacidade</a></li>
+            <li><a href="./termos-de-uso.html">Termos de uso</a></li>
+            <li><a href="./pagamentos-e-seguranca.html">Pagamentos e segurança</a></li>
+            <li><a href="./politica-de-frete.html">Envios e prazos</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <small>© <span id="year"></span> M.E FIT. Todos os direitos reservados.</small>
+        <div class="footer-meta">
+          <span>WhatsApp: <a href="https://wa.me/551199999999" target="_blank" rel="noopener">(11) 99999-9999</a></span>
+          <span>Endereço: Rua Energia 123, São Paulo - SP</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
