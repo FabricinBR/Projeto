@@ -17,11 +17,21 @@ function initSearchEngine() {
 
   if (!input || !form || !resultsList || !emptyState || !counter) return;
 
-  const normalize = (value) => value
+  const normalize = (value = '') => String(value)
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .replace(/[^a-z0-9\s-]/g, ' ');
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/-/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const escapeHTML = (value = '') => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
   const catalog = [
     {
@@ -107,24 +117,36 @@ function initSearchEngine() {
     `).join('');
   };
 
-  const updateState = (items, query) => {
+  const updateState = (items, normalizedQuery, rawQuery) => {
+    const cleanQuery = rawQuery.trim();
+    const queryForDisplay = escapeHTML(cleanQuery);
+    const hasQuery = normalizedQuery.length > 0;
     const hasResults = items.length > 0;
     resultsList.classList.toggle('is-hidden', !hasResults);
     emptyState.classList.toggle('is-hidden', hasResults);
-    counter.textContent = hasResults
-      ? `${items.length} ${items.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}`
-      : query
-        ? 'Nenhum resultado' : 'Mostrando todos os produtos cadastrados';
+    if (hasResults) {
+      counter.textContent = hasQuery
+        ? `${items.length} ${items.length === 1 ? 'resultado encontrado' : 'resultados encontrados'} para “${cleanQuery}”`
+        : `Mostrando todos os ${items.length} produtos cadastrados`;
+      emptyState.textContent = 'Nenhum produto encontrado com esses termos. Tente buscar pelo código completo ou por outra palavra-chave.';
+    } else {
+      counter.textContent = hasQuery
+        ? `Nenhum resultado para “${cleanQuery}”`
+        : 'Nenhum produto cadastrado';
+      emptyState.innerHTML = hasQuery
+        ? `Nenhum produto encontrado para <strong>“${queryForDisplay}”</strong>. Tente buscar pelo código completo ou por outra palavra-chave.`
+        : 'Nenhum produto cadastrado no momento.';
+    }
   };
 
   const performSearch = (query) => {
-    const normalizedQuery = normalize(query.trim());
+    const normalizedQuery = normalize(query);
     const results = normalizedQuery
       ? catalog.filter((item) => item.tokens.includes(normalizedQuery))
       : catalog;
 
     renderResults(results);
-    updateState(results, normalizedQuery);
+    updateState(results, normalizedQuery, query);
   };
 
   form.addEventListener('submit', (event) => {
@@ -137,6 +159,6 @@ function initSearchEngine() {
     performSearch(input.value);
   });
 
-  renderResults(catalog);
-  updateState(catalog, '');
-}
+    renderResults(catalog);
+    updateState(catalog, '', '');
+  }
