@@ -2,6 +2,24 @@
   const namespace = (global.MEFIT = global.MEFIT || {});
   const doc = global.document;
 
+  const ensureHiddenForSignedInElements = () => {
+    if (!doc) return;
+    if (!doc.documentElement.getAttribute('data-auth-state')) {
+      doc.documentElement.setAttribute('data-auth-state', 'signed-out');
+    }
+    doc.querySelectorAll('[data-auth-visible="signed-in"]').forEach((element) => {
+      if (element.hasAttribute('hidden')) return;
+      element.hidden = true;
+      element.setAttribute('aria-hidden', 'true');
+    });
+  };
+
+  if (doc.readyState === 'loading') {
+    doc.addEventListener('DOMContentLoaded', ensureHiddenForSignedInElements, { once: true });
+  } else {
+    ensureHiddenForSignedInElements();
+  }
+
   /* =========================
      Utilidades básicas
      ========================= */
@@ -509,6 +527,8 @@
     const syncAuthVisibility = () => {
       const email = authModule.readSessionEmail();
       const isAuth = Boolean(email);
+
+      doc.documentElement.setAttribute('data-auth-state', isAuth ? 'signed-in' : 'signed-out');
 
       if (protectedAreas.length) {
         protectedAreas.forEach((area) => setElementVisibility(area, isAuth));
