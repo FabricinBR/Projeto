@@ -13,6 +13,10 @@ const AUTH_SESSION_KEY = 'mefit-session-email';
 const AUTH_REMEMBER_KEY = 'mefit-remember-email';
 
 let sessionWarningShown = false;
+let memorySessionEmail = '';
+let sessionPersisted = false;
+
+const normalizeEmail = (value) => (typeof value === 'string' ? value.trim() : '');
 
 const warnSessionAccess = (message, error) => {
   if (sessionWarningShown) return;
@@ -22,38 +26,47 @@ const warnSessionAccess = (message, error) => {
 
 const readSessionEmail = () => {
   if (typeof window === 'undefined' || !('sessionStorage' in window)) {
-    return '';
+    return sessionPersisted ? memorySessionEmail : '';
   }
 
   try {
     const value = window.sessionStorage.getItem(AUTH_SESSION_KEY);
-    return typeof value === 'string' ? value : '';
+    const normalized = normalizeEmail(value);
+    memorySessionEmail = normalized;
+    sessionPersisted = true;
+    return normalized;
   } catch (error) {
     warnSessionAccess('Não foi possível acessar a sessão do cliente.', error);
-    return '';
+    return sessionPersisted ? memorySessionEmail : '';
   }
 };
 
 const writeSessionEmail = (email) => {
+  const normalized = normalizeEmail(email);
+  memorySessionEmail = normalized;
+  sessionPersisted = false;
+
   if (typeof window === 'undefined' || !('sessionStorage' in window)) {
-    return false;
+    return { email: normalized, persisted: false };
   }
 
   try {
-    if (!email) {
+    if (!normalized) {
       window.sessionStorage.removeItem(AUTH_SESSION_KEY);
     } else {
-      window.sessionStorage.setItem(AUTH_SESSION_KEY, email);
+      window.sessionStorage.setItem(AUTH_SESSION_KEY, normalized);
     }
-    return true;
+    sessionPersisted = true;
+    return { email: normalized, persisted: true };
   } catch (error) {
     warnSessionAccess('Não foi possível atualizar a sessão do cliente.', error);
-    return false;
+    return { email: normalized, persisted: false };
   }
 };
 
-const dispatchAuthChange = () => {
-  const email = readSessionEmail();
+const dispatchAuthChange = (overrideEmail) => {
+  const email =
+    typeof overrideEmail === 'string' ? normalizeEmail(overrideEmail) : readSessionEmail();
   document.dispatchEvent(
     new CustomEvent('auth:changed', {
       detail: { email }
@@ -63,13 +76,18 @@ const dispatchAuthChange = () => {
 };
 
 const setSessionEmail = (email) => {
-  writeSessionEmail(email);
-  return dispatchAuthChange();
+  const result = writeSessionEmail(email);
+  if (!result.persisted) {
+    // se não persistiu em sessionStorage, não mantemos fallback (exigir habilitar armazenamento)
+    memorySessionEmail = '';
+  }
+  const finalEmail = result.persisted ? result.email : '';
+  return { email: dispatchAuthChange(finalEmail), persisted: result.persisted };
 };
 
 const clearSessionEmail = () => {
-  writeSessionEmail('');
-  return dispatchAuthChange();
+  const result = writeSessionEmail('');
+  return { email: dispatchAuthChange(''), persisted: result.persisted };
 };
 
 /* =========================
@@ -386,14 +404,26 @@ const initLoginForm = () => {
         return;
       }
 
-      setSessionEmail(email);
+      const { persisted } = setSessionEmail(email);
+      if (!persisted) {
+        clearSessionEmail();
+        showFeedback(
+          'Não foi possível ativar a sessão porque o armazenamento do navegador está bloqueado. Libere cookies/armazenamento e tente novamente.',
+          'error'
+        );
+        return;
+      }
+
       if (rememberInput?.checked) {
         setRememberedEmail(email);
       } else {
         clearRememberedEmail();
       }
 
-      showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.', 'success');
+      showFeedback(
+        'Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.',
+        'success'
+      );
       window.setTimeout(() => {
         window.location.href = '../perfil-cliente.html';
       }, 1000);
