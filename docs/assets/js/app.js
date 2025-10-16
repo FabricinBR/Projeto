@@ -1,517 +1,700 @@
-const ready = (callback) => {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', callback, { once: true });
-  } else {
-    callback();
-  }
-};
+(function (global) {
+  const namespace = (global.MEFIT = global.MEFIT || {});
+  const doc = global.document;
 
-/* =========================
-   Autenticação (sessão)
-   ========================= */
-const AUTH_SESSION_KEY = 'mefit-session-email';
-const AUTH_REMEMBER_KEY = 'mefit-remember-email';
+  /* =========================
+     Utilidades básicas
+     ========================= */
+  const toStringSafe = (value) => (value ?? '').toString();
+  const trimString = (value) => (typeof value === 'string' ? value.trim() : '');
 
-let sessionWarningShown = false;
-let memorySessionEmail = '';
-let sessionPersisted = false;
-
-const normalizeEmail = (value) => (typeof value === 'string' ? value.trim() : '');
-
-const warnSessionAccess = (message, error) => {
-  if (sessionWarningShown) return;
-  sessionWarningShown = true;
-  console.warn(message, error);
-};
-
-const readSessionEmail = () => {
-  if (typeof window === 'undefined' || !('sessionStorage' in window)) {
-    return sessionPersisted ? memorySessionEmail : '';
-  }
-
-  try {
-    const value = window.sessionStorage.getItem(AUTH_SESSION_KEY);
-    const normalized = normalizeEmail(value);
-    memorySessionEmail = normalized;
-    sessionPersisted = true;
-    return normalized;
-  } catch (error) {
-    warnSessionAccess('Não foi possível acessar a sessão do cliente.', error);
-    return sessionPersisted ? memorySessionEmail : '';
-  }
-};
-
-const writeSessionEmail = (email) => {
-  const normalized = normalizeEmail(email);
-  memorySessionEmail = normalized;
-  sessionPersisted = false;
-
-  if (typeof window === 'undefined' || !('sessionStorage' in window)) {
-    return { email: normalized, persisted: false };
-  }
-
-  try {
-    if (!normalized) {
-      window.sessionStorage.removeItem(AUTH_SESSION_KEY);
+  const ready = (callback) => {
+    if (doc.readyState === 'loading') {
+      doc.addEventListener('DOMContentLoaded', callback, { once: true });
     } else {
-      window.sessionStorage.setItem(AUTH_SESSION_KEY, normalized);
+      callback();
     }
-    sessionPersisted = true;
-    return { email: normalized, persisted: true };
-  } catch (error) {
-    warnSessionAccess('Não foi possível atualizar a sessão do cliente.', error);
-    return { email: normalized, persisted: false };
-  }
-};
-
-const dispatchAuthChange = (overrideEmail) => {
-  const email =
-    typeof overrideEmail === 'string' ? normalizeEmail(overrideEmail) : readSessionEmail();
-  document.dispatchEvent(new CustomEvent('auth:changed', { detail: { email } }));
-  return email;
-};
-
-const setSessionEmail = (email) => {
-  const result = writeSessionEmail(email);
-  if (!result.persisted) {
-    // se não persistiu em sessionStorage, não mantemos fallback (exigir habilitar armazenamento)
-    memorySessionEmail = '';
-  }
-  const finalEmail = result.persisted ? result.email : '';
-  return { email: dispatchAuthChange(finalEmail), persisted: result.persisted };
-};
-
-const clearSessionEmail = () => {
-  const result = writeSessionEmail('');
-  return { email: dispatchAuthChange(''), persisted: result.persisted };
-};
-
-/* =========================
-   Carrinho - badge
-   ========================= */
-const ensureCartBadge = () => {
-  let badge = document.querySelector('[data-cart-count]');
-  if (badge) return badge;
-
-  const navLink = document.querySelector('.nav a[href$="carrinho.html"]');
-  if (!navLink) return null;
-
-  badge = document.createElement('span');
-  badge.className = 'cart-count-badge';
-  badge.dataset.cartCount = '';
-  badge.hidden = true;
-  badge.textContent = '0';
-  badge.setAttribute('role', 'status');
-  badge.setAttribute('aria-live', 'polite');
-  badge.setAttribute('aria-label', 'Itens no carrinho');
-  navLink.appendChild(badge);
-  return badge;
-};
-
-const CART_KEY = 'mefit-cart-items';
-
-const normalizeId = (value) => (value ?? '').toString();
-
-const coerceQuantity = (value) => {
-  const numeric = Number.parseInt(value, 10);
-  return Number.isFinite(numeric) && numeric > 0 ? numeric : 1;
-};
-
-const normalizeStoredItem = (entry) => {
-  if (entry == null) return null;
-
-  if (typeof entry === 'string' || typeof entry === 'number') {
-    const id = normalizeId(entry);
-    return id ? { id, quantidade: 1 } : null;
-  }
-
-  if (typeof entry === 'object') {
-    const id = 'id' in entry ? normalizeId(entry.id) : '';
-    if (!id) return null;
-    return { ...entry, id, quantidade: coerceQuantity(entry.quantidade) };
-  }
-
-  return null;
-};
-
-const loadCartItems = () => {
-  if (typeof window === 'undefined' || !('localStorage' in window)) return [];
-  try {
-    const stored = window.localStorage.getItem(CART_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed)) return [];
-
-    const seen = new Set();
-    return parsed
-      .map(normalizeStoredItem)
-      .filter((item) => {
-        if (!item?.id) return false;
-        if (seen.has(item.id)) return false;
-        seen.add(item.id);
-        return true;
-      });
-  } catch (error) {
-    console.warn('Não foi possível ler o carrinho armazenado.', error);
-    return [];
-  }
-};
-
-const updateCartBadge = (items) => {
-  const badge = ensureCartBadge();
-  if (!badge) return;
-
-  const total = Array.isArray(items)
-    ? items.reduce((sum, item) => sum + (Number(item?.quantidade) || 1), 0)
-    : 0;
-  badge.textContent = String(total);
-  badge.hidden = total === 0;
-};
-
-const initCartBadge = () => {
-  const syncBadge = () => {
-    const items = loadCartItems();
-    updateCartBadge(items);
   };
 
-  syncBadge();
+  const createWarningLogger = () => {
+    let shown = false;
+    return (message, error) => {
+      if (shown) return;
+      shown = true;
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn(message, error);
+      }
+    };
+  };
 
-  window.addEventListener('storage', (event) => {
-    if (event.key && event.key !== CART_KEY) return;
-    syncBadge();
-  });
-
-  window.addEventListener('cart:changed', (event) => {
-    const detailItems = event.detail?.items;
-    if (Array.isArray(detailItems)) {
-      updateCartBadge(detailItems.map(normalizeStoredItem).filter(Boolean));
-      return;
+  const setElementVisibility = (element, shouldShow) => {
+    if (!element) return;
+    element.hidden = !shouldShow;
+    if (!shouldShow) {
+      element.setAttribute('aria-hidden', 'true');
+    } else {
+      element.removeAttribute('aria-hidden');
     }
-    syncBadge();
-  });
-};
+  };
 
-/* =========================
-   Utilidades de UI
-   ========================= */
-const updateYear = () => {
-  const targets = document.querySelectorAll('#year, [data-current-year]');
-  if (!targets.length) return;
-
-  const currentYear = String(new Date().getFullYear());
-  targets.forEach((element) => {
-    element.textContent = currentYear;
-  });
-};
-
-const setElementVisibility = (element, shouldShow) => {
-  element.hidden = !shouldShow;
-  if (!shouldShow) {
-    element.setAttribute('aria-hidden', 'true');
-  } else {
-    element.removeAttribute('aria-hidden');
-  }
-};
-
-const setupPageTransitions = () => {
-  const { body } = document;
-  if (!body) return;
-
-  const TRANSITION_MS = 350;
-  let isNavigating = false;
-  let pendingNavigation = null;
-
-  const prefersReducedMotion =
-    typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
-  const shouldAnimate = !(prefersReducedMotion && prefersReducedMotion.matches);
-
-  body.classList.add('enable-page-transitions');
-  if (shouldAnimate) {
-    body.classList.add('is-page-entering');
-    window.requestAnimationFrame(() => {
-      body.classList.remove('is-page-entering');
+  const updateYear = () => {
+    const targets = doc.querySelectorAll('#year, [data-current-year]');
+    if (!targets.length) return;
+    const currentYear = String(new Date().getFullYear());
+    targets.forEach((element) => {
+      element.textContent = currentYear;
     });
-  }
-
-  const finishEntering = () => {
-    body.classList.remove('is-page-entering');
-    body.classList.remove('is-page-leaving');
-    isNavigating = false;
   };
 
-  const isModifiedClick = (event) =>
-    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  /* =========================
+     Armazenamento seguro
+     ========================= */
+  const createStorage = (type, { fallback = false, onError } = {}) => {
+    let storageRef = null;
+    let supported = false;
+    const memoryStore = fallback ? new Map() : null;
 
-  const isInternalLink = (link) => {
-    const href = link.getAttribute('href');
-    if (!href || href.startsWith('#')) return false;
-    if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return false;
+    const notifyError = (operation, error) => {
+      if (typeof onError === 'function') {
+        onError(operation, error);
+      }
+    };
 
-    const target = link.getAttribute('target');
-    if (target && target.toLowerCase() !== '_self' && target !== '') return false;
-    if (link.hasAttribute('download')) return false;
+    const ensureStorage = () => {
+      if (storageRef) return storageRef;
+      try {
+        const candidate = global[type];
+        if (!candidate) return null;
+        const testKey = '__mefit_storage_test__';
+        candidate.setItem(testKey, '1');
+        candidate.removeItem(testKey);
+        storageRef = candidate;
+        supported = true;
+      } catch (error) {
+        storageRef = null;
+        supported = false;
+        notifyError('init', error);
+      }
+      return storageRef;
+    };
 
-    const rel = link.getAttribute('rel');
-    if (rel && rel.split(/\s+/).includes('external')) return false;
+    const get = (key) => {
+      const storage = ensureStorage();
+      if (storage && supported) {
+        try {
+          return storage.getItem(key);
+        } catch (error) {
+          storageRef = null;
+          supported = false;
+          notifyError('get', error);
+        }
+      }
+      if (!memoryStore) return null;
+      return memoryStore.has(key) ? memoryStore.get(key) : null;
+    };
+
+    const set = (key, value) => {
+      const storage = ensureStorage();
+      if (storage && supported) {
+        try {
+          if (value === null || value === undefined) {
+            storage.removeItem(key);
+          } else {
+            storage.setItem(key, value);
+          }
+          return true;
+        } catch (error) {
+          storageRef = null;
+          supported = false;
+          notifyError('set', error);
+        }
+      }
+      if (!memoryStore) return false;
+      if (value === null || value === undefined) {
+        memoryStore.delete(key);
+      } else {
+        memoryStore.set(key, value);
+      }
+      return false;
+    };
+
+    const remove = (key) => {
+      const storage = ensureStorage();
+      if (storage && supported) {
+        try {
+          storage.removeItem(key);
+          return true;
+        } catch (error) {
+          storageRef = null;
+          supported = false;
+          notifyError('remove', error);
+        }
+      }
+      if (!memoryStore) return false;
+      memoryStore.delete(key);
+      return false;
+    };
+
+    return {
+      get,
+      set,
+      remove,
+      isSupported: () => supported
+    };
+  };
+
+  const warnSessionAccess = createWarningLogger();
+  const warnLocalStorage = createWarningLogger();
+
+  const storage = {
+    session: createStorage('sessionStorage', {
+      onError: (_, error) => warnSessionAccess('Não foi possível acessar a sessão do cliente.', error)
+    }),
+    local: createStorage('localStorage', {
+      onError: (_, error) => warnLocalStorage('Não foi possível acessar o armazenamento local.', error)
+    })
+  };
+
+  /* =========================
+     Carrinho compartilhado
+     ========================= */
+  const CART_KEY = 'mefit-cart-items';
+
+  const normalizeId = (value) => toStringSafe(value);
+
+  const coerceQuantity = (value, { min = 1, max = 99 } = {}) => {
+    const numeric = Number.parseInt(value, 10);
+    if (!Number.isFinite(numeric)) return min;
+    const positive = Math.max(numeric, min);
+    return Number.isFinite(max) ? Math.min(positive, max) : positive;
+  };
+
+  const cloneCartItems = (items) => (Array.isArray(items) ? items.map((item) => ({ ...item })) : []);
+
+  const normalizeCartItem = (entry, { maxQuantity = 99 } = {}) => {
+    if (entry == null) return null;
+
+    if (typeof entry === 'string' || typeof entry === 'number') {
+      const id = normalizeId(entry);
+      return id ? { id, quantidade: 1 } : null;
+    }
+
+    if (typeof entry === 'object') {
+      const id = normalizeId(entry.id ?? '');
+      if (!id) return null;
+      return {
+        ...entry,
+        id,
+        quantidade: coerceQuantity(entry.quantidade, { min: 1, max: maxQuantity })
+      };
+    }
+
+    return null;
+  };
+
+  const sanitizeCartItems = (items, options = {}) => {
+    if (!Array.isArray(items) || !items.length) return [];
+    const seen = new Set();
+    const sanitized = [];
+
+    items.forEach((entry) => {
+      const normalized = normalizeCartItem(entry, options);
+      if (!normalized || !normalized.id) return;
+      if (seen.has(normalized.id)) return;
+      seen.add(normalized.id);
+      sanitized.push(normalized);
+    });
+
+    return sanitized;
+  };
+
+  const dispatchCartChange = (items, origin = 'app', { sanitized = false } = {}) => {
+    const payload = sanitized ? cloneCartItems(items) : cloneCartItems(sanitizeCartItems(items));
+    global.dispatchEvent(
+      new CustomEvent('cart:changed', {
+        detail: {
+          origin,
+          items: payload
+        }
+      })
+    );
+  };
+
+  const loadCartItems = (options = {}) => {
+    const stored = storage.local.get(CART_KEY);
+    if (!stored) return [];
 
     try {
-      const url = new URL(href, window.location.href);
-      const current = new URL(window.location.href);
-      if (url.origin !== current.origin) return false;
-
-      const samePath = url.pathname === current.pathname && url.search === current.search;
-      if (samePath && (url.hash && url.hash !== current.hash)) return false;
-      if (url.href === current.href) return false;
-
-      return true;
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return [];
+      return sanitizeCartItems(parsed, options);
     } catch (error) {
-      console.warn('Não foi possível interpretar o link para aplicar a transição.', error);
+      console.warn('Não foi possível ler o carrinho armazenado.', error);
+      return [];
+    }
+  };
+
+  const persistCartItems = (items, { dispatch = true, origin = 'app', maxQuantity } = {}) => {
+    const sanitized = sanitizeCartItems(items, { maxQuantity });
+    try {
+      const serialized = JSON.stringify(sanitized);
+      const persisted = storage.local.set(CART_KEY, serialized);
+      if (!persisted) {
+        console.warn('Não foi possível salvar o carrinho.');
+      }
+    } catch (error) {
+      console.warn('Não foi possível salvar o carrinho.', error);
+    }
+
+    if (dispatch) {
+      dispatchCartChange(sanitized, origin, { sanitized: true });
+    }
+
+    return sanitized;
+  };
+
+  const countCartItems = (items) =>
+    Array.isArray(items)
+      ? items.reduce((total, item) => total + (Number(item?.quantidade) || 1), 0)
+      : 0;
+
+  const cartModule = {
+    STORAGE_KEY: CART_KEY,
+    normalizeId,
+    coerceQuantity,
+    normalizeItem: normalizeCartItem,
+    sanitizeItems: sanitizeCartItems,
+    clone: cloneCartItems,
+    load: loadCartItems,
+    persist: persistCartItems,
+    count: countCartItems,
+    dispatchChange: (items, origin = 'app') => dispatchCartChange(items, origin)
+  };
+
+  /* =========================
+     Autenticação (sessão)
+     ========================= */
+  const AUTH_SESSION_KEY = 'mefit-session-email';
+  const AUTH_REMEMBER_KEY = 'mefit-remember-email';
+
+  const dispatchAuthChange = (email) => {
+    const normalized = trimString(email);
+    doc.dispatchEvent(new CustomEvent('auth:changed', { detail: { email: normalized } }));
+    return normalized;
+  };
+
+  const readSessionEmail = () => trimString(storage.session.get(AUTH_SESSION_KEY));
+
+  const setSessionEmail = (email) => {
+    const normalized = trimString(email);
+    let persisted = false;
+
+    if (normalized) {
+      persisted = storage.session.set(AUTH_SESSION_KEY, normalized);
+      if (!persisted) {
+        storage.session.remove(AUTH_SESSION_KEY);
+      }
+    } else {
+      storage.session.remove(AUTH_SESSION_KEY);
+      persisted = true;
+    }
+
+    const finalEmail = persisted ? normalized : '';
+    return { email: dispatchAuthChange(finalEmail), persisted };
+  };
+
+  const clearSessionEmail = () => {
+    storage.session.remove(AUTH_SESSION_KEY);
+    return { email: dispatchAuthChange(''), persisted: true };
+  };
+
+  const isAuthenticated = () => Boolean(readSessionEmail());
+
+  const logout = ({ redirect } = {}) => {
+    const result = clearSessionEmail();
+    const target = trimString(redirect);
+    if (target) {
+      global.location.href = target;
+    }
+    return result;
+  };
+
+  const readRememberedEmail = () => trimString(storage.local.get(AUTH_REMEMBER_KEY));
+
+  const rememberEmail = (email) => {
+    const normalized = trimString(email);
+    if (!normalized) {
+      storage.local.remove(AUTH_REMEMBER_KEY);
       return false;
     }
-  };
-
-  const navigateWithTransition = (url) => {
-    if (isNavigating) return;
-    isNavigating = true;
-    if (shouldAnimate) {
-      body.classList.add('is-page-leaving');
-      pendingNavigation = window.setTimeout(() => {
-        window.location.href = url;
-      }, TRANSITION_MS);
-    } else {
-      window.location.href = url;
-    }
-  };
-
-  document.addEventListener('click', (event) => {
-    if (event.defaultPrevented || isModifiedClick(event)) return;
-
-    const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
-    if (!link || !isInternalLink(link)) return;
-
-    event.preventDefault();
-    navigateWithTransition(new URL(link.getAttribute('href'), window.location.href).href);
-  });
-
-  window.addEventListener('pageshow', (event) => {
-    if (pendingNavigation) {
-      window.clearTimeout(pendingNavigation);
-      pendingNavigation = null;
-    }
-    if (event.persisted) {
-      body.classList.add('enable-page-transitions');
-    }
-    finishEntering();
-  });
-};
-
-/* =========================
-   Estado de Autenticação
-   ========================= */
-const initAuthState = () => {
-  const protectedAreas = Array.from(document.querySelectorAll('[data-requires-auth]'));
-
-  const syncAuthVisibility = () => {
-    const email = readSessionEmail();
-    const isAuthenticated = Boolean(email);
-
-    document
-      .querySelectorAll('[data-auth-visible="signed-in"]')
-      .forEach((el) => setElementVisibility(el, isAuthenticated));
-
-    document
-      .querySelectorAll('[data-auth-visible="signed-out"]')
-      .forEach((el) => setElementVisibility(el, !isAuthenticated));
-
-    document.querySelectorAll('[data-auth-email]').forEach((el) => {
-      if (isAuthenticated) {
-        el.textContent = email;
-        setElementVisibility(el, true);
-      } else {
-        el.textContent = '';
-        setElementVisibility(el, false);
-      }
-    });
-
-    if (!isAuthenticated && protectedAreas.length) {
-      const redirectTarget =
-        protectedAreas[0].dataset.requiresAuth ||
-        protectedAreas[0].dataset.authRedirect ||
-        './login/';
-      window.location.href = redirectTarget;
-    }
-  };
-
-  document.addEventListener('auth:changed', syncAuthVisibility);
-  syncAuthVisibility();
-
-  document.querySelectorAll('[data-logout]').forEach((el) => {
-    el.addEventListener('click', (event) => {
-      event.preventDefault();
-      clearSessionEmail();
-      const redirect = el.getAttribute('data-logout-redirect');
-      if (redirect) window.location.href = redirect;
-    });
-  });
-};
-
-/* =========================
-   Login (form demo)
-   ========================= */
-const initLoginForm = () => {
-  const loginForm = document.querySelector('#login-form');
-  if (!loginForm) return;
-
-  const emailInput = loginForm.querySelector('input[name="email"]');
-  const passwordInput = loginForm.querySelector('input[name="password"]');
-  const rememberInput = loginForm.querySelector('input[name="remember"]');
-  const feedbackEl = loginForm.querySelector('.form-feedback');
-  const submitButton = loginForm.querySelector('button[type="submit"]');
-  const toggleButton = loginForm.querySelector('[data-toggle-password]');
-
-  const REMEMBER_KEY = AUTH_REMEMBER_KEY;
-
-  const getRememberedEmail = () => {
-    try {
-      return localStorage.getItem(REMEMBER_KEY) ?? '';
-    } catch (error) {
-      console.warn('Não foi possível carregar preferências de login salvas.', error);
-      return '';
-    }
-  };
-
-  const setRememberedEmail = (email) => {
-    try {
-      if (email) localStorage.setItem(REMEMBER_KEY, email);
-    } catch (error) {
-      console.warn('Não foi possível salvar preferências de login.', error);
-    }
+    return storage.local.set(AUTH_REMEMBER_KEY, normalized);
   };
 
   const clearRememberedEmail = () => {
-    try {
-      localStorage.removeItem(REMEMBER_KEY);
-    } catch (error) {
-      console.warn('Não foi possível limpar preferências de login.', error);
+    storage.local.remove(AUTH_REMEMBER_KEY);
+  };
+
+  const authModule = {
+    readSessionEmail,
+    isAuthenticated,
+    setSessionEmail,
+    clearSessionEmail,
+    logout,
+    dispatchChange: dispatchAuthChange,
+    readRememberedEmail,
+    rememberEmail,
+    clearRememberedEmail,
+    keys: {
+      session: AUTH_SESSION_KEY,
+      remember: AUTH_REMEMBER_KEY
     }
   };
 
-  const clearFeedback = () => {
-    if (!feedbackEl) return;
-    feedbackEl.hidden = true;
-    feedbackEl.textContent = '';
-    feedbackEl.classList.remove('is-error', 'is-success');
+  /* =========================
+     Utilidades de UI
+     ========================= */
+  const ensureCartBadge = () => {
+    let badge = doc.querySelector('[data-cart-count]');
+    if (badge) return badge;
+
+    const navLink = doc.querySelector('.nav a[href$="carrinho.html"]');
+    if (!navLink) return null;
+
+    badge = doc.createElement('span');
+    badge.className = 'cart-count-badge';
+    badge.dataset.cartCount = '';
+    badge.hidden = true;
+    badge.textContent = '0';
+    badge.setAttribute('role', 'status');
+    badge.setAttribute('aria-live', 'polite');
+    badge.setAttribute('aria-label', 'Itens no carrinho');
+    navLink.appendChild(badge);
+    return badge;
   };
 
-  const showFeedback = (message, type = 'success') => {
-    if (!feedbackEl) return;
-    feedbackEl.textContent = message;
-    feedbackEl.hidden = false;
-    feedbackEl.classList.remove('is-error', 'is-success');
-    feedbackEl.classList.add(type === 'error' ? 'is-error' : 'is-success');
-  };
+  const setupPageTransitions = () => {
+    const body = doc.body;
+    if (!body) return;
 
-  const setLoading = (loading) => {
-    if (!submitButton) return;
-    if (loading) {
-      if (!submitButton.dataset.originalText) {
-        submitButton.dataset.originalText = submitButton.textContent ?? '';
+    const TRANSITION_MS = 350;
+    let isNavigating = false;
+    let pendingNavigation = null;
+
+    const prefersReducedMotion =
+      typeof global.matchMedia === 'function' ? global.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const shouldAnimate = !(prefersReducedMotion && prefersReducedMotion.matches);
+
+    body.classList.add('enable-page-transitions');
+    if (shouldAnimate) {
+      body.classList.add('is-page-entering');
+      global.requestAnimationFrame(() => {
+        body.classList.remove('is-page-entering');
+      });
+    }
+
+    const finishEntering = () => {
+      body.classList.remove('is-page-entering');
+      body.classList.remove('is-page-leaving');
+      isNavigating = false;
+    };
+
+    const isModifiedClick = (event) =>
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+
+    const isInternalLink = (link) => {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#')) return false;
+      if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return false;
+
+      const target = link.getAttribute('target');
+      if (target && target.toLowerCase() !== '_self' && target !== '') return false;
+      if (link.hasAttribute('download')) return false;
+
+      const rel = link.getAttribute('rel');
+      if (rel && rel.split(/\s+/).includes('external')) return false;
+
+      try {
+        const url = new URL(href, global.location.href);
+        const current = new URL(global.location.href);
+        if (url.origin !== current.origin) return false;
+
+        const samePath = url.pathname === current.pathname && url.search === current.search;
+        if (samePath && url.hash && url.hash !== current.hash) return false;
+        if (url.href === current.href) return false;
+
+        return true;
+      } catch (error) {
+        console.warn('Não foi possível interpretar o link para aplicar a transição.', error);
+        return false;
       }
-      submitButton.textContent = 'Entrando...';
-    } else if (submitButton.dataset.originalText) {
-      submitButton.textContent = submitButton.dataset.originalText;
-    }
-    submitButton.disabled = loading;
-  };
+    };
 
-  if (toggleButton && passwordInput) {
-    toggleButton.addEventListener('click', () => {
-      const shouldReveal = passwordInput.type === 'password';
-      passwordInput.type = shouldReveal ? 'text' : 'password';
-      toggleButton.textContent = shouldReveal ? 'Ocultar' : 'Mostrar';
-      toggleButton.setAttribute('aria-pressed', shouldReveal ? 'true' : 'false');
-      passwordInput.focus();
+    const navigateWithTransition = (url) => {
+      if (isNavigating) return;
+      isNavigating = true;
+      if (shouldAnimate) {
+        body.classList.add('is-page-leaving');
+        pendingNavigation = global.setTimeout(() => {
+          global.location.href = url;
+        }, TRANSITION_MS);
+      } else {
+        global.location.href = url;
+      }
+    };
+
+    doc.addEventListener('click', (event) => {
+      if (event.defaultPrevented || isModifiedClick(event)) return;
+
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      if (!link || !isInternalLink(link)) return;
+
+      event.preventDefault();
+      navigateWithTransition(new URL(link.getAttribute('href'), global.location.href).href);
     });
-  }
 
-  const savedEmail = getRememberedEmail();
-  if (savedEmail && emailInput) {
-    emailInput.value = savedEmail;
-    if (rememberInput) rememberInput.checked = true;
-  }
+    global.addEventListener('pageshow', (event) => {
+      if (pendingNavigation) {
+        global.clearTimeout(pendingNavigation);
+        pendingNavigation = null;
+      }
+      if (event.persisted) {
+        body.classList.add('enable-page-transitions');
+      }
+      finishEntering();
+    });
+  };
 
-  const sessionEmail = readSessionEmail();
-  if (sessionEmail) {
-    showFeedback(`Você está conectado como ${sessionEmail}.`, 'success');
-  }
+  const initCartBadge = () => {
+    const updateCartBadge = (items) => {
+      const badge = ensureCartBadge();
+      if (!badge) return;
+      const total = cartModule.count(items);
+      badge.textContent = String(total);
+      badge.hidden = total === 0;
+    };
 
-  loginForm.addEventListener('input', () => {
-    if (feedbackEl?.classList.contains('is-error')) clearFeedback();
-  });
+    const syncBadge = () => {
+      updateCartBadge(cartModule.load());
+    };
 
-  loginForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    clearFeedback();
+    syncBadge();
 
-    if (!emailInput || !passwordInput) return;
+    global.addEventListener('storage', (event) => {
+      if (event.key && event.key !== CART_KEY) return;
+      syncBadge();
+    });
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+    global.addEventListener('cart:changed', (event) => {
+      const detailItems = event.detail?.items;
+      if (Array.isArray(detailItems)) {
+        updateCartBadge(cartModule.sanitizeItems(detailItems));
+        return;
+      }
+      syncBadge();
+    });
+  };
 
-    if (!email || !password) {
-      showFeedback('Informe seu e-mail e senha para continuar.', 'error');
-      return;
+  /* =========================
+     Estado de Autenticação
+     ========================= */
+  const initAuthState = () => {
+    const protectedAreas = Array.from(doc.querySelectorAll('[data-requires-auth]'));
+
+    if (protectedAreas.length) {
+      protectedAreas.forEach((area) => setElementVisibility(area, false));
     }
 
-    if (password.length < 6) {
-      showFeedback('A senha precisa ter pelo menos 6 caracteres.', 'error');
-      return;
+    const syncAuthVisibility = () => {
+      const email = authModule.readSessionEmail();
+      const isAuthenticated = Boolean(email);
+
+      if (protectedAreas.length) {
+        protectedAreas.forEach((area) => setElementVisibility(area, isAuthenticated));
+      }
+
+      doc
+        .querySelectorAll('[data-auth-visible="signed-in"]')
+        .forEach((el) => setElementVisibility(el, isAuthenticated));
+
+      doc
+        .querySelectorAll('[data-auth-visible="signed-out"]')
+        .forEach((el) => setElementVisibility(el, !isAuthenticated));
+
+      doc.querySelectorAll('[data-auth-email]').forEach((el) => {
+        if (isAuthenticated) {
+          el.textContent = email;
+          setElementVisibility(el, true);
+        } else {
+          el.textContent = '';
+          setElementVisibility(el, false);
+        }
+      });
+
+      if (!isAuthenticated && protectedAreas.length) {
+        const redirectTarget =
+          protectedAreas[0].dataset.requiresAuth || protectedAreas[0].dataset.authRedirect || './login/';
+        global.location.href = redirectTarget;
+      }
+    };
+
+    doc.addEventListener('auth:changed', syncAuthVisibility);
+    syncAuthVisibility();
+
+    doc.querySelectorAll('[data-logout]').forEach((el) => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        const redirect = el.getAttribute('data-logout-redirect') || el.getAttribute('href');
+        authModule.logout({ redirect: redirect && redirect !== '#' ? redirect : undefined });
+      });
+    });
+  };
+
+  /* =========================
+     Login (form demo)
+     ========================= */
+  const initLoginForm = () => {
+    const loginForm = doc.querySelector('#login-form');
+    if (!loginForm) return;
+
+    const emailInput = loginForm.querySelector('input[name="email"]');
+    const passwordInput = loginForm.querySelector('input[name="password"]');
+    const rememberInput = loginForm.querySelector('input[name="remember"]');
+    const feedbackEl = loginForm.querySelector('.form-feedback');
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+    const toggleButton = loginForm.querySelector('[data-toggle-password]');
+
+    const clearFeedback = () => {
+      if (!feedbackEl) return;
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = '';
+      feedbackEl.classList.remove('is-error', 'is-success');
+    };
+
+    const showFeedback = (message, type = 'success') => {
+      if (!feedbackEl) return;
+      feedbackEl.textContent = message;
+      feedbackEl.hidden = false;
+      feedbackEl.classList.remove('is-error', 'is-success');
+      feedbackEl.classList.add(type === 'error' ? 'is-error' : 'is-success');
+    };
+
+    const setLoading = (loading) => {
+      if (!submitButton) return;
+      if (loading) {
+        if (!submitButton.dataset.originalText) {
+          submitButton.dataset.originalText = submitButton.textContent ?? '';
+        }
+        submitButton.textContent = 'Entrando...';
+      } else if (submitButton.dataset.originalText) {
+        submitButton.textContent = submitButton.dataset.originalText;
+      }
+      submitButton.disabled = loading;
+    };
+
+    if (toggleButton && passwordInput) {
+      toggleButton.addEventListener('click', () => {
+        const shouldReveal = passwordInput.type === 'password';
+        passwordInput.type = shouldReveal ? 'text' : 'password';
+        toggleButton.textContent = shouldReveal ? 'Ocultar' : 'Mostrar';
+        toggleButton.setAttribute('aria-pressed', shouldReveal ? 'true' : 'false');
+        passwordInput.focus();
+      });
     }
 
-    try {
-      setLoading(true);
-      const demoEmail = 'demo@mefit.com';
-      const demoPassword = 'demo123';
-      const isDemoLogin = email.toLowerCase() === demoEmail && password === demoPassword;
+    const savedEmail = authModule.readRememberedEmail();
+    if (savedEmail && emailInput) {
+      emailInput.value = savedEmail;
+      if (rememberInput) rememberInput.checked = true;
+    }
 
-      if (!isDemoLogin) {
-        showFeedback('Não encontramos uma conta com essas credenciais. Revise os dados digitados.', 'error');
+    const sessionEmail = authModule.readSessionEmail();
+    if (sessionEmail) {
+      showFeedback(`Você está conectado como ${sessionEmail}.`, 'success');
+    }
+
+    loginForm.addEventListener('input', () => {
+      if (feedbackEl?.classList.contains('is-error')) clearFeedback();
+    });
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearFeedback();
+
+      if (!emailInput || !passwordInput) return;
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showFeedback('Informe seu e-mail e senha para continuar.', 'error');
         return;
       }
 
-      const { persisted } = setSessionEmail(email);
-      if (!persisted) {
-        clearSessionEmail();
-        showFeedback(
-          'Não foi possível ativar a sessão porque o armazenamento do navegador está bloqueado. Libere cookies/armazenamento e tente novamente.',
-          'error'
-        );
+      if (password.length < 6) {
+        showFeedback('A senha precisa ter pelo menos 6 caracteres.', 'error');
         return;
       }
 
-      if (rememberInput?.checked) setRememberedEmail(email);
-      else clearRememberedEmail();
+      try {
+        setLoading(true);
+        const demoEmail = 'demo@mefit.com';
+        const demoPassword = 'demo123';
+        const isDemoLogin = email.toLowerCase() === demoEmail && password === demoPassword;
 
-      showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.', 'success');
-      window.setTimeout(() => {
-        window.location.href = '../perfil-cliente.html';
-      }, 1000);
-    } catch (error) {
-      console.error('Falha ao simular login:', error);
-      showFeedback('Não foi possível conectar agora. Tente novamente em alguns instantes.', 'error');
-    } finally {
-      setLoading(false);
-    }
+        if (!isDemoLogin) {
+          showFeedback('Não encontramos uma conta com essas credenciais. Revise os dados digitados.', 'error');
+          return;
+        }
+
+        const { persisted } = authModule.setSessionEmail(email);
+        if (!persisted) {
+          authModule.clearSessionEmail();
+          showFeedback(
+            'Não foi possível ativar a sessão porque o armazenamento do navegador está bloqueado. Libere cookies/armazenamento e tente novamente.',
+            'error'
+          );
+          return;
+        }
+
+        if (rememberInput?.checked) authModule.rememberEmail(email);
+        else authModule.clearRememberedEmail();
+
+        showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.', 'success');
+        global.setTimeout(() => {
+          global.location.href = '../perfil-cliente.html';
+        }, 1000);
+      } catch (error) {
+        console.error('Falha ao simular login:', error);
+        showFeedback('Não foi possível conectar agora. Tente novamente em alguns instantes.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  };
+
+  /* =========================
+     Boot
+     ========================= */
+  namespace.utils = {
+    ready,
+    trim: trimString,
+    setElementVisibility,
+    updateYear
+  };
+  namespace.storage = storage;
+  namespace.cart = cartModule;
+  namespace.auth = authModule;
+  namespace.ui = {
+    ensureCartBadge,
+    updateYear,
+    setElementVisibility
+  };
+
+  ready(() => {
+    setupPageTransitions();
+    updateYear();
+    initAuthState();
+    initLoginForm();
+    initCartBadge();
   });
-};
-
-/* =========================
-   Boot
-   ========================= */
-ready(() => {
-  setupPageTransitions();
-  updateYear();
-  initAuthState();
-  initLoginForm();
-  initCartBadge();
-});
+})(typeof window !== 'undefined' ? window : globalThis);
