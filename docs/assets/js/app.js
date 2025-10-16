@@ -308,6 +308,7 @@
     return { email: dispatchAuthChange(''), persisted: true };
   };
 
+  // ——— versão consolidada (mantém melhorias)
   const isAuthenticated = () => Boolean(readSessionEmail());
 
   const logout = ({ redirect } = {}) => {
@@ -500,28 +501,29 @@
   const initAuthState = () => {
     const protectedAreas = Array.from(doc.querySelectorAll('[data-requires-auth]'));
 
+    // Pré-oculta áreas protegidas até sincronizar o estado
     if (protectedAreas.length) {
       protectedAreas.forEach((area) => setElementVisibility(area, false));
     }
 
     const syncAuthVisibility = () => {
       const email = authModule.readSessionEmail();
-      const isAuthenticated = Boolean(email);
+      const isAuth = Boolean(email);
 
       if (protectedAreas.length) {
-        protectedAreas.forEach((area) => setElementVisibility(area, isAuthenticated));
+        protectedAreas.forEach((area) => setElementVisibility(area, isAuth));
       }
 
       doc
         .querySelectorAll('[data-auth-visible="signed-in"]')
-        .forEach((el) => setElementVisibility(el, isAuthenticated));
+        .forEach((el) => setElementVisibility(el, isAuth));
 
       doc
         .querySelectorAll('[data-auth-visible="signed-out"]')
-        .forEach((el) => setElementVisibility(el, !isAuthenticated));
+        .forEach((el) => setElementVisibility(el, !isAuth));
 
       doc.querySelectorAll('[data-auth-email]').forEach((el) => {
-        if (isAuthenticated) {
+        if (isAuth) {
           el.textContent = email;
           setElementVisibility(el, true);
         } else {
@@ -530,9 +532,11 @@
         }
       });
 
-      if (!isAuthenticated && protectedAreas.length) {
+      if (!isAuth && protectedAreas.length) {
         const redirectTarget =
-          protectedAreas[0].dataset.requiresAuth || protectedAreas[0].dataset.authRedirect || './login/';
+          protectedAreas[0].dataset.requiresAuth ||
+          protectedAreas[0].dataset.authRedirect ||
+          './login/';
         global.location.href = redirectTarget;
       }
     };
@@ -540,11 +544,16 @@
     doc.addEventListener('auth:changed', syncAuthVisibility);
     syncAuthVisibility();
 
+    // Botões/links de logout
     doc.querySelectorAll('[data-logout]').forEach((el) => {
       el.addEventListener('click', (event) => {
         event.preventDefault();
-        const redirect = el.getAttribute('data-logout-redirect') || el.getAttribute('href');
-        authModule.logout({ redirect: redirect && redirect !== '#' ? redirect : undefined });
+        const redirect =
+          el.getAttribute('data-logout-redirect') ||
+          el.getAttribute('href');
+        authModule.logout({
+          redirect: redirect && redirect !== '#' ? redirect : undefined
+        });
       });
     });
   };
