@@ -12,16 +12,17 @@
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav" aria-label="Navegação principal">
-        <a href="./">Início</a>
+        <a href="./index.html">Início</a>
         <a href="./produtos.html">Produtos</a>
         <a href="./carrinho.html" class="active" aria-current="page">Carrinho</a>
-        <a href="./perfil-cliente.html">Perfil</a>
+        <a href="./perfil-cliente.html" data-auth-visible="signed-in">Perfil</a>
         <a href="./sobre.html">Sobre</a>
         <a href="./contato.html">Contato</a>
-        <a href="./login/">Login</a>
+        <a href="./login/" data-auth-visible="signed-out">Login</a>
+        <a href="./index.html" data-logout data-logout-redirect="./index.html" data-auth-visible="signed-in">Sair</a>
       </nav>
     </div>
   </header>
@@ -32,11 +33,12 @@
         <div>
           <p class="cart-eyebrow">Resumo do pedido</p>
           <h1 id="carrinho-title">Seu carrinho está quase pronto!</h1>
-          <p class="cart-intro">Revise itens, aplique cupons e selecione a melhor forma de envio antes de finalizar a compra.</p>
+          <p class="cart-intro" data-cart-summary>Revise itens, aplique cupons e selecione a melhor forma de envio antes de finalizar a compra.</p>
         </div>
         <div class="cart-hero-actions">
           <a class="btn btn-outline" href="./produtos.html">Adicionar mais produtos</a>
-          <a class="btn btn-primary" href="./login/">Fazer login para finalizar</a>
+          <a class="btn btn-primary" href="./login/" data-auth-visible="signed-out">Fazer login para finalizar</a>
+          <a class="btn btn-primary" href="./perfil-cliente.html" data-auth-visible="signed-in">Ir para o perfil do cliente</a>
         </div>
       </div>
     </section>
@@ -44,103 +46,38 @@
     <section class="cart-layout container" aria-label="Itens e totais">
       <div class="cart-items" aria-labelledby="itens-title">
         <h2 id="itens-title">Itens selecionados</h2>
-        <ul class="cart-list">
-          <li class="cart-item">
-            <div class="cart-thumb" aria-hidden="true">
-              <img src="assets/img/sample1.png" alt="Legging Aurora em lilás" loading="lazy">
-            </div>
-            <div class="cart-item-body">
-              <div class="cart-item-header">
-                <h3>Legging Aurora</h3>
-                <button class="profile-link" type="button">Remover</button>
-              </div>
-              <p class="cart-item-meta">Lilás Boreal · Tamanho P</p>
-              <div class="cart-item-controls">
-                <label>
-                  Qtde
-                  <select aria-label="Quantidade Legging Aurora">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                  </select>
-                </label>
-                <span class="cart-price">R$ 139,90</span>
-              </div>
-            </div>
-          </li>
-          <li class="cart-item">
-            <div class="cart-thumb" aria-hidden="true">
-              <img src="assets/img/sample2.png" alt="Top Horizon com recortes contrastantes" loading="lazy">
-            </div>
-            <div class="cart-item-body">
-              <div class="cart-item-header">
-                <h3>Top Horizon</h3>
-                <button class="profile-link" type="button">Remover</button>
-              </div>
-              <p class="cart-item-meta">Roxo Eclipse · Tamanho M</p>
-              <div class="cart-item-controls">
-                <label>
-                  Qtde
-                  <select aria-label="Quantidade Top Horizon">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                  </select>
-                </label>
-                <span class="cart-price">R$ 99,90</span>
-              </div>
-            </div>
-          </li>
-          <li class="cart-item">
-            <div class="cart-thumb" aria-hidden="true">
-              <img src="assets/img/sample3.png" alt="Jaqueta Boreal" loading="lazy">
-            </div>
-            <div class="cart-item-body">
-              <div class="cart-item-header">
-                <h3>Jaqueta Boreal</h3>
-                <button class="profile-link" type="button">Remover</button>
-              </div>
-              <p class="cart-item-meta">Grafite Polar · Tamanho M</p>
-              <div class="cart-item-controls">
-                <label>
-                  Qtde
-                  <select aria-label="Quantidade Jaqueta Boreal">
-                    <option>1</option>
-                    <option>2</option>
-                  </select>
-                </label>
-                <span class="cart-price">R$ 219,90</span>
-              </div>
-            </div>
-          </li>
-        </ul>
+        <ul class="cart-list" data-cart-list data-source="./assets/data/produtos.json" aria-live="polite"></ul>
+        <p class="cart-empty" data-cart-empty hidden>
+          Seu carrinho está vazio no momento. <a href="./produtos.html">Explore o catálogo completo</a> para adicionar suas próximas peças.
+        </p>
       </div>
 
       <aside class="cart-summary" aria-labelledby="resumo-title">
         <h2 id="resumo-title">Totais e entrega</h2>
-        <form class="cart-coupon" aria-label="Aplicar cupom">
+        <form class="cart-coupon" aria-label="Aplicar cupom" data-cart-coupon-form>
           <label for="cupom">Cupom de desconto</label>
           <div class="cart-coupon-row">
-            <input id="cupom" type="text" name="cupom" placeholder="DIGITEAQUI" autocomplete="off">
+            <input id="cupom" type="text" name="cupom" placeholder="DIGITEAQUI" autocomplete="off" data-cart-coupon-input>
             <button class="btn btn-outline" type="submit">Aplicar</button>
           </div>
         </form>
+        <p class="cart-coupon-feedback" data-cart-coupon-feedback hidden></p>
         <dl class="cart-totals">
           <div>
             <dt>Subtotal</dt>
-            <dd>R$ 459,70</dd>
+            <dd data-cart-subtotal>R$ 0,00</dd>
           </div>
-          <div>
+          <div data-cart-discount-row hidden>
             <dt>Descontos</dt>
-            <dd>- R$ 30,00 (Prime Friday)</dd>
+            <dd data-cart-discount>- R$ 0,00</dd>
           </div>
           <div>
             <dt>Frete</dt>
-            <dd>Grátis (acima de R$ 299)</dd>
+            <dd data-cart-shipping>Calcular no próximo passo</dd>
           </div>
           <div class="cart-total">
             <dt>Total</dt>
-            <dd>R$ 429,70</dd>
+            <dd data-cart-total>R$ 0,00</dd>
           </div>
         </dl>
         <div class="cart-payment">
@@ -152,8 +89,9 @@
           </ul>
         </div>
         <div class="cart-actions">
-          <a class="btn btn-primary" href="./login/">Finalizar compra</a>
-          <a class="btn btn-outline" href="./perfil-cliente.html">Salvar lista de desejos</a>
+          <a class="btn btn-primary" href="./login/" data-auth-visible="signed-out" data-cart-checkout>Finalizar compra</a>
+          <a class="btn btn-primary" href="./perfil-cliente.html#pedidos-title" data-auth-visible="signed-in">Concluir compra no perfil</a>
+          <a class="btn btn-outline" href="./perfil-cliente.html" data-auth-visible="signed-in" data-cart-save>Salvar lista de desejos</a>
         </div>
       </aside>
     </section>
@@ -166,26 +104,7 @@
         </div>
         <a class="btn btn-outline" href="./produtos.html#essentials">Ver coleção Essentials</a>
       </div>
-      <div class="recommended-grid">
-        <article class="recommend-card">
-          <h3>Meia Performance</h3>
-          <p>Compressão graduada e tecido respirável.</p>
-          <span class="price">R$ 39,90</span>
-          <button class="btn btn-outline" type="button">Adicionar</button>
-        </article>
-        <article class="recommend-card">
-          <h3>Garrafa Térmica Aurora</h3>
-          <p>1L com parede dupla e acabamento fosco.</p>
-          <span class="price">R$ 119,90</span>
-          <button class="btn btn-outline" type="button">Adicionar</button>
-        </article>
-        <article class="recommend-card">
-          <h3>Faixa de resistência média</h3>
-          <p>Ideal para treinos funcionais e ativação de glúteos.</p>
-          <span class="price">R$ 54,90</span>
-          <button class="btn btn-outline" type="button">Adicionar</button>
-        </article>
-      </div>
+      <div class="recommended-grid" data-cart-suggestions aria-live="polite"></div>
     </section>
 
     <section class="cart-assistance container" aria-labelledby="assistencia-title">
@@ -224,8 +143,8 @@
             <li><a href="./index.html">Início</a></li>
             <li><a href="./produtos.html">Catálogo completo</a></li>
             <li><a href="./carrinho.html">Carrinho</a></li>
-            <li><a href="./perfil-cliente.html">Perfil</a></li>
-            <li><a href="./login/">Minha conta</a></li>
+            <li><a href="./perfil-cliente.html" data-auth-visible="signed-in">Perfil</a></li>
+            <li><a href="./login/" data-auth-visible="signed-out">Minha conta</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -268,5 +187,6 @@
   </footer>
 
   <script src="assets/js/app.js"></script>
+  <script src="assets/js/carrinho.js"></script>
 </body>
 </html>

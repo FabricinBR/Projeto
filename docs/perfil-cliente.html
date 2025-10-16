@@ -12,27 +12,29 @@
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">M.E <span>FIT</span></a>
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
       </div>
       <nav class="nav" aria-label="Navegação principal">
-        <a href="./">Início</a>
+        <a href="./index.html">Início</a>
         <a href="./produtos.html">Produtos</a>
         <a href="./carrinho.html">Carrinho</a>
-        <a href="./perfil-cliente.html" class="active" aria-current="page">Perfil</a>
+        <a href="./perfil-cliente.html" class="active" aria-current="page" data-auth-visible="signed-in">Perfil</a>
         <a href="./sobre.html">Sobre</a>
         <a href="./contato.html">Contato</a>
-        <a href="./login/">Login</a>
+        <a href="./login/" data-auth-visible="signed-out">Login</a>
+        <a href="./index.html" data-logout data-logout-redirect="./login/" data-auth-visible="signed-in">Sair</a>
       </nav>
     </div>
   </header>
 
-  <main>
+  <main data-requires-auth="./login/">
     <section class="profile-hero container" aria-labelledby="perfil-title">
       <div class="profile-hero-grid">
         <div class="profile-summary">
           <p class="profile-eyebrow">Bem-vindo de volta</p>
           <h1 id="perfil-title">Marina Esteves</h1>
           <p class="profile-intro">Aqui você acompanha pedidos em andamento, preferências de treino e benefícios do seu plano <strong>M.E FIT Prime</strong>.</p>
+          <p class="profile-session" data-auth-visible="signed-in">Sessão ativa: <strong data-auth-email>demo@mefit.com</strong></p>
           <ul class="profile-tags" aria-label="Status da conta">
             <li class="status-pill">Cliente Prime</li>
             <li class="status-pill status-pill--positive">Recompensas ativas</li>
@@ -58,6 +60,7 @@
           <div class="profile-actions">
             <a class="btn btn-primary" href="./carrinho.html">Continuar comprando</a>
             <a class="btn btn-outline" href="./rastrear-pedido.html">Rastrear entrega</a>
+            <button class="btn btn-outline" type="button" data-logout data-logout-redirect="./login/" data-auth-visible="signed-in">Sair da conta</button>
           </div>
         </aside>
       </div>
@@ -73,7 +76,7 @@
           <dl class="profile-data">
             <div>
               <dt>E-mail</dt>
-              <dd>marina.esteves@mefit.com</dd>
+              <dd><span data-auth-email>demo@mefit.com</span></dd>
             </div>
             <div>
               <dt>Telefone</dt>
@@ -231,8 +234,8 @@
             <li><a href="./index.html">Início</a></li>
             <li><a href="./produtos.html">Catálogo completo</a></li>
             <li><a href="./carrinho.html">Carrinho</a></li>
-            <li><a href="./perfil-cliente.html">Perfil</a></li>
-            <li><a href="./login/">Minha conta</a></li>
+            <li><a href="./perfil-cliente.html" data-auth-visible="signed-in">Perfil</a></li>
+            <li><a href="./login/" data-auth-visible="signed-out">Minha conta</a></li>
           </ul>
         </div>
         <div class="footer-column">

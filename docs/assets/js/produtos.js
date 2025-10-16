@@ -14,6 +14,25 @@ const initProducts = () => {
   const CART_KEY = 'mefit-cart-items';
   let cartItems = [];
 
+  const ensureCartBadge = () => {
+    let badge = document.querySelector('[data-cart-count]');
+    if (badge) return badge;
+
+    const navLink = document.querySelector('.nav a[href$="carrinho.html"]');
+    if (!navLink) return null;
+
+    badge = document.createElement('span');
+    badge.className = 'cart-count-badge';
+    badge.dataset.cartCount = '';
+    badge.hidden = true;
+    badge.textContent = '0';
+    badge.setAttribute('role', 'status');
+    badge.setAttribute('aria-live', 'polite');
+    badge.setAttribute('aria-label', 'Itens no carrinho');
+    navLink.appendChild(badge);
+    return badge;
+  };
+
   const filtersForm = document.querySelector('[data-product-filters]');
   const searchInput = document.querySelector('[data-product-search]');
   const categorySelect = document.querySelector('[data-filter-category]');
@@ -24,7 +43,7 @@ const initProducts = () => {
   const countEl = document.querySelector('[data-product-count]');
   const emptyEl = document.querySelector('[data-product-empty]');
   const loadingEl = document.querySelector('[data-product-loading]');
-  const cartCountBadge = document.querySelector('[data-cart-count]');
+  const cartCountBadge = ensureCartBadge();
 
   const source = productGrid.getAttribute('data-source');
   let allProducts = [];
@@ -58,6 +77,19 @@ const initProducts = () => {
     return null;
   };
 
+  const cloneCartItems = () => cartItems.map((item) => ({ ...item }));
+
+  const dispatchCartEvent = () => {
+    window.dispatchEvent(
+      new CustomEvent('cart:changed', {
+        detail: {
+          origin: 'catalog',
+          items: cloneCartItems()
+        }
+      })
+    );
+  };
+
   // ---------- Persistência do carrinho ----------
   const loadCart = () => {
     if (typeof window === 'undefined' || !('localStorage' in window)) {
@@ -84,7 +116,7 @@ const initProducts = () => {
     }
   };
 
-  const saveCart = () => {
+  const persistCart = ({ silent = false } = {}) => {
     if (typeof window === 'undefined' || !('localStorage' in window)) {
       return;
     }
@@ -93,6 +125,7 @@ const initProducts = () => {
     } catch (error) {
       console.warn('Não foi possível salvar o carrinho.', error);
     }
+    if (!silent) dispatchCartEvent();
   };
 
   const updateCartBadge = () => {
@@ -161,7 +194,7 @@ const initProducts = () => {
       })
       .filter(Boolean);
 
-    if (hasChanges) saveCart();
+    if (hasChanges) persistCart({ silent: true });
   };
 
   const updateButtonsForProduct = (productId) => {
@@ -187,7 +220,7 @@ const initProducts = () => {
       quantidade: 1
     };
     cartItems.push(item);
-    saveCart();
+    persistCart();
     updateCartBadge();
   };
 
@@ -196,7 +229,7 @@ const initProducts = () => {
     const previousLength = cartItems.length;
     cartItems = cartItems.filter((item) => normalizeId(item.id) !== targetId);
     if (cartItems.length === previousLength) return;
-    saveCart();
+    persistCart();
     updateCartBadge();
   };
 
@@ -380,6 +413,13 @@ const initProducts = () => {
     });
   };
 
+  const refreshCatalogView = () => {
+    if (!Array.isArray(allProducts) || !allProducts.length) return;
+    const filtered = applyFilters();
+    renderProducts(filtered);
+    updateCount(filtered.length, allProducts.length);
+  };
+
   const loadProducts = async () => {
     if (!source) {
       console.error('Fonte de produtos não definida.');
@@ -417,6 +457,22 @@ const initProducts = () => {
   };
 
   loadProducts();
+
+  const syncCartFromStorage = () => {
+    cartItems = loadCart();
+    updateCartBadge();
+    refreshCatalogView();
+  };
+
+  window.addEventListener('storage', (event) => {
+    if (event.key && event.key !== CART_KEY) return;
+    syncCartFromStorage();
+  });
+
+  window.addEventListener('cart:changed', (event) => {
+    if (event.detail?.origin === 'catalog') return;
+    syncCartFromStorage();
+  });
 };
 
 onDocumentReady(initProducts);
