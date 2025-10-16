@@ -39,7 +39,15 @@ const initProducts = () => {
     const image = productCard.querySelector('.p-thumb img');
     if (!image) return;
 
-    const cartTarget = cartCountBadge || document.querySelector('.nav a[href$="carrinho.html"]');
+    // Alvo da animação: badge visível; senão, link do carrinho
+    const cartLink = document.querySelector('.nav a[href$="carrinho.html"]');
+    const cartTarget =
+      cartCountBadge &&
+      !cartCountBadge.hidden &&
+      cartCountBadge.offsetParent !== null
+        ? cartCountBadge
+        : cartLink;
+
     if (!cartTarget) return;
 
     const imageRect = image.getBoundingClientRect();
@@ -57,6 +65,9 @@ const initProducts = () => {
     clone.style.opacity = '1';
 
     document.body.appendChild(clone);
+
+    // Força reflow antes da transição (garante início da animação)
+    clone.getBoundingClientRect();
 
     const targetX = targetRect.left + targetRect.width / 2;
     const targetY = targetRect.top + targetRect.height / 2;
@@ -111,7 +122,7 @@ const initProducts = () => {
   const coerceQuantity = (value) => {
     const numeric = Number.parseInt(value, 10);
     return Number.isFinite(numeric) && numeric > 0 ? numeric : 1;
-    };
+  };
 
   const normalizeStoredItem = (entry) => {
     if (entry == null) return null;
