@@ -11,6 +11,9 @@ const initProducts = () => {
   if (!productGrid || productGrid.dataset.enhanced === 'true') return;
   productGrid.dataset.enhanced = 'true';
 
+  const CART_KEY = 'mefit-cart-items';
+  let cartItems = [];
+
   const filtersForm = document.querySelector('[data-product-filters]');
   const searchInput = document.querySelector('[data-product-search]');
   const categorySelect = document.querySelector('[data-filter-category]');
@@ -21,9 +24,96 @@ const initProducts = () => {
   const countEl = document.querySelector('[data-product-count]');
   const emptyEl = document.querySelector('[data-product-empty]');
   const loadingEl = document.querySelector('[data-product-loading]');
+  const cartCountBadge = document.querySelector('[data-cart-count]');
 
   const source = productGrid.getAttribute('data-source');
   let allProducts = [];
+
+  const loadCart = () => {
+    if (typeof window === 'undefined' || !('localStorage' in window)) {
+      return [];
+    }
+    try {
+      const stored = localStorage.getItem(CART_KEY);
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((item) => item && typeof item.id === 'string');
+    } catch (error) {
+      console.warn('Não foi possível carregar o carrinho salvo.', error);
+      return [];
+    }
+  };
+
+  const saveCart = () => {
+    if (typeof window === 'undefined' || !('localStorage' in window)) {
+      return;
+    }
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+    } catch (error) {
+      console.warn('Não foi possível salvar o carrinho.', error);
+    }
+  };
+
+  const updateCartBadge = () => {
+    if (!cartCountBadge) return;
+    const total = cartItems.reduce((sum, item) => sum + (Number(item.quantidade) || 1), 0);
+    cartCountBadge.textContent = String(total);
+    cartCountBadge.hidden = total === 0;
+  };
+
+  const isInCart = (productId) => cartItems.some((item) => item.id === productId);
+
+  const setButtonState = (button, active) => {
+    if (!button) return;
+    button.textContent = active ? 'Remover do carrinho' : 'Adicionar ao carrinho';
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  };
+
+  const updateButtonsForProduct = (productId) => {
+    const buttons = productGrid.querySelectorAll(`[data-product-id="${productId}"]`);
+    const active = isInCart(productId);
+    buttons.forEach((button) => setButtonState(button, active));
+  };
+
+  const addToCart = (product) => {
+    if (!product?.id) return;
+    if (isInCart(product.id)) return;
+    const item = {
+      id: product.id,
+      nome: product.nome,
+      preco: product.preco,
+      imagem: product.imagem,
+      categoria: product.categoria,
+      tamanhos: product.tamanhos,
+      quantidade: 1
+    };
+    cartItems.push(item);
+    saveCart();
+    updateCartBadge();
+  };
+
+  const removeFromCart = (productId) => {
+    const previousLength = cartItems.length;
+    cartItems = cartItems.filter((item) => item.id !== productId);
+    if (cartItems.length === previousLength) return;
+    saveCart();
+    updateCartBadge();
+  };
+
+  const toggleCartItem = (product) => {
+    if (!product?.id) return;
+    if (isInCart(product.id)) {
+      removeFromCart(product.id);
+      return;
+    }
+    addToCart(product);
+  };
+
+  cartItems = loadCart();
+  updateCartBadge();
 
   const formatCurrency = (value) => value.toLocaleString('pt-BR', {
     style: 'currency',
@@ -54,13 +144,17 @@ const initProducts = () => {
     productGrid.innerHTML = items.map((product) => {
       const sizes = Array.isArray(product.tamanhos) ? product.tamanhos.join(', ') : '';
       const meta = [product.categoria, sizes ? `Tamanhos: ${sizes}` : null].filter(Boolean).join(' • ');
+      const inCart = isInCart(product.id);
+      const buttonClass = inCart ? 'btn btn-primary is-active' : 'btn btn-primary';
+      const buttonLabel = inCart ? 'Remover do carrinho' : 'Adicionar ao carrinho';
+      const ariaPressed = inCart ? 'true' : 'false';
       return `
         <article class="p-card">
           <div class="p-thumb"><img src="${product.imagem}" alt="${product.nome}" loading="lazy"></div>
           <h3>${product.nome}</h3>
           <p class="product-meta">${meta}</p>
           <p class="price">${formatCurrency(product.preco)}</p>
-          <button class="btn btn-primary" type="button">Adicionar ao carrinho</button>
+          <button class="${buttonClass}" type="button" data-cart-toggle data-product-id="${product.id}" aria-pressed="${ariaPressed}">${buttonLabel}</button>
         </article>
       `;
     }).join('');
@@ -158,6 +252,17 @@ const initProducts = () => {
         }
       });
     }
+
+    productGrid.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-cart-toggle]');
+      if (!button) return;
+      const productId = button.getAttribute('data-product-id');
+      const product = allProducts.find((item) => item.id === productId);
+      if (!product) return;
+      toggleCartItem(product);
+      updateButtonsForProduct(productId);
+      button.blur();
+    });
   };
 
   const loadProducts = async () => {
