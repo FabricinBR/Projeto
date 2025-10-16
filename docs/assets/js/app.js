@@ -213,6 +213,98 @@ const setElementVisibility = (element, shouldShow) => {
   }
 };
 
+const setupPageTransitions = () => {
+  const { body } = document;
+  if (!body) return;
+
+  const TRANSITION_MS = 350;
+  let isNavigating = false;
+  let pendingNavigation = null;
+
+  const prefersReducedMotion =
+    typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  const shouldAnimate = !(prefersReducedMotion && prefersReducedMotion.matches);
+
+  body.classList.add('enable-page-transitions');
+  if (shouldAnimate) {
+    body.classList.add('is-page-entering');
+    window.requestAnimationFrame(() => {
+      body.classList.remove('is-page-entering');
+    });
+  }
+
+  const finishEntering = () => {
+    body.classList.remove('is-page-entering');
+    body.classList.remove('is-page-leaving');
+    isNavigating = false;
+  };
+
+  const isModifiedClick = (event) =>
+    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+
+  const isInternalLink = (link) => {
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#')) return false;
+    if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return false;
+
+    const target = link.getAttribute('target');
+    if (target && target.toLowerCase() !== '_self' && target !== '') return false;
+    if (link.hasAttribute('download')) return false;
+
+    const rel = link.getAttribute('rel');
+    if (rel && rel.split(/\s+/).includes('external')) return false;
+
+    try {
+      const url = new URL(href, window.location.href);
+      const current = new URL(window.location.href);
+      if (url.origin !== current.origin) return false;
+
+      const samePath = url.pathname === current.pathname && url.search === current.search;
+      if (samePath && (url.hash && url.hash !== current.hash)) return false;
+      if (url.href === current.href) return false;
+
+      return true;
+    } catch (error) {
+      console.warn('Não foi possível interpretar o link para aplicar a transição.', error);
+      return false;
+    }
+  };
+
+  const navigateWithTransition = (url) => {
+    if (isNavigating) return;
+    isNavigating = true;
+    if (shouldAnimate) {
+      body.classList.add('is-page-leaving');
+      pendingNavigation = window.setTimeout(() => {
+        window.location.href = url;
+      }, TRANSITION_MS);
+    } else {
+      window.location.href = url;
+    }
+  };
+
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || isModifiedClick(event)) return;
+
+    const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+    if (!link || !isInternalLink(link)) return;
+
+    event.preventDefault();
+    navigateWithTransition(new URL(link.getAttribute('href'), window.location.href).href);
+  });
+
+  window.addEventListener('pageshow', (event) => {
+    if (pendingNavigation) {
+      window.clearTimeout(pendingNavigation);
+      pendingNavigation = null;
+    }
+    if (event.persisted) {
+      body.classList.add('enable-page-transitions');
+    }
+    finishEntering();
+  });
+};
+
 /* =========================
    Estado de Autenticação
    ========================= */
@@ -417,6 +509,7 @@ const initLoginForm = () => {
    Boot
    ========================= */
 ready(() => {
+  setupPageTransitions();
   updateYear();
   initAuthState();
   initLoginForm();
