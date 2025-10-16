@@ -4,9 +4,13 @@
 
   const ensureHiddenForSignedInElements = () => {
     if (!doc) return;
+
+    // Garante um estado inicial explícito para o documento
     if (!doc.documentElement.getAttribute('data-auth-state')) {
       doc.documentElement.setAttribute('data-auth-state', 'signed-out');
     }
+
+    // Pré-oculta elementos visíveis apenas quando autenticado
     doc.querySelectorAll('[data-auth-visible="signed-in"]').forEach((element) => {
       if (element.hasAttribute('hidden')) return;
       element.hidden = true;
@@ -326,7 +330,6 @@
     return { email: dispatchAuthChange(''), persisted: true };
   };
 
-  // ——— versão consolidada (mantém melhorias)
   const isAuthenticated = () => Boolean(readSessionEmail());
 
   const logout = ({ redirect } = {}) => {
@@ -528,6 +531,7 @@
       const email = authModule.readSessionEmail();
       const isAuth = Boolean(email);
 
+      // Sinaliza estado atual no <html>
       doc.documentElement.setAttribute('data-auth-state', isAuth ? 'signed-in' : 'signed-out');
 
       if (protectedAreas.length) {
