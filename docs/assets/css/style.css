@@ -24,7 +24,8 @@ a:hover{text-decoration:underline}
 .header-grid{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
 .brand-link{font-size:24px;font-weight:800;letter-spacing:.5px;color:var(--text)}
 .brand-link span{color:var(--primary)}
-.nav a{margin:0 10px;padding:8px 10px;border-radius:8px}
+.nav a{margin:0 10px;padding:8px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+.nav a .cart-count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;padding:2px 6px;border-radius:999px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;line-height:1}
 .nav a.active,.nav a:hover{background:var(--card)}
 .hero{padding:64px 0 32px}
 .hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:stretch}
@@ -55,6 +56,7 @@ a:hover{text-decoration:underline}
 .banner-card.banner-dark{background:linear-gradient(160deg,rgba(15,10,24,.95),rgba(124,77,255,.55))}
 .banner-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;background:rgba(16,10,24,.75);border:1px solid var(--border);padding:6px 12px;border-radius:999px;color:var(--primary-2);font-weight:700}
 .btn{display:inline-block;padding:10px 16px;border-radius:12px;border:1px solid var(--border);font-weight:600}
+.btn.is-disabled,.btn[aria-disabled="true"]{opacity:.55;pointer-events:none;cursor:not-allowed}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent}
 .btn-outline{color:var(--text);background:transparent}
 .showcases{padding:24px 0 16px;display:grid;gap:32px}
@@ -212,6 +214,8 @@ code{background:#100a18;padding:2px 6px;border-radius:6px;border:1px solid var(-
 .profile-eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--primary-2);font-weight:700;margin:0}
 .profile-summary h1{margin:0;font-size:34px}
 .profile-intro{margin:0;color:var(--muted);line-height:1.6}
+.profile-session{margin:4px 0 0;font-size:14px;font-weight:600;color:var(--primary-2)}
+.profile-session strong{color:#fff;font-weight:700}
 .profile-tags{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .profile-status{background:linear-gradient(140deg,rgba(124,77,255,.18),rgba(16,10,24,.92));border:1px solid var(--border);border-radius:22px;padding:28px;display:grid;gap:16px}
 .profile-stats{margin:0;padding:0;display:grid;gap:12px}
@@ -270,13 +274,20 @@ code{background:#100a18;padding:2px 6px;border-radius:6px;border:1px solid var(-
 .cart-item-meta{margin:0;color:var(--muted)}
 .cart-item-controls{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .cart-item-controls label{display:flex;align-items:center;gap:8px;font-weight:600}
-.cart-item-controls select{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:#100a18;color:var(--text);font:inherit}
+.cart-item-controls select,.cart-item-controls input[type=number]{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:#100a18;color:var(--text);font:inherit}
+.cart-item-controls input[type=number]{width:72px;text-align:center}
 .cart-price{font-weight:700;color:var(--primary-2)}
+.cart-line-total{font-weight:700;color:#fff}
+.cart-empty{margin:0;color:var(--muted);background:rgba(21,16,38,.6);border:1px dashed var(--border);border-radius:14px;padding:16px}
+.cart-empty a{color:var(--primary-2);font-weight:600}
 .cart-summary{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:24px;display:grid;gap:20px;height:max-content}
 .cart-summary h2{margin:0}
 .cart-coupon{display:grid;gap:10px}
 .cart-coupon-row{display:flex;gap:10px}
 .cart-coupon-row input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#100a18;color:var(--text)}
+.cart-coupon-feedback{margin:0;padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.4;background:rgba(21,16,38,.65);border:1px solid transparent}
+.cart-coupon-feedback.is-success{border-color:rgba(124,77,255,.45);color:var(--primary-2);background:rgba(124,77,255,.12)}
+.cart-coupon-feedback.is-error{border-color:rgba(255,128,171,.4);color:var(--accent);background:rgba(255,128,171,.12)}
 .cart-totals{margin:0;padding:0;display:grid;gap:12px}
 .cart-totals div{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted)}
 .cart-totals dt{font-weight:600}
