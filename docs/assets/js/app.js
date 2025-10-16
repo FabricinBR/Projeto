@@ -2,6 +2,21 @@
   const namespace = (global.MEFIT = global.MEFIT || {});
   const doc = global.document;
 
+  const ensureHiddenForSignedInElements = () => {
+    if (!doc) return;
+    doc.querySelectorAll('[data-auth-visible="signed-in"]').forEach((element) => {
+      if (element.hasAttribute('hidden')) return;
+      element.hidden = true;
+      element.setAttribute('aria-hidden', 'true');
+    });
+  };
+
+  if (doc.readyState === 'loading') {
+    doc.addEventListener('DOMContentLoaded', ensureHiddenForSignedInElements, { once: true });
+  } else {
+    ensureHiddenForSignedInElements();
+  }
+
   /* =========================
      Utilidades básicas
      ========================= */
