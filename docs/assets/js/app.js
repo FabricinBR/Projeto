@@ -6,6 +6,9 @@ const ready = (callback) => {
   }
 };
 
+/* =========================
+   Autenticação (sessão)
+   ========================= */
 const AUTH_SESSION_KEY = 'mefit-session-email';
 const AUTH_REMEMBER_KEY = 'mefit-remember-email';
 
@@ -64,17 +67,14 @@ const writeSessionEmail = (email) => {
 const dispatchAuthChange = (overrideEmail) => {
   const email =
     typeof overrideEmail === 'string' ? normalizeEmail(overrideEmail) : readSessionEmail();
-  document.dispatchEvent(
-    new CustomEvent('auth:changed', {
-      detail: { email }
-    })
-  );
+  document.dispatchEvent(new CustomEvent('auth:changed', { detail: { email } }));
   return email;
 };
 
 const setSessionEmail = (email) => {
   const result = writeSessionEmail(email);
   if (!result.persisted) {
+    // se não persistiu em sessionStorage, não mantemos fallback (exigir habilitar armazenamento)
     memorySessionEmail = '';
   }
   const finalEmail = result.persisted ? result.email : '';
@@ -86,6 +86,9 @@ const clearSessionEmail = () => {
   return { email: dispatchAuthChange(''), persisted: result.persisted };
 };
 
+/* =========================
+   Carrinho - badge
+   ========================= */
 const ensureCartBadge = () => {
   let badge = document.querySelector('[data-cart-count]');
   if (badge) return badge;
@@ -125,20 +128,14 @@ const normalizeStoredItem = (entry) => {
   if (typeof entry === 'object') {
     const id = 'id' in entry ? normalizeId(entry.id) : '';
     if (!id) return null;
-    return {
-      ...entry,
-      id,
-      quantidade: coerceQuantity(entry.quantidade)
-    };
+    return { ...entry, id, quantidade: coerceQuantity(entry.quantidade) };
   }
 
   return null;
 };
 
 const loadCartItems = () => {
-  if (typeof window === 'undefined' || !('localStorage' in window)) {
-    return [];
-  }
+  if (typeof window === 'undefined' || !('localStorage' in window)) return [];
   try {
     const stored = window.localStorage.getItem(CART_KEY);
     if (!stored) return [];
@@ -194,6 +191,9 @@ const initCartBadge = () => {
   });
 };
 
+/* =========================
+   Utilidades de UI
+   ========================= */
 const updateYear = () => {
   const targets = document.querySelectorAll('#year, [data-current-year]');
   if (!targets.length) return;
@@ -213,6 +213,9 @@ const setElementVisibility = (element, shouldShow) => {
   }
 };
 
+/* =========================
+   Estado de Autenticação
+   ========================= */
 const initAuthState = () => {
   const protectedAreas = Array.from(document.querySelectorAll('[data-requires-auth]'));
 
@@ -222,19 +225,19 @@ const initAuthState = () => {
 
     document
       .querySelectorAll('[data-auth-visible="signed-in"]')
-      .forEach((element) => setElementVisibility(element, isAuthenticated));
+      .forEach((el) => setElementVisibility(el, isAuthenticated));
 
     document
       .querySelectorAll('[data-auth-visible="signed-out"]')
-      .forEach((element) => setElementVisibility(element, !isAuthenticated));
+      .forEach((el) => setElementVisibility(el, !isAuthenticated));
 
-    document.querySelectorAll('[data-auth-email]').forEach((element) => {
+    document.querySelectorAll('[data-auth-email]').forEach((el) => {
       if (isAuthenticated) {
-        element.textContent = email;
-        setElementVisibility(element, true);
+        el.textContent = email;
+        setElementVisibility(el, true);
       } else {
-        element.textContent = '';
-        setElementVisibility(element, false);
+        el.textContent = '';
+        setElementVisibility(el, false);
       }
     });
 
@@ -250,18 +253,19 @@ const initAuthState = () => {
   document.addEventListener('auth:changed', syncAuthVisibility);
   syncAuthVisibility();
 
-  document.querySelectorAll('[data-logout]').forEach((element) => {
-    element.addEventListener('click', (event) => {
+  document.querySelectorAll('[data-logout]').forEach((el) => {
+    el.addEventListener('click', (event) => {
       event.preventDefault();
       clearSessionEmail();
-      const redirect = element.getAttribute('data-logout-redirect');
-      if (redirect) {
-        window.location.href = redirect;
-      }
+      const redirect = el.getAttribute('data-logout-redirect');
+      if (redirect) window.location.href = redirect;
     });
   });
 };
 
+/* =========================
+   Login (form demo)
+   ========================= */
 const initLoginForm = () => {
   const loginForm = document.querySelector('#login-form');
   if (!loginForm) return;
@@ -286,9 +290,7 @@ const initLoginForm = () => {
 
   const setRememberedEmail = (email) => {
     try {
-      if (email) {
-        localStorage.setItem(REMEMBER_KEY, email);
-      }
+      if (email) localStorage.setItem(REMEMBER_KEY, email);
     } catch (error) {
       console.warn('Não foi possível salvar preferências de login.', error);
     }
@@ -327,7 +329,6 @@ const initLoginForm = () => {
     } else if (submitButton.dataset.originalText) {
       submitButton.textContent = submitButton.dataset.originalText;
     }
-
     submitButton.disabled = loading;
   };
 
@@ -353,9 +354,7 @@ const initLoginForm = () => {
   }
 
   loginForm.addEventListener('input', () => {
-    if (feedbackEl?.classList.contains('is-error')) {
-      clearFeedback();
-    }
+    if (feedbackEl?.classList.contains('is-error')) clearFeedback();
   });
 
   loginForm.addEventListener('submit', async (event) => {
@@ -398,16 +397,10 @@ const initLoginForm = () => {
         return;
       }
 
-      if (rememberInput?.checked) {
-        setRememberedEmail(email);
-      } else {
-        clearRememberedEmail();
-      }
+      if (rememberInput?.checked) setRememberedEmail(email);
+      else clearRememberedEmail();
 
-      showFeedback(
-        'Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.',
-        'success'
-      );
+      showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.', 'success');
       window.setTimeout(() => {
         window.location.href = '../perfil-cliente.html';
       }, 1000);
@@ -420,6 +413,9 @@ const initLoginForm = () => {
   });
 };
 
+/* =========================
+   Boot
+   ========================= */
 ready(() => {
   updateYear();
   initAuthState();
