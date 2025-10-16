@@ -308,6 +308,18 @@
     return { email: dispatchAuthChange(''), persisted: true };
   };
 
+  // ——— versão consolidada (mantém melhorias)
+  const isAuthenticated = () => Boolean(readSessionEmail());
+
+  const logout = ({ redirect } = {}) => {
+    const result = clearSessionEmail();
+    const target = trimString(redirect);
+    if (target) {
+      global.location.href = target;
+    }
+    return result;
+  };
+
   const readRememberedEmail = () => trimString(storage.local.get(AUTH_REMEMBER_KEY));
 
   const rememberEmail = (email) => {
@@ -325,8 +337,10 @@
 
   const authModule = {
     readSessionEmail,
+    isAuthenticated,
     setSessionEmail,
     clearSessionEmail,
+    logout,
     dispatchChange: dispatchAuthChange,
     readRememberedEmail,
     rememberEmail,
@@ -487,20 +501,29 @@
   const initAuthState = () => {
     const protectedAreas = Array.from(doc.querySelectorAll('[data-requires-auth]'));
 
+    // Pré-oculta áreas protegidas até sincronizar o estado
+    if (protectedAreas.length) {
+      protectedAreas.forEach((area) => setElementVisibility(area, false));
+    }
+
     const syncAuthVisibility = () => {
       const email = authModule.readSessionEmail();
-      const isAuthenticated = Boolean(email);
+      const isAuth = Boolean(email);
+
+      if (protectedAreas.length) {
+        protectedAreas.forEach((area) => setElementVisibility(area, isAuth));
+      }
 
       doc
         .querySelectorAll('[data-auth-visible="signed-in"]')
-        .forEach((el) => setElementVisibility(el, isAuthenticated));
+        .forEach((el) => setElementVisibility(el, isAuth));
 
       doc
         .querySelectorAll('[data-auth-visible="signed-out"]')
-        .forEach((el) => setElementVisibility(el, !isAuthenticated));
+        .forEach((el) => setElementVisibility(el, !isAuth));
 
       doc.querySelectorAll('[data-auth-email]').forEach((el) => {
-        if (isAuthenticated) {
+        if (isAuth) {
           el.textContent = email;
           setElementVisibility(el, true);
         } else {
@@ -509,9 +532,11 @@
         }
       });
 
-      if (!isAuthenticated && protectedAreas.length) {
+      if (!isAuth && protectedAreas.length) {
         const redirectTarget =
-          protectedAreas[0].dataset.requiresAuth || protectedAreas[0].dataset.authRedirect || './login/';
+          protectedAreas[0].dataset.requiresAuth ||
+          protectedAreas[0].dataset.authRedirect ||
+          './login/';
         global.location.href = redirectTarget;
       }
     };
@@ -519,12 +544,16 @@
     doc.addEventListener('auth:changed', syncAuthVisibility);
     syncAuthVisibility();
 
+    // Botões/links de logout
     doc.querySelectorAll('[data-logout]').forEach((el) => {
       el.addEventListener('click', (event) => {
         event.preventDefault();
-        authModule.clearSessionEmail();
-        const redirect = el.getAttribute('data-logout-redirect');
-        if (redirect) global.location.href = redirect;
+        const redirect =
+          el.getAttribute('data-logout-redirect') ||
+          el.getAttribute('href');
+        authModule.logout({
+          redirect: redirect && redirect !== '#' ? redirect : undefined
+        });
       });
     });
   };
