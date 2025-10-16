@@ -125,7 +125,7 @@ const initLoginForm = () => {
 
       showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
       window.setTimeout(() => {
-        window.location.href = '../index.html';
+        window.location.href = '../';
       }, 1000);
     } catch (error) {
       console.error('Falha ao simular login:', error);
