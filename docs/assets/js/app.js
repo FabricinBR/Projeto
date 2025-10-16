@@ -6,6 +6,9 @@ const ready = (callback) => {
   }
 };
 
+/* =========================
+   Autenticação (sessão)
+   ========================= */
 const AUTH_SESSION_KEY = 'mefit-session-email';
 const AUTH_REMEMBER_KEY = 'mefit-remember-email';
 
@@ -69,6 +72,9 @@ const clearSessionEmail = () => {
   return dispatchAuthChange();
 };
 
+/* =========================
+   Carrinho - badge
+   ========================= */
 const ensureCartBadge = () => {
   let badge = document.querySelector('[data-cart-count]');
   if (badge) return badge;
@@ -177,6 +183,9 @@ const initCartBadge = () => {
   });
 };
 
+/* =========================
+   Utilidades de UI
+   ========================= */
 const updateYear = () => {
   const targets = document.querySelectorAll('#year, [data-current-year]');
   if (!targets.length) return;
@@ -196,6 +205,9 @@ const setElementVisibility = (element, shouldShow) => {
   }
 };
 
+/* =========================
+   Estado de Autenticação
+   ========================= */
 const initAuthState = () => {
   const protectedAreas = Array.from(document.querySelectorAll('[data-requires-auth]'));
 
@@ -245,6 +257,9 @@ const initAuthState = () => {
   });
 };
 
+/* =========================
+   Login (form demo)
+   ========================= */
 const initLoginForm = () => {
   const loginForm = document.querySelector('#login-form');
   if (!loginForm) return;
@@ -391,6 +406,9 @@ const initLoginForm = () => {
   });
 };
 
+/* =========================
+   Boot
+   ========================= */
 ready(() => {
   updateYear();
   initAuthState();
