@@ -98,5 +98,105 @@
     "cores": ["Preto", "Magenta"],
     "descricao": "Top com zíper frontal e faixa elástica interna que garante suporte de impacto alto.",
     "imagem": "./assets/img/sample1.png"
+  },
+  {
+    "id": 101,
+    "nome": "Produto Teste Essentials",
+    "categoria": "Teste",
+    "preco": 10.0,
+    "tamanhos": ["Único"],
+    "cores": ["Cinza"],
+    "descricao": "Item fictício utilizado para validar o fluxo de adicionar ao carrinho.",
+    "imagem": "./assets/img/sample1.png"
+  },
+  {
+    "id": 102,
+    "nome": "Produto Teste Flex",
+    "categoria": "Teste",
+    "preco": 12.5,
+    "tamanhos": ["Único"],
+    "cores": ["Azul"],
+    "descricao": "Produto simulado para garantir compatibilidade com o carrinho e cálculo de totais.",
+    "imagem": "./assets/img/sample2.png"
+  },
+  {
+    "id": 103,
+    "nome": "Produto Teste Power",
+    "categoria": "Teste",
+    "preco": 15.75,
+    "tamanhos": ["Único"],
+    "cores": ["Vermelho"],
+    "descricao": "Entrada de catálogo criada apenas para cenários de QA do carrinho.",
+    "imagem": "./assets/img/sample3.png"
+  },
+  {
+    "id": 104,
+    "nome": "Produto Teste Lite",
+    "categoria": "Teste",
+    "preco": 9.99,
+    "tamanhos": ["Único"],
+    "cores": ["Preto"],
+    "descricao": "Recurso auxiliar para testar limites mínimos de preço e estoque.",
+    "imagem": "./assets/img/sample1.png"
+  },
+  {
+    "id": 105,
+    "nome": "Produto Teste Duo",
+    "categoria": "Teste",
+    "preco": 19.9,
+    "tamanhos": ["Único"],
+    "cores": ["Branco", "Preto"],
+    "descricao": "Produto fictício com múltiplas cores para avaliar renderização de atributos.",
+    "imagem": "./assets/img/sample2.png"
+  },
+  {
+    "id": 106,
+    "nome": "Produto Teste Pro",
+    "categoria": "Teste",
+    "preco": 24.9,
+    "tamanhos": ["Único"],
+    "cores": ["Laranja"],
+    "descricao": "Serve para exercícios automatizados que cobrem descontos e cupons no carrinho.",
+    "imagem": "./assets/img/sample3.png"
+  },
+  {
+    "id": 107,
+    "nome": "Produto Teste Wave",
+    "categoria": "Teste",
+    "preco": 14.5,
+    "tamanhos": ["Único"],
+    "cores": ["Azul", "Verde"],
+    "descricao": "Entrada extra focada em validar atualização do badge de itens.",
+    "imagem": "./assets/img/sample1.png"
+  },
+  {
+    "id": 108,
+    "nome": "Produto Teste Max",
+    "categoria": "Teste",
+    "preco": 29.9,
+    "tamanhos": ["Único"],
+    "cores": ["Preto", "Amarelo"],
+    "descricao": "Produto de QA para testar volumes maiores de itens no carrinho.",
+    "imagem": "./assets/img/sample2.png"
+  },
+  {
+    "id": 109,
+    "nome": "Produto Teste Mini",
+    "categoria": "Teste",
+    "preco": 8.5,
+    "tamanhos": ["Único"],
+    "cores": ["Rosa"],
+    "descricao": "Item fictício de baixo custo pensado para testes de frete gratuito e promoções.",
+    "imagem": "./assets/img/sample3.png"
+  },
+  {
+    "id": 110,
+    "nome": "Produto Teste Prime",
+    "categoria": "Teste",
+    "preco": 34.9,
+    "tamanhos": ["Único"],
+    "cores": ["Verde"],
+    "descricao": "Produto dedicado para validar persistência e recuperação do carrinho entre sessões.",
+    "imagem": "./assets/img/sample1.png"
   }
 ]
