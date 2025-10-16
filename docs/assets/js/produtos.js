@@ -31,6 +31,32 @@ const initProducts = () => {
 
   const normalizeId = (value) => (value ?? '').toString();
 
+  const coerceQuantity = (value) => {
+    const numeric = Number.parseInt(value, 10);
+    return Number.isFinite(numeric) && numeric > 0 ? numeric : 1;
+  };
+
+  const normalizeStoredItem = (entry) => {
+    if (entry == null) return null;
+
+    if (typeof entry === 'string' || typeof entry === 'number') {
+      const id = normalizeId(entry);
+      return id ? { id, quantidade: 1 } : null;
+    }
+
+    if (typeof entry === 'object') {
+      const id = 'id' in entry ? normalizeId(entry.id) : '';
+      if (!id) return null;
+      return {
+        ...entry,
+        id,
+        quantidade: coerceQuantity(entry.quantidade)
+      };
+    }
+
+    return null;
+  };
+
   const loadCart = () => {
     if (typeof window === 'undefined' || !('localStorage' in window)) {
       return [];
@@ -40,13 +66,16 @@ const initProducts = () => {
       if (!stored) return [];
       const parsed = JSON.parse(stored);
       if (!Array.isArray(parsed)) return [];
+
+      const seen = new Set();
       return parsed
-        .filter((item) => item && (typeof item.id === 'string' || typeof item.id === 'number'))
-        .map((item) => ({
-          ...item,
-          id: normalizeId(item.id),
-          quantidade: Number.isFinite(Number(item.quantidade)) ? Number(item.quantidade) : 1
-        }));
+        .map(normalizeStoredItem)
+        .filter((item) => {
+          if (!item?.id) return false;
+          if (seen.has(item.id)) return false;
+          seen.add(item.id);
+          return true;
+        });
     } catch (error) {
       console.warn('Não foi possível carregar o carrinho salvo.', error);
       return [];
@@ -81,6 +110,36 @@ const initProducts = () => {
     button.textContent = active ? 'Remover do carrinho' : 'Adicionar ao carrinho';
     button.classList.toggle('is-active', active);
     button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  };
+
+  const hydrateCartItems = () => {
+    if (!Array.isArray(allProducts) || !allProducts.length || !cartItems.length) return;
+
+    let hasChanges = false;
+    cartItems = cartItems.map((item) => {
+      if (item?.nome && item.preco != null && item.imagem) {
+        return item;
+      }
+
+      const product = allProducts.find((entry) => normalizeId(entry.id) === item.id);
+      if (!product) {
+        return item;
+      }
+
+      hasChanges = true;
+      return {
+        ...item,
+        nome: product.nome,
+        preco: product.preco,
+        imagem: product.imagem,
+        categoria: product.categoria,
+        tamanhos: product.tamanhos
+      };
+    });
+
+    if (hasChanges) {
+      saveCart();
+    }
   };
 
   const updateButtonsForProduct = (productId) => {
@@ -301,6 +360,7 @@ const initProducts = () => {
       }
 
       allProducts = data;
+      hydrateCartItems();
       populateFilters();
       handleFiltersChange();
       attachListeners();
