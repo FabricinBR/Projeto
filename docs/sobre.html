@@ -27,8 +27,10 @@
   </header>
 
   <main>
+    <!-- HERO UNIFICADO -->
     <section class="about-hero container" aria-labelledby="sobre-title">
       <div class="about-hero-grid">
+        <!-- variação: copy/painel à direita -->
         <div class="about-hero-copy">
           <span class="about-eyebrow">Quem somos</span>
           <h1 id="sobre-title">Sobre a M.E FIT</h1>
@@ -38,8 +40,9 @@
             <a class="btn btn-outline" href="./contato.html">Falar com a equipe</a>
           </div>
         </div>
-        <aside class="about-hero-panel" aria-labelledby="missao">
-          <h2 id="missao">Nossa missão</h2>
+
+        <aside class="about-hero-panel" aria-labelledby="missao-hero">
+          <h2 id="missao-hero">Nossa missão</h2>
           <p class="about-hero-lead">Potencializar o seu bem-estar com peças funcionais, confortáveis e bonitas, pensadas para quem treina de verdade e vive em movimento.</p>
           <ul class="about-metrics">
             <li>
@@ -57,33 +60,93 @@
           </ul>
         </aside>
       </div>
+
+      <!-- variação: bloco visual (mantido) -->
+      <figure class="about-hero-figure">
+        <img src="assets/img/sample3.png" alt="Equipe M.E FIT apresentando peças lilás e roxas" loading="lazy">
+        <figcaption>Peças assinadas, modelagem inteligente e testes reais com atletas.</figcaption>
+      </figure>
     </section>
 
+    <!-- OVERVIEW (mantido) -->
+    <section class="about-overview container" aria-labelledby="missao-overview">
+      <div class="about-section-header">
+        <h2 id="missao-overview">Nossa missão</h2>
+        <p>Potencializar o seu bem-estar com peças funcionais, confortáveis e bonitas, pensadas para quem treina de verdade e vive em movimento.</p>
+      </div>
+      <div class="about-overview-grid">
+        <article class="about-overview-card">
+          <h3>Pesquisa aplicada</h3>
+          <p>Entrevistamos nossa comunidade, acompanhamos treinos presenciais e coletamos feedbacks digitais para ajustar cada modelagem. Tudo começa entendendo como você se movimenta.</p>
+        </article>
+        <article class="about-overview-card">
+          <h3>Design consciente</h3>
+          <p>Utilizamos cartela lilás/roxo, elementos reflexivos e estruturas que favorecem amplitude de movimento. Nenhuma peça vai para produção sem testes de durabilidade.</p>
+        </article>
+        <article class="about-overview-card">
+          <h3>Experiência completa</h3>
+          <p>Do primeiro atendimento ao pós-compra, nosso time garante orientação sobre tamanhos, cuidados e combinações para prolongar a vida útil das peças.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- VALORES / DIFERENCIAIS (unificado: manteve os 4 cards) -->
     <section class="about-sections container" aria-labelledby="sobre-pilares">
       <div class="about-section-header">
         <h2 id="sobre-pilares">O que nos move</h2>
         <p>O processo criativo da M.E FIT começa nos treinos, com feedback constante de atletas, educadores físicos e da comunidade que veste a marca todos os dias.</p>
       </div>
-      <div class="about-grid">
+      <div class="about-grid about-grid--values">
         <article class="about-card">
+          <span class="about-card-icon" aria-hidden="true">01</span>
           <h3>Tecnologia &amp; conforto</h3>
           <p>Selecionamos tecidos respiráveis, com compressão na medida, controle de umidade e proteção UV para acompanhar diferentes modalidades.</p>
         </article>
         <article class="about-card">
+          <span class="about-card-icon" aria-hidden="true">02</span>
           <h3>Modelagem inteligente</h3>
-          <p>Desenvolvemos ergonomia que abraça o corpo, do PP ao GG, com ajustes específicos para treinos de força, corrida, yoga e treinos funcionais.</p>
+          <p>Ergonomia que acompanha o corpo, do PP ao GG, com versões específicas para força, corrida, yoga e treinos funcionais.</p>
         </article>
         <article class="about-card">
+          <span class="about-card-icon" aria-hidden="true">03</span>
           <h3>Qualidade real</h3>
-          <p>Cada peça passa por costuras reforçadas, testes de uso intensivo e controle de qualidade em pequenos lotes para garantir durabilidade.</p>
+          <p>Costuras reforçadas, testes de uso intensivo e controle de qualidade lote a lote para garantir durabilidade.</p>
         </article>
         <article class="about-card">
+          <span class="about-card-icon" aria-hidden="true">04</span>
           <h3>Design autoral</h3>
-          <p>Identidade visual própria com base nos tons lilás e roxo da M.E FIT, apresentando lançamentos sazonais e colaborações exclusivas.</p>
+          <p>Identidade visual própria com base nos tons lilás e roxo da M.E FIT, com lançamentos sazonais e colaborações exclusivas.</p>
         </article>
       </div>
     </section>
 
+    <!-- PROCESSO (mantido) -->
+    <section class="about-process container" aria-labelledby="sobre-processo">
+      <div class="about-section-header">
+        <h2 id="sobre-processo">Como criamos cada coleção</h2>
+        <p>O Laboratório M.E FIT transforma ideias em peças com propósito, aliando dados e intuição criativa.</p>
+      </div>
+      <ol class="about-process-steps">
+        <li>
+          <h3>Pesquisa de materiais</h3>
+          <p>Selecionamos fibras inteligentes com refrescância, sustentação e resistência à abrasão.</p>
+        </li>
+        <li>
+          <h3>Prototipagem rápida</h3>
+          <p>Modelistas criam versões piloto e ajustam detalhes com base em feedback imediato de atletas.</p>
+        </li>
+        <li>
+          <h3>Testes de campo</h3>
+          <p>Treinos monitorados garantem caimento perfeito, respirabilidade e conforto em movimento.</p>
+        </li>
+        <li>
+          <h3>Qualidade e rastreio</h3>
+          <p>Cada lote passa por revisão manual, rastreio transparente e embalagens de menor impacto.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- COMPROMISSO (listas combinadas) -->
     <section class="about-commitment container" aria-labelledby="responsabilidade">
       <div class="about-callout">
         <h2 id="responsabilidade">Responsabilidade que gera impacto</h2>
@@ -96,10 +159,11 @@
       </div>
     </section>
 
+    <!-- LINHA DO TEMPO (texto unificado) -->
     <section class="about-timeline container" aria-labelledby="trajetoria">
       <div class="about-section-header">
         <h2 id="trajetoria">Nossa trajetória</h2>
-        <p>Cada coleção nasce de experimentos práticos e das conversas com quem vive esporte diariamente.</p>
+        <p>Cada marco fortalece o compromisso com inovação, responsabilidade e bem-estar.</p>
       </div>
       <ol class="about-timeline-list">
         <li>
@@ -125,6 +189,7 @@
       </ol>
     </section>
 
+    <!-- SUPORTE / CONTATO (unificado; padronizei WhatsApp) -->
     <section class="about-support container" aria-labelledby="atendimento">
       <div class="about-section-header">
         <h2 id="atendimento">Estamos aqui para você</h2>
@@ -135,20 +200,39 @@
         <div class="about-contact-grid">
           <div>
             <span class="about-contact-label">WhatsApp</span>
-            <a class="about-contact-value" href="https://wa.me/5511999999999">(11) 99999-9999</a>
+            <a class="about-contact-value" href="https://wa.me/5511999999999" target="_blank" rel="noopener">(11) 99999-9999</a>
+            <span class="about-contact-note">Resposta média em até 5 minutos úteis.</span>
           </div>
           <div>
             <span class="about-contact-label">E-mail</span>
             <a class="about-contact-value" href="mailto:atendimento@mefit.com">atendimento@mefit.com</a>
+            <span class="about-contact-note">Retorno personalizado em até 24h úteis.</span>
           </div>
           <div>
             <span class="about-contact-label">Endereço</span>
             <strong class="about-contact-value">Rua Energia 123, São Paulo – SP</strong>
+            <span class="about-contact-note">Visitas com agendamento prévio.</span>
           </div>
           <div>
             <span class="about-contact-label">Horário</span>
             <strong class="about-contact-value">Seg a Sex, 9h–18h</strong>
+            <span class="about-contact-note">Suporte emergencial via WhatsApp.</span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA (mantida) -->
+    <section class="about-cta container" aria-labelledby="sobre-cta">
+      <div class="about-cta-card">
+        <div>
+          <span class="about-eyebrow">Treine com confiança</span>
+          <h2 id="sobre-cta">Pronta para elevar seu movimento?</h2>
+          <p>Descubra peças que unem design autoral, tecnologia e responsabilidade para acompanhar cada novo desafio.</p>
+        </div>
+        <div class="about-cta-actions">
+          <a class="btn btn-primary" href="./produtos.html">Explorar peças</a>
+          <a class="btn btn-outline" href="./contato.html">Agendar atendimento</a>
         </div>
       </div>
     </section>
@@ -213,13 +297,17 @@
       <div class="footer-bottom">
         <small>© <span id="year"></span> M.E FIT. Todos os direitos reservados.</small>
         <div class="footer-meta">
-          <span>WhatsApp: <a href="https://wa.me/551199999999" target="_blank" rel="noopener">(11) 99999-9999</a></span>
+          <span>WhatsApp: <a href="https://wa.me/5511999999999" target="_blank" rel="noopener">(11) 99999-9999</a></span>
           <span>Endereço: Rua Energia 123, São Paulo - SP</span>
         </div>
       </div>
     </div>
   </footer>
 
+  <script>
+    // Atualiza o ano automaticamente
+    (function(){var y=document.getElementById('year'); if(y){ y.textContent=new Date().getFullYear(); }})();
+  </script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>
