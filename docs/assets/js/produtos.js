@@ -29,12 +29,13 @@ const initProducts = () => {
   const source = productGrid.getAttribute('data-source');
   let allProducts = [];
 
+  // ---------- Utilidades de normalização ----------
   const normalizeId = (value) => (value ?? '').toString();
 
   const coerceQuantity = (value) => {
     const numeric = Number.parseInt(value, 10);
     return Number.isFinite(numeric) && numeric > 0 ? numeric : 1;
-  };
+    };
 
   const normalizeStoredItem = (entry) => {
     if (entry == null) return null;
@@ -57,6 +58,7 @@ const initProducts = () => {
     return null;
   };
 
+  // ---------- Persistência do carrinho ----------
   const loadCart = () => {
     if (typeof window === 'undefined' || !('localStorage' in window)) {
       return [];
@@ -137,6 +139,7 @@ const initProducts = () => {
           return item;
         }
 
+        // Completa metadados ausentes do item do carrinho
         if (item?.nome && item.preco != null && item.imagem) {
           if (normalizedId !== item.id) {
             hasChanges = true;
@@ -158,9 +161,7 @@ const initProducts = () => {
       })
       .filter(Boolean);
 
-    if (hasChanges) {
-      saveCart();
-    }
+    if (hasChanges) saveCart();
   };
 
   const updateButtonsForProduct = (productId) => {
@@ -175,6 +176,7 @@ const initProducts = () => {
     const normalizedId = normalizeId(product.id);
     if (!normalizedId) return;
     if (isInCart(normalizedId)) return;
+
     const item = {
       id: normalizedId,
       nome: product.nome,
@@ -211,10 +213,8 @@ const initProducts = () => {
   cartItems = loadCart();
   updateCartBadge();
 
-  const formatCurrency = (value) => value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  });
+  const formatCurrency = (value) =>
+    Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   const updateCount = (visible, total) => {
     if (!countEl) return;
@@ -222,9 +222,10 @@ const initProducts = () => {
       countEl.textContent = 'Nenhum produto disponível no momento.';
       return;
     }
-    const label = visible === total
-      ? `${visible} ${visible === 1 ? 'produto' : 'produtos'} disponíveis.`
-      : `Exibindo ${visible} de ${total} produtos.`;
+    const label =
+      visible === total
+        ? `${visible} ${visible === 1 ? 'produto' : 'produtos'} disponíveis.`
+        : `Exibindo ${visible} de ${total} produtos.`;
     countEl.textContent = label;
   };
 
@@ -237,15 +238,18 @@ const initProducts = () => {
     }
 
     emptyEl.hidden = true;
-    productGrid.innerHTML = items.map((product) => {
-      const productId = normalizeId(product.id);
-      const sizes = Array.isArray(product.tamanhos) ? product.tamanhos.join(', ') : '';
-      const meta = [product.categoria, sizes ? `Tamanhos: ${sizes}` : null].filter(Boolean).join(' • ');
-      const inCart = isInCart(productId);
-      const buttonClass = inCart ? 'btn btn-primary is-active' : 'btn btn-primary';
-      const buttonLabel = inCart ? 'Remover do carrinho' : 'Adicionar ao carrinho';
-      const ariaPressed = inCart ? 'true' : 'false';
-      return `
+    productGrid.innerHTML = items
+      .map((product) => {
+        const productId = normalizeId(product.id);
+        const sizes = Array.isArray(product.tamanhos) ? product.tamanhos.join(', ') : '';
+        const meta = [product.categoria, sizes ? `Tamanhos: ${sizes}` : null]
+          .filter(Boolean)
+          .join(' • ');
+        const inCart = isInCart(productId);
+        const buttonClass = inCart ? 'btn btn-primary is-active' : 'btn btn-primary';
+        const buttonLabel = inCart ? 'Remover do carrinho' : 'Adicionar ao carrinho';
+        const ariaPressed = inCart ? 'true' : 'false';
+        return `
         <article class="p-card">
           <div class="p-thumb"><img src="${product.imagem}" alt="${product.nome}" loading="lazy"></div>
           <h3>${product.nome}</h3>
@@ -254,7 +258,8 @@ const initProducts = () => {
           <button class="${buttonClass}" type="button" data-cart-toggle data-product-id="${productId}" aria-pressed="${ariaPressed}">${buttonLabel}</button>
         </article>
       `;
-    }).join('');
+      })
+      .join('');
   };
 
   const applyFilters = () => {
@@ -262,7 +267,9 @@ const initProducts = () => {
 
     const query = searchInput?.value.trim().toLowerCase();
     if (query) {
-      filtered = filtered.filter((product) => product.nome.toLowerCase().includes(query));
+      filtered = filtered.filter((product) =>
+        product.nome.toLowerCase().includes(query)
+      );
     }
 
     const category = categorySelect?.value;
@@ -272,7 +279,9 @@ const initProducts = () => {
 
     const size = sizeSelect?.value;
     if (size) {
-      filtered = filtered.filter((product) => Array.isArray(product.tamanhos) && product.tamanhos.includes(size));
+      filtered = filtered.filter(
+        (product) => Array.isArray(product.tamanhos) && product.tamanhos.includes(size)
+      );
     }
 
     const minPrice = minPriceInput?.value ? Number(minPriceInput.value) : null;
@@ -288,23 +297,30 @@ const initProducts = () => {
   };
 
   const populateFilters = () => {
-    const categories = Array.from(new Set(allProducts.map((product) => product.categoria)))
+    const categories = Array.from(new Set(allProducts.map((p) => p.categoria)))
+      .filter(Boolean)
       .sort((a, b) => a.localeCompare(b));
+
     if (categorySelect) {
-      categorySelect.innerHTML = '<option value="">Todas as categorias</option>'
-        + categories.map((category) => `<option value="${category}">${category}</option>`).join('');
+      categorySelect.innerHTML =
+        '<option value="">Todas as categorias</option>' +
+        categories.map((c) => `<option value="${c}">${c}</option>`).join('');
     }
 
-    const sizes = Array.from(new Set(allProducts.flatMap((product) => (
-      Array.isArray(product.tamanhos) ? product.tamanhos : []
-    )))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    const sizes = Array.from(
+      new Set(
+        allProducts.flatMap((p) => (Array.isArray(p.tamanhos) ? p.tamanhos : []))
+      )
+    ).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
     if (sizeSelect) {
-      sizeSelect.innerHTML = '<option value="">Todos os tamanhos</option>'
-        + sizes.map((size) => `<option value="${size}">${size}</option>`).join('');
+      sizeSelect.innerHTML =
+        '<option value="">Todos os tamanhos</option>' +
+        sizes.map((s) => `<option value="${s}">${s}</option>`).join('');
     }
 
     const prices = allProducts
-      .map((product) => Number(product.preco))
+      .map((p) => Number(p.preco))
       .filter((price) => !Number.isNaN(price));
     if (prices.length) {
       const min = Math.min(...prices);
@@ -330,11 +346,13 @@ const initProducts = () => {
   };
 
   const attachListeners = () => {
-    [searchInput, categorySelect, sizeSelect, minPriceInput, maxPriceInput].forEach((input) => {
-      if (!input) return;
-      const eventName = input.tagName === 'INPUT' ? 'input' : 'change';
-      input.addEventListener(eventName, handleFiltersChange);
-    });
+    [searchInput, categorySelect, sizeSelect, minPriceInput, maxPriceInput].forEach(
+      (input) => {
+        if (!input) return;
+        const eventName = input.tagName === 'INPUT' ? 'input' : 'change';
+        input.addEventListener(eventName, handleFiltersChange);
+      }
+    );
 
     if (filtersForm) {
       filtersForm.addEventListener('reset', () => {
@@ -373,6 +391,7 @@ const initProducts = () => {
       if (loadingEl) loadingEl.hidden = false;
       if (emptyEl) emptyEl.hidden = true;
       if (countEl) countEl.textContent = 'Carregando produtos...';
+
       const response = await fetch(source, { cache: 'no-store' });
       if (!response.ok) {
         throw new Error(`Erro ao buscar produtos: ${response.status}`);
@@ -390,7 +409,9 @@ const initProducts = () => {
       attachListeners();
     } catch (error) {
       console.error(error);
-      if (countEl) countEl.textContent = 'Não foi possível carregar o catálogo agora. Tente novamente mais tarde.';
+      if (countEl)
+        countEl.textContent =
+          'Não foi possível carregar o catálogo agora. Tente novamente mais tarde.';
       if (loadingEl) loadingEl.hidden = true;
     }
   };
