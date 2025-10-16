@@ -33,6 +33,70 @@ const initProducts = () => {
     return badge;
   };
 
+  const animateAddToCart = (productCard) => {
+    if (!productCard) return;
+
+    const image = productCard.querySelector('.p-thumb img');
+    if (!image) return;
+
+    const cartLink = document.querySelector('.nav a[href$="carrinho.html"]');
+    const cartTarget =
+      cartCountBadge && !cartCountBadge.hidden && cartCountBadge.offsetParent !== null
+        ? cartCountBadge
+        : cartLink;
+    if (!cartTarget) return;
+
+    const imageRect = image.getBoundingClientRect();
+    const targetRect = cartTarget.getBoundingClientRect();
+
+    if (!imageRect.width || !imageRect.height) return;
+
+    const clone = image.cloneNode(true);
+    clone.classList.add('product-fly-clone');
+    clone.style.left = `${imageRect.left}px`;
+    clone.style.top = `${imageRect.top}px`;
+    clone.style.width = `${imageRect.width}px`;
+    clone.style.height = `${imageRect.height}px`;
+    clone.style.transform = 'translate3d(0, 0, 0)';
+    clone.style.opacity = '1';
+
+    document.body.appendChild(clone);
+
+    // Força o cálculo de layout antes de iniciar a transição
+    clone.getBoundingClientRect();
+
+    const targetX = targetRect.left + targetRect.width / 2;
+    const targetY = targetRect.top + targetRect.height / 2;
+    const imageCenterX = imageRect.left + imageRect.width / 2;
+    const imageCenterY = imageRect.top + imageRect.height / 2;
+
+    const translateX = targetX - imageCenterX;
+    const translateY = targetY - imageCenterY;
+
+    const performAnimation = () => {
+      clone.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(0.2)`;
+      clone.style.opacity = '0';
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(performAnimation);
+    });
+
+    const removeClone = () => {
+      clone.removeEventListener('transitionend', removeClone);
+      clone.remove();
+    };
+
+    clone.addEventListener('transitionend', removeClone);
+
+    window.setTimeout(() => {
+      if (clone.isConnected) {
+        clone.removeEventListener('transitionend', removeClone);
+        clone.remove();
+      }
+    }, 900);
+  };
+
   const filtersForm = document.querySelector('[data-product-filters]');
   const searchInput = document.querySelector('[data-product-search]');
   const categorySelect = document.querySelector('[data-filter-category]');
@@ -407,8 +471,12 @@ const initProducts = () => {
       const productId = normalizeId(button.getAttribute('data-product-id'));
       const product = allProducts.find((item) => normalizeId(item.id) === productId);
       if (!product) return;
+      const alreadyInCart = isInCart(productId);
       toggleCartItem(product);
       updateButtonsForProduct(productId);
+      if (!alreadyInCart && isInCart(productId)) {
+        animateAddToCart(button.closest('.p-card'));
+      }
       button.blur();
     });
   };
