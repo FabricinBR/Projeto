@@ -115,27 +115,48 @@ const initProducts = () => {
   const hydrateCartItems = () => {
     if (!Array.isArray(allProducts) || !allProducts.length || !cartItems.length) return;
 
+    const catalogById = new Map(
+      allProducts.map((product) => [normalizeId(product.id), product])
+    );
+
     let hasChanges = false;
-    cartItems = cartItems.map((item) => {
-      if (item?.nome && item.preco != null && item.imagem) {
-        return item;
-      }
+    cartItems = cartItems
+      .map((item) => {
+        const normalizedId = normalizeId(item?.id);
+        if (!normalizedId) {
+          hasChanges = true;
+          return null;
+        }
 
-      const product = allProducts.find((entry) => normalizeId(entry.id) === item.id);
-      if (!product) {
-        return item;
-      }
+        const product = catalogById.get(normalizedId);
+        if (!product) {
+          if (normalizedId !== item.id) {
+            hasChanges = true;
+            return { ...item, id: normalizedId };
+          }
+          return item;
+        }
 
-      hasChanges = true;
-      return {
-        ...item,
-        nome: product.nome,
-        preco: product.preco,
-        imagem: product.imagem,
-        categoria: product.categoria,
-        tamanhos: product.tamanhos
-      };
-    });
+        if (item?.nome && item.preco != null && item.imagem) {
+          if (normalizedId !== item.id) {
+            hasChanges = true;
+            return { ...item, id: normalizedId };
+          }
+          return item;
+        }
+
+        hasChanges = true;
+        return {
+          ...item,
+          id: normalizedId,
+          nome: product.nome,
+          preco: product.preco,
+          imagem: product.imagem,
+          categoria: product.categoria,
+          tamanhos: product.tamanhos
+        };
+      })
+      .filter(Boolean);
 
     if (hasChanges) {
       saveCart();
@@ -151,9 +172,11 @@ const initProducts = () => {
 
   const addToCart = (product) => {
     if (!product?.id) return;
-    if (isInCart(product.id)) return;
+    const normalizedId = normalizeId(product.id);
+    if (!normalizedId) return;
+    if (isInCart(normalizedId)) return;
     const item = {
-      id: normalizeId(product.id),
+      id: normalizedId,
       nome: product.nome,
       preco: product.preco,
       imagem: product.imagem,
@@ -177,8 +200,9 @@ const initProducts = () => {
 
   const toggleCartItem = (product) => {
     if (!product?.id) return;
-    if (isInCart(product.id)) {
-      removeFromCart(product.id);
+    const normalizedId = normalizeId(product.id);
+    if (isInCart(normalizedId)) {
+      removeFromCart(normalizedId);
       return;
     }
     addToCart(product);
@@ -329,8 +353,8 @@ const initProducts = () => {
     productGrid.addEventListener('click', (event) => {
       const button = event.target.closest('[data-cart-toggle]');
       if (!button) return;
-      const productId = button.getAttribute('data-product-id');
-      const product = allProducts.find((item) => normalizeId(item.id) === normalizeId(productId));
+      const productId = normalizeId(button.getAttribute('data-product-id'));
+      const product = allProducts.find((item) => normalizeId(item.id) === productId);
       if (!product) return;
       toggleCartItem(product);
       updateButtonsForProduct(productId);
