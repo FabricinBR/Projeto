@@ -79,6 +79,8 @@ a:hover{text-decoration:underline}
 .combo-benefits dd{margin:0;font-weight:600}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:24px 0 56px}
 .card{background:var(--card);border:1px solid var(--border);padding:16px;border-radius:14px}
+
+/* === About (merged) === */
 .about-hero{padding:72px 0 32px;display:grid;gap:32px}
 .about-hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;align-items:stretch}
 .about-hero-copy{display:grid;gap:12px}
@@ -86,6 +88,20 @@ a:hover{text-decoration:underline}
 .about-hero-copy h1{margin:0;font-size:40px}
 .about-hero-copy p{margin:0;color:var(--muted);line-height:1.6}
 .about-hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+
+/* Variante “content/figure/stats” (mantida) */
+.about-hero-content{display:grid;gap:20px;background:linear-gradient(140deg,rgba(124,77,255,.18),rgba(12,6,20,.92));border:1px solid var(--border);border-radius:28px;padding:32px;box-shadow:0 28px 70px rgba(8,4,15,.45)}
+.about-hero-content h1{margin:0;font-size:40px}
+.about-hero-content p{margin:0;color:var(--muted);line-height:1.6}
+.about-hero-stats{margin:0;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.about-hero-stats div{background:rgba(16,10,24,.8);border:1px solid var(--border);border-radius:18px;padding:16px;display:grid;gap:4px}
+.about-hero-stats dt{margin:0;font-size:24px;font-weight:700;color:#fff}
+.about-hero-stats dd{margin:0;color:var(--muted);font-size:14px;line-height:1.4}
+.about-hero-figure{justify-self:end;background:radial-gradient(circle at top,var(--primary-2),rgba(12,6,20,.6));border:1px solid var(--border);border-radius:32px;padding:16px;display:grid;gap:12px;box-shadow:0 28px 70px rgba(10,6,18,.5)}
+.about-hero-figure img{width:100%;height:auto;border-radius:20px;mix-blend-mode:screen;object-fit:cover}
+.about-hero-figure figcaption{margin:0;color:var(--muted);font-size:14px;text-align:center}
+
+/* Variante “panel/metrics” (mantida) */
 .about-hero-panel{background:linear-gradient(150deg,rgba(124,77,255,.22),rgba(12,6,20,.92));border:1px solid var(--border);border-radius:24px;padding:28px;display:grid;gap:16px;box-shadow:0 24px 60px rgba(9,5,16,.35)}
 .about-hero-panel h2{margin:0;font-size:22px}
 .about-hero-lead{margin:0;color:var(--muted);line-height:1.6}
@@ -93,14 +109,31 @@ a:hover{text-decoration:underline}
 .about-metrics li{background:rgba(16,10,24,.75);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:grid;gap:4px}
 .about-metrics strong{font-size:22px;color:#fff}
 .about-metrics span{color:var(--muted);font-size:14px;line-height:1.4}
+
 .about-sections{padding:24px 0 16px;display:grid;gap:28px}
 .about-section-header{display:grid;gap:8px;max-width:620px}
 .about-section-header h2{margin:0}
 .about-section-header p{margin:0;color:var(--muted);line-height:1.6}
+
 .about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.about-grid--values{gap:24px}
+
 .about-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;display:grid;gap:12px}
 .about-card h3{margin:0;font-size:20px}
 .about-card p{margin:0;color:var(--muted);line-height:1.6}
+.about-card-icon{width:36px;height:36px;border-radius:12px;background:rgba(124,77,255,.28);display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px}
+
+.about-overview{padding:16px 0 32px;display:grid;gap:32px}
+.about-overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.about-overview-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:24px;display:grid;gap:10px;line-height:1.6;color:var(--muted)}
+.about-overview-card h3{margin:0;color:#fff;font-size:18px}
+
+.about-process{padding:16px 0 24px;display:grid;gap:24px}
+.about-process-steps{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.about-process-steps li{background:rgba(16,10,24,.82);border:1px solid var(--border);border-radius:22px;padding:24px;display:grid;gap:8px}
+.about-process-steps h3{margin:0;color:#fff;font-size:18px}
+.about-process-steps p{margin:0;color:var(--muted);line-height:1.6}
+
 .about-commitment{padding:16px 0 8px}
 .about-callout{background:linear-gradient(140deg,rgba(124,77,255,.2),rgba(12,6,20,.92));border:1px solid var(--border);border-radius:24px;padding:28px;display:grid;gap:16px}
 .about-callout h2{margin:0}
@@ -108,12 +141,23 @@ a:hover{text-decoration:underline}
 .about-callout ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .about-callout li{display:flex;align-items:flex-start;gap:10px;color:var(--muted);line-height:1.5}
 .about-callout li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+
 .about-timeline{padding:24px 0 32px;display:grid;gap:24px}
 .about-timeline-list{list-style:none;margin:0;padding:0;display:grid;gap:16px}
 .about-timeline-list li{position:relative;padding-left:34px;line-height:1.5}
 .about-timeline-list li::before{content:"";position:absolute;left:0;top:10px;width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(255,128,171,.12)}
 .about-timeline-list time{display:block;font-weight:700;color:#fff}
 .about-timeline-list p{margin:4px 0 0;color:var(--muted)}
+
+.about-community{padding:16px 0 16px;display:grid;gap:24px}
+.about-community-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.about-community-card{background:rgba(16,10,24,.85);border:1px solid var(--border);border-radius:22px;padding:24px;display:grid;gap:12px}
+.about-community-card h3{margin:0;font-size:18px}
+.about-community-card p{margin:0;color:var(--muted);line-height:1.5}
+.about-community-card ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.about-community-card li{display:flex;align-items:flex-start;gap:8px;color:var(--muted);font-size:14px;line-height:1.45}
+.about-community-card li::before{content:"•";color:var(--primary-2);font-weight:700;margin-top:-2px}
+
 .about-support{padding:16px 0 60px;display:grid;gap:24px}
 .about-support-grid{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:28px;display:grid;gap:20px}
 .about-support-text{margin:0;color:var(--muted);line-height:1.6}
@@ -122,11 +166,22 @@ a:hover{text-decoration:underline}
 .about-contact-label{text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--muted);font-weight:600}
 .about-contact-value{font-size:16px;font-weight:600;color:#fff}
 .about-contact-grid a.about-contact-value{color:var(--primary-2)}
+
+.about-cta{padding:0 0 72px}
+.about-cta-card{background:linear-gradient(150deg,rgba(124,77,255,.24),rgba(12,6,20,.9));border:1px solid var(--border);border-radius:28px;padding:32px;display:grid;gap:20px;align-items:center;box-shadow:0 30px 80px rgba(8,4,16,.45)}
+.about-cta-card h2{margin:0;font-size:28px}
+.about-cta-card p{margin:0;color:var(--muted);line-height:1.6}
+.about-cta-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+/* === Footer & outros === */
 .site-footer{margin-top:56px;background:rgba(12,6,20,.85);border-top:1px solid var(--border);padding:48px 0 24px}
 .footer-grid{display:grid;gap:28px}
 @media (min-width:720px){
   .footer-grid{grid-template-columns:repeat(5,minmax(160px,1fr))}
   .footer-brand{grid-column:span 2}
+  .about-hero{grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr)}
+  .about-hero-figure{align-self:stretch}
+  .about-cta-card{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 }
 .footer-brand{display:grid;gap:12px;max-width:320px}
 .footer-brand p{margin:0;color:var(--muted);line-height:1.5}
@@ -141,6 +196,8 @@ a:hover{text-decoration:underline}
 .footer-meta{display:flex;gap:16px;flex-wrap:wrap}
 .footer-meta span{display:flex;align-items:center;gap:6px}
 .footer-meta a{color:var(--primary-2);font-weight:600}
+
+/* Produtos, formulários, auth, perfil, carrinho — inalterados */
 .product-layout{display:grid;gap:32px;padding:24px 0 60px}
 .product-header{display:grid;gap:12px}
 .product-header h1{margin:0}

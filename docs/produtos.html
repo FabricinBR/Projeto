@@ -1,12 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>M.E FIT — Produtos</title>
-  <link href="./assets/css/style.css" rel="stylesheet">
-  <link rel="icon" href="./assets/img/favicon.png" type="image/png">
-  <meta name="description" content="Catálogo de produtos M.E FIT.">
+  <link href="./assets/css/style.css" rel="stylesheet" />
+  <link rel="icon" href="./assets/img/favicon.png" type="image/png" />
+  <meta name="description" content="Catálogo de produtos M.E FIT." />
+
+  <!-- Estilos mínimos para os componentes do catálogo (mantém a página funcional
+       mesmo sem ajustes no style.css). Se já estiver no seu CSS, você pode remover. -->
+  <style>
+    main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    form[data-product-filters] {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-block; margin-top: 0.5rem; background: #7d2ae8; color: #fff;
+      border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; transition: 0.3s;
+    }
+    .btn.is-active { background: #b854ff; }
+    .btn:hover { opacity: 0.85; }
+    [data-product-grid] {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;
+    }
+    .p-card {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 1rem; text-align: center; transition: transform 0.2s;
+    }
+    .p-card:hover { transform: scale(1.02); }
+    .p-thumb img { max-width: 100%; height: auto; border-radius: 8px; }
+    [data-product-empty], [data-product-loading] { text-align: center; margin-top: 1rem; }
+    /* contador do carrinho dentro do link da nav (opcional) */
+    .cart-badge {
+      display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 6px;
+      font-size: 12px; line-height: 18px; text-align: center; border-radius: 999px;
+      background: #b388ff; color: #0f0a12;
+    }
+    .cart-badge[hidden] { display: none; }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -16,7 +50,11 @@
       </div>
       <nav class="nav" aria-label="Navegação principal">
         <a href="./index.html">Início</a>
-        <a href="./produtos.html" class="active">Produtos</a>
+        <a href="./produtos.html" class="active">
+          Produtos
+          <!-- badge de contagem do carrinho (atualizado via JS) -->
+          <span class="cart-badge" data-cart-count hidden>0</span>
+        </a>
         <a href="./carrinho.html">Carrinho</a>
         <a href="./perfil-cliente.html">Perfil</a>
         <a href="./sobre.html">Sobre</a>
@@ -26,129 +64,27 @@
     </div>
   </header>
 
-  <main class="container product-layout">
-    <header class="product-header">
-      <h1>Catálogo de produtos</h1>
-      <p>Explore a coleção oficial M.E FIT com dados reais e filtros avançados para encontrar a peça ideal.</p>
-    </header>
+  <main>
+    <form data-product-filters>
+      <input type="text" placeholder="Buscar produto..." data-product-search />
+      <select data-filter-category>
+        <option value="">Todas as categorias</option>
+      </select>
+      <select data-filter-size>
+        <option value="">Todos os tamanhos</option>
+      </select>
+      <input type="number" step="0.01" placeholder="Preço mínimo" data-filter-min-price />
+      <input type="number" step="0.01" placeholder="Preço máximo" data-filter-max-price />
+      <button type="reset" class="btn" data-product-clear>Limpar</button>
+    </form>
 
-    <section class="product-filters" aria-label="Filtros do catálogo">
-      <form class="filter-form" data-product-filters>
-        <div class="filter-group">
-          <label for="buscar-produto">Buscar por nome</label>
-          <input id="buscar-produto" type="search" placeholder="Digite o nome do produto" autocomplete="off" data-product-search>
-        </div>
+    <p data-product-count>Carregando catálogo completo...</p>
+    <div data-product-loading hidden>Carregando produtos...</div>
+    <p data-product-empty hidden>Nenhum produto encontrado com os filtros selecionados.</p>
 
-        <div class="filter-grid">
-          <div class="filter-group">
-            <label for="filtrar-categoria">Categoria</label>
-            <select id="filtrar-categoria" data-filter-category>
-              <option value="">Todas as categorias</option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label for="filtrar-tamanho">Tamanho</label>
-            <select id="filtrar-tamanho" data-filter-size>
-              <option value="">Todos os tamanhos</option>
-            </select>
-          </div>
-
-          <fieldset class="filter-group">
-            <legend>Preço</legend>
-            <div class="price-inputs">
-              <label class="visually-hidden" for="preco-min">Preço mínimo</label>
-              <input id="preco-min" type="number" min="0" step="0.5" placeholder="Mín." data-filter-min-price>
-              <span aria-hidden="true">–</span>
-              <label class="visually-hidden" for="preco-max">Preço máximo</label>
-              <input id="preco-max" type="number" min="0" step="0.5" placeholder="Máx." data-filter-max-price>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="filter-actions">
-          <button type="reset" class="btn btn-outline" data-product-clear>Limpar filtros</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="product-results" aria-live="polite">
-      <div class="product-toolbar">
-        <p class="result-count" data-product-count>Carregando produtos...</p>
-      </div>
-      <div class="product-grid" data-product-grid data-source="./assets/data/produtos.json"></div>
-      <p class="product-empty" data-product-empty hidden>Nenhum produto encontrado com os filtros selecionados.</p>
-      <p class="product-loading" data-product-loading hidden>Carregando catálogo completo...</p>
-    </section>
+    <section data-product-grid data-source="./data/products.json"></section>
   </main>
 
-  <footer class="site-footer" aria-label="Rodapé">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
-          <p>
-            Moda esportiva de alta performance para impulsionar a sua rotina de treinos,
-            com peças versáteis e tecnológicas.
-          </p>
-          <div class="footer-contact">
-            <span>Atendimento: seg a sex, 9h às 18h</span>
-            <a href="tel:+551199999999">+55 (11) 99999-9999</a>
-            <a href="mailto:atendimento@mefit.com">atendimento@mefit.com</a>
-          </div>
-        </div>
-        <div class="footer-column">
-          <h3>Comprar</h3>
-          <ul class="footer-links">
-            <li><a href="./index.html">Início</a></li>
-            <li><a href="./produtos.html">Catálogo completo</a></li>
-            <li><a href="./carrinho.html">Carrinho</a></li>
-            <li><a href="./perfil-cliente.html">Perfil</a></li>
-            <li><a href="./index.html#promo-title">Campanhas promocionais</a></li>
-            <li><a href="./index.html#showcases-title">Coleções em destaque</a></li>
-            <li><a href="./login/">Minha conta</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Atendimento</h3>
-          <ul class="footer-links">
-            <li><a href="./contato.html">Contato</a></li>
-            <li><a href="./faq.html">Perguntas frequentes</a></li>
-            <li><a href="./trocas-e-devolucoes.html">Trocas e devoluções</a></li>
-            <li><a href="./rastrear-pedido.html">Rastrear pedido</a></li>
-            <li><a href="./politica-de-frete.html">Política de frete</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Institucional</h3>
-          <ul class="footer-links">
-            <li><a href="./sobre.html">Sobre a M.E FIT</a></li>
-            <li><a href="./blog.html">Blog</a></li>
-            <li><a href="./trabalhe-conosco.html">Trabalhe conosco</a></li>
-            <li><a href="./programa-de-afiliados.html">Programa de afiliados</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Políticas</h3>
-          <ul class="footer-links">
-            <li><a href="./politica-de-privacidade.html">Política de privacidade</a></li>
-            <li><a href="./termos-de-uso.html">Termos de uso</a></li>
-            <li><a href="./pagamentos-e-seguranca.html">Pagamentos e segurança</a></li>
-            <li><a href="./politica-de-frete.html">Envios e prazos</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <small>© <span id="year"></span> M.E FIT. Todos os direitos reservados.</small>
-        <div class="footer-meta">
-          <span>WhatsApp: <a href="https://wa.me/551199999999" target="_blank" rel="noopener">(11) 99999-9999</a></span>
-          <span>Endereço: Rua Energia 123, São Paulo - SP</span>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <script src="./assets/js/app.js"></script>
-  <script src="./assets/js/produtos.js"></script>
+  <script src="./assets/js/products.js" defer></script>
 </body>
 </html>
