@@ -6,6 +6,194 @@ const ready = (callback) => {
   }
 };
 
+const AUTH_SESSION_KEY = 'mefit-session-email';
+const AUTH_REMEMBER_KEY = 'mefit-remember-email';
+
+let sessionWarningShown = false;
+let memorySessionEmail = '';
+let sessionPersisted = false;
+
+const normalizeEmail = (value) => (typeof value === 'string' ? value.trim() : '');
+
+const warnSessionAccess = (message, error) => {
+  if (sessionWarningShown) return;
+  sessionWarningShown = true;
+  console.warn(message, error);
+};
+
+const readSessionEmail = () => {
+  if (typeof window === 'undefined' || !('sessionStorage' in window)) {
+    return sessionPersisted ? memorySessionEmail : '';
+  }
+
+  try {
+    const value = window.sessionStorage.getItem(AUTH_SESSION_KEY);
+    const normalized = normalizeEmail(value);
+    memorySessionEmail = normalized;
+    sessionPersisted = true;
+    return normalized;
+  } catch (error) {
+    warnSessionAccess('Não foi possível acessar a sessão do cliente.', error);
+    return sessionPersisted ? memorySessionEmail : '';
+  }
+};
+
+const writeSessionEmail = (email) => {
+  const normalized = normalizeEmail(email);
+  memorySessionEmail = normalized;
+  sessionPersisted = false;
+
+  if (typeof window === 'undefined' || !('sessionStorage' in window)) {
+    return { email: normalized, persisted: false };
+  }
+
+  try {
+    if (!normalized) {
+      window.sessionStorage.removeItem(AUTH_SESSION_KEY);
+    } else {
+      window.sessionStorage.setItem(AUTH_SESSION_KEY, normalized);
+    }
+    sessionPersisted = true;
+    return { email: normalized, persisted: true };
+  } catch (error) {
+    warnSessionAccess('Não foi possível atualizar a sessão do cliente.', error);
+    return { email: normalized, persisted: false };
+  }
+};
+
+const dispatchAuthChange = (overrideEmail) => {
+  const email =
+    typeof overrideEmail === 'string' ? normalizeEmail(overrideEmail) : readSessionEmail();
+  document.dispatchEvent(
+    new CustomEvent('auth:changed', {
+      detail: { email }
+    })
+  );
+  return email;
+};
+
+const setSessionEmail = (email) => {
+  const result = writeSessionEmail(email);
+  if (!result.persisted) {
+    memorySessionEmail = '';
+  }
+  const finalEmail = result.persisted ? result.email : '';
+  return { email: dispatchAuthChange(finalEmail), persisted: result.persisted };
+};
+
+const clearSessionEmail = () => {
+  const result = writeSessionEmail('');
+  return { email: dispatchAuthChange(''), persisted: result.persisted };
+};
+
+const ensureCartBadge = () => {
+  let badge = document.querySelector('[data-cart-count]');
+  if (badge) return badge;
+
+  const navLink = document.querySelector('.nav a[href$="carrinho.html"]');
+  if (!navLink) return null;
+
+  badge = document.createElement('span');
+  badge.className = 'cart-count-badge';
+  badge.dataset.cartCount = '';
+  badge.hidden = true;
+  badge.textContent = '0';
+  badge.setAttribute('role', 'status');
+  badge.setAttribute('aria-live', 'polite');
+  badge.setAttribute('aria-label', 'Itens no carrinho');
+  navLink.appendChild(badge);
+  return badge;
+};
+
+const CART_KEY = 'mefit-cart-items';
+
+const normalizeId = (value) => (value ?? '').toString();
+
+const coerceQuantity = (value) => {
+  const numeric = Number.parseInt(value, 10);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : 1;
+};
+
+const normalizeStoredItem = (entry) => {
+  if (entry == null) return null;
+
+  if (typeof entry === 'string' || typeof entry === 'number') {
+    const id = normalizeId(entry);
+    return id ? { id, quantidade: 1 } : null;
+  }
+
+  if (typeof entry === 'object') {
+    const id = 'id' in entry ? normalizeId(entry.id) : '';
+    if (!id) return null;
+    return {
+      ...entry,
+      id,
+      quantidade: coerceQuantity(entry.quantidade)
+    };
+  }
+
+  return null;
+};
+
+const loadCartItems = () => {
+  if (typeof window === 'undefined' || !('localStorage' in window)) {
+    return [];
+  }
+  try {
+    const stored = window.localStorage.getItem(CART_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    const seen = new Set();
+    return parsed
+      .map(normalizeStoredItem)
+      .filter((item) => {
+        if (!item?.id) return false;
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+  } catch (error) {
+    console.warn('Não foi possível ler o carrinho armazenado.', error);
+    return [];
+  }
+};
+
+const updateCartBadge = (items) => {
+  const badge = ensureCartBadge();
+  if (!badge) return;
+
+  const total = Array.isArray(items)
+    ? items.reduce((sum, item) => sum + (Number(item?.quantidade) || 1), 0)
+    : 0;
+  badge.textContent = String(total);
+  badge.hidden = total === 0;
+};
+
+const initCartBadge = () => {
+  const syncBadge = () => {
+    const items = loadCartItems();
+    updateCartBadge(items);
+  };
+
+  syncBadge();
+
+  window.addEventListener('storage', (event) => {
+    if (event.key && event.key !== CART_KEY) return;
+    syncBadge();
+  });
+
+  window.addEventListener('cart:changed', (event) => {
+    const detailItems = event.detail?.items;
+    if (Array.isArray(detailItems)) {
+      updateCartBadge(detailItems.map(normalizeStoredItem).filter(Boolean));
+      return;
+    }
+    syncBadge();
+  });
+};
+
 const updateYear = () => {
   const targets = document.querySelectorAll('#year, [data-current-year]');
   if (!targets.length) return;
@@ -13,6 +201,64 @@ const updateYear = () => {
   const currentYear = String(new Date().getFullYear());
   targets.forEach((element) => {
     element.textContent = currentYear;
+  });
+};
+
+const setElementVisibility = (element, shouldShow) => {
+  element.hidden = !shouldShow;
+  if (!shouldShow) {
+    element.setAttribute('aria-hidden', 'true');
+  } else {
+    element.removeAttribute('aria-hidden');
+  }
+};
+
+const initAuthState = () => {
+  const protectedAreas = Array.from(document.querySelectorAll('[data-requires-auth]'));
+
+  const syncAuthVisibility = () => {
+    const email = readSessionEmail();
+    const isAuthenticated = Boolean(email);
+
+    document
+      .querySelectorAll('[data-auth-visible="signed-in"]')
+      .forEach((element) => setElementVisibility(element, isAuthenticated));
+
+    document
+      .querySelectorAll('[data-auth-visible="signed-out"]')
+      .forEach((element) => setElementVisibility(element, !isAuthenticated));
+
+    document.querySelectorAll('[data-auth-email]').forEach((element) => {
+      if (isAuthenticated) {
+        element.textContent = email;
+        setElementVisibility(element, true);
+      } else {
+        element.textContent = '';
+        setElementVisibility(element, false);
+      }
+    });
+
+    if (!isAuthenticated && protectedAreas.length) {
+      const redirectTarget =
+        protectedAreas[0].dataset.requiresAuth ||
+        protectedAreas[0].dataset.authRedirect ||
+        './login/';
+      window.location.href = redirectTarget;
+    }
+  };
+
+  document.addEventListener('auth:changed', syncAuthVisibility);
+  syncAuthVisibility();
+
+  document.querySelectorAll('[data-logout]').forEach((element) => {
+    element.addEventListener('click', (event) => {
+      event.preventDefault();
+      clearSessionEmail();
+      const redirect = element.getAttribute('data-logout-redirect');
+      if (redirect) {
+        window.location.href = redirect;
+      }
+    });
   });
 };
 
@@ -27,8 +273,34 @@ const initLoginForm = () => {
   const submitButton = loginForm.querySelector('button[type="submit"]');
   const toggleButton = loginForm.querySelector('[data-toggle-password]');
 
-  const REMEMBER_KEY = 'mefit-remember-email';
-  const SESSION_KEY = 'mefit-session-email';
+  const REMEMBER_KEY = AUTH_REMEMBER_KEY;
+
+  const getRememberedEmail = () => {
+    try {
+      return localStorage.getItem(REMEMBER_KEY) ?? '';
+    } catch (error) {
+      console.warn('Não foi possível carregar preferências de login salvas.', error);
+      return '';
+    }
+  };
+
+  const setRememberedEmail = (email) => {
+    try {
+      if (email) {
+        localStorage.setItem(REMEMBER_KEY, email);
+      }
+    } catch (error) {
+      console.warn('Não foi possível salvar preferências de login.', error);
+    }
+  };
+
+  const clearRememberedEmail = () => {
+    try {
+      localStorage.removeItem(REMEMBER_KEY);
+    } catch (error) {
+      console.warn('Não foi possível limpar preferências de login.', error);
+    }
+  };
 
   const clearFeedback = () => {
     if (!feedbackEl) return;
@@ -69,13 +341,13 @@ const initLoginForm = () => {
     });
   }
 
-  const savedEmail = localStorage.getItem(REMEMBER_KEY);
+  const savedEmail = getRememberedEmail();
   if (savedEmail && emailInput) {
     emailInput.value = savedEmail;
     if (rememberInput) rememberInput.checked = true;
   }
 
-  const sessionEmail = sessionStorage.getItem(SESSION_KEY);
+  const sessionEmail = readSessionEmail();
   if (sessionEmail) {
     showFeedback(`Você está conectado como ${sessionEmail}.`, 'success');
   }
@@ -116,16 +388,28 @@ const initLoginForm = () => {
         return;
       }
 
-      sessionStorage.setItem(SESSION_KEY, email);
-      if (rememberInput?.checked) {
-        localStorage.setItem(REMEMBER_KEY, email);
-      } else {
-        localStorage.removeItem(REMEMBER_KEY);
+      const { persisted } = setSessionEmail(email);
+      if (!persisted) {
+        clearSessionEmail();
+        showFeedback(
+          'Não foi possível ativar a sessão porque o armazenamento do navegador está bloqueado. Libere cookies/armazenamento e tente novamente.',
+          'error'
+        );
+        return;
       }
 
-      showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
+      if (rememberInput?.checked) {
+        setRememberedEmail(email);
+      } else {
+        clearRememberedEmail();
+      }
+
+      showFeedback(
+        'Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.',
+        'success'
+      );
       window.setTimeout(() => {
-        window.location.href = '../index.html';
+        window.location.href = '../perfil-cliente.html';
       }, 1000);
     } catch (error) {
       console.error('Falha ao simular login:', error);
@@ -138,5 +422,7 @@ const initLoginForm = () => {
 
 ready(() => {
   updateYear();
+  initAuthState();
   initLoginForm();
+  initCartBadge();
 });
