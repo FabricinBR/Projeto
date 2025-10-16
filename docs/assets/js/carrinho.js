@@ -1,12 +1,126 @@
-const onReady = (callback) => {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', callback, { once: true });
-  } else {
-    callback();
+const namespace = window.MEFIT || {};
+const readyFn =
+  namespace.utils?.ready ||
+  ((callback) => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', callback, { once: true });
+    } else {
+      callback();
+    }
+  });
+
+const cartModule = namespace.cart || null;
+const storageModule = namespace.storage || null;
+
+const fallbackNormalizeId = (value) => (value ?? '').toString();
+const fallbackCoerceQuantity = (value) => {
+  const numeric = Number.parseInt(value, 10);
+  return Number.isFinite(numeric) && numeric > 0 ? Math.min(numeric, 99) : 1;
+};
+
+const normalizeId = cartModule?.normalizeId || fallbackNormalizeId;
+const coerceQuantity = (value) =>
+  cartModule?.coerceQuantity ? cartModule.coerceQuantity(value, { min: 1, max: 99 }) : fallbackCoerceQuantity(value);
+
+const CART_KEY = cartModule?.STORAGE_KEY || 'mefit-cart-items';
+
+const loadSharedCart = () => {
+  if (cartModule?.load) {
+    return cartModule.load({ maxQuantity: 99 });
+  }
+
+  if (typeof window === 'undefined' || !('localStorage' in window)) {
+    return [];
+  }
+
+  try {
+    const stored = window.localStorage.getItem(CART_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    const seen = new Set();
+    return parsed
+      .map((entry) => {
+        if (entry == null) return null;
+
+        if (typeof entry === 'string' || typeof entry === 'number') {
+          const id = fallbackNormalizeId(entry);
+          return id ? { id, quantidade: 1 } : null;
+        }
+
+        if (typeof entry === 'object') {
+          const id = fallbackNormalizeId(entry.id);
+          if (!id) return null;
+          return {
+            ...entry,
+            id,
+            quantidade: fallbackCoerceQuantity(entry.quantidade)
+          };
+        }
+
+        return null;
+      })
+      .filter((item) => {
+        if (!item?.id) return false;
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+  } catch (error) {
+    console.warn('Não foi possível carregar o carrinho salvo.', error);
+    return [];
   }
 };
 
-onReady(() => {
+const persistSharedCart = (items, { silent = false, origin = 'cart' } = {}) => {
+  if (cartModule?.persist) {
+    return cartModule.persist(items, { dispatch: !silent, origin, maxQuantity: 99 });
+  }
+
+  const sanitized = Array.isArray(items)
+    ? items
+        .map((entry) => {
+          if (entry == null) return null;
+          if (typeof entry === 'object') {
+            const id = fallbackNormalizeId(entry.id);
+            if (!id) return null;
+            return { ...entry, id, quantidade: fallbackCoerceQuantity(entry.quantidade) };
+          }
+          const id = fallbackNormalizeId(entry);
+          return id ? { id, quantidade: 1 } : null;
+        })
+        .filter((item, index, list) => {
+          if (!item?.id) return false;
+          return list.findIndex((candidate) => candidate?.id === item.id) === index;
+        })
+    : [];
+
+  if (typeof window !== 'undefined' && 'localStorage' in window) {
+    try {
+      window.localStorage.setItem(CART_KEY, JSON.stringify(sanitized));
+    } catch (error) {
+      console.warn('Não foi possível salvar o carrinho.', error);
+    }
+  }
+
+  if (!silent) {
+    window.dispatchEvent(
+      new CustomEvent('cart:changed', {
+        detail: {
+          origin,
+          items: sanitized.map((item) => ({ ...item }))
+        }
+      })
+    );
+  }
+
+  return sanitized;
+};
+
+const couponStorage = storageModule?.local || null;
+
+readyFn(() => {
   const cartList = document.querySelector('[data-cart-list]');
   if (!cartList) return;
 
@@ -24,7 +138,6 @@ onReady(() => {
   const checkoutButton = document.querySelector('[data-cart-checkout]');
   const saveButton = document.querySelector('[data-cart-save]');
 
-  const CART_KEY = 'mefit-cart-items';
   const COUPON_KEY = 'mefit-cart-coupon';
   const FREE_SHIPPING_THRESHOLD = 299;
   const COUPONS = {
@@ -34,17 +147,10 @@ onReady(() => {
 
   const source = cartList.getAttribute('data-source');
 
-  let cartItems = [];
+  let cartItems = loadSharedCart();
   let catalog = [];
   let catalogById = new Map();
   let activeCoupon = null;
-
-  const normalizeId = (value) => (value ?? '').toString();
-
-  const coerceQuantity = (value) => {
-    const numeric = Number.parseInt(value, 10);
-    return Number.isFinite(numeric) && numeric > 0 ? Math.min(numeric, 99) : 1;
-  };
 
   const parsePrice = (value) => {
     const numeric = Number.parseFloat(value);
@@ -59,78 +165,16 @@ onReady(() => {
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
 
-  const normalizeStoredItem = (entry) => {
-    if (entry == null) return null;
-
-    if (typeof entry === 'string' || typeof entry === 'number') {
-      const id = normalizeId(entry);
-      return id ? { id, quantidade: 1 } : null;
-    }
-
-    if (typeof entry === 'object') {
-      const id = 'id' in entry ? normalizeId(entry.id) : '';
-      if (!id) return null;
-      return {
-        ...entry,
-        id,
-        quantidade: coerceQuantity(entry.quantidade)
-      };
-    }
-
-    return null;
-  };
-
-  const cloneCartItems = () => cartItems.map((item) => ({ ...item }));
-
-  const dispatchCartEvent = () => {
-    window.dispatchEvent(
-      new CustomEvent('cart:changed', {
-        detail: {
-          origin: 'cart',
-          items: cloneCartItems()
-        }
-      })
-    );
-  };
-
-  const loadCart = () => {
-    if (typeof window === 'undefined' || !('localStorage' in window)) {
-      return [];
-    }
-    try {
-      const stored = window.localStorage.getItem(CART_KEY);
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      if (!Array.isArray(parsed)) return [];
-
-      const seen = new Set();
-      return parsed
-        .map(normalizeStoredItem)
-        .filter((item) => {
-          if (!item?.id) return false;
-          if (seen.has(item.id)) return false;
-          seen.add(item.id);
-          return true;
-        });
-    } catch (error) {
-      console.warn('Não foi possível carregar o carrinho salvo.', error);
-      return [];
-    }
-  };
-
   const persistCart = ({ silent = false } = {}) => {
-    if (typeof window === 'undefined' || !('localStorage' in window)) {
-      return;
-    }
-    try {
-      window.localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
-    } catch (error) {
-      console.warn('Não foi possível salvar o carrinho.', error);
-    }
-    if (!silent) dispatchCartEvent();
+    cartItems = persistSharedCart(cartItems, { silent, origin: 'cart' });
   };
+
+  const loadCart = () => loadSharedCart();
 
   const loadCoupon = () => {
+    if (couponStorage) {
+      return couponStorage.get(COUPON_KEY) ?? '';
+    }
     if (typeof window === 'undefined' || !('localStorage' in window)) {
       return '';
     }
@@ -143,6 +187,14 @@ onReady(() => {
   };
 
   const persistCoupon = (code) => {
+    if (couponStorage) {
+      if (code) {
+        couponStorage.set(COUPON_KEY, code);
+      } else {
+        couponStorage.remove(COUPON_KEY);
+      }
+      return;
+    }
     if (typeof window === 'undefined' || !('localStorage' in window)) {
       return;
     }
@@ -161,7 +213,9 @@ onReady(() => {
     Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   const countCartItems = () =>
-    cartItems.reduce((total, item) => total + (Number(item.quantidade) || 1), 0);
+    cartModule?.count
+      ? cartModule.count(cartItems)
+      : cartItems.reduce((total, item) => total + (Number(item.quantidade) || 1), 0);
 
   const calculateSubtotal = () =>
     cartItems.reduce((total, item) => {
