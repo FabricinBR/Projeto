@@ -6,6 +6,75 @@ const ready = (callback) => {
   }
 };
 
+/* =========================
+   Autenticação (sessão)
+   ========================= */
+const AUTH_SESSION_KEY = 'mefit-session-email';
+const AUTH_REMEMBER_KEY = 'mefit-remember-email';
+
+let sessionWarningShown = false;
+
+const warnSessionAccess = (message, error) => {
+  if (sessionWarningShown) return;
+  sessionWarningShown = true;
+  console.warn(message, error);
+};
+
+const readSessionEmail = () => {
+  if (typeof window === 'undefined' || !('sessionStorage' in window)) {
+    return '';
+  }
+
+  try {
+    const value = window.sessionStorage.getItem(AUTH_SESSION_KEY);
+    return typeof value === 'string' ? value : '';
+  } catch (error) {
+    warnSessionAccess('Não foi possível acessar a sessão do cliente.', error);
+    return '';
+  }
+};
+
+const writeSessionEmail = (email) => {
+  if (typeof window === 'undefined' || !('sessionStorage' in window)) {
+    return false;
+  }
+
+  try {
+    if (!email) {
+      window.sessionStorage.removeItem(AUTH_SESSION_KEY);
+    } else {
+      window.sessionStorage.setItem(AUTH_SESSION_KEY, email);
+    }
+    return true;
+  } catch (error) {
+    warnSessionAccess('Não foi possível atualizar a sessão do cliente.', error);
+    return false;
+  }
+};
+
+const dispatchAuthChange = () => {
+  const email = readSessionEmail();
+  document.dispatchEvent(
+    new CustomEvent('auth:changed', {
+      detail: { email }
+    })
+  );
+  return email;
+};
+
+const setSessionEmail = (email) => {
+  writeSessionEmail(email);
+  return dispatchAuthChange();
+};
+
+const clearSessionEmail = () => {
+  writeSessionEmail('');
+  return dispatchAuthChange();
+};
+
+/* =========================
+   Carrinho - badge
+   ========================= */
 const ensureCartBadge = () => {
   let badge = document.querySelector('[data-cart-count]');
   if (badge) return badge;
@@ -114,6 +183,9 @@ const initCartBadge = () => {
   });
 };
 
+/* =========================
+   Utilidades de UI
+   ========================= */
 const updateYear = () => {
   const targets = document.querySelectorAll('#year, [data-current-year]');
   if (!targets.length) return;
@@ -124,6 +196,70 @@ const updateYear = () => {
   });
 };
 
+const setElementVisibility = (element, shouldShow) => {
+  element.hidden = !shouldShow;
+  if (!shouldShow) {
+    element.setAttribute('aria-hidden', 'true');
+  } else {
+    element.removeAttribute('aria-hidden');
+  }
+};
+
+/* =========================
+   Estado de Autenticação
+   ========================= */
+const initAuthState = () => {
+  const protectedAreas = Array.from(document.querySelectorAll('[data-requires-auth]'));
+
+  const syncAuthVisibility = () => {
+    const email = readSessionEmail();
+    const isAuthenticated = Boolean(email);
+
+    document
+      .querySelectorAll('[data-auth-visible="signed-in"]')
+      .forEach((element) => setElementVisibility(element, isAuthenticated));
+
+    document
+      .querySelectorAll('[data-auth-visible="signed-out"]')
+      .forEach((element) => setElementVisibility(element, !isAuthenticated));
+
+    document.querySelectorAll('[data-auth-email]').forEach((element) => {
+      if (isAuthenticated) {
+        element.textContent = email;
+        setElementVisibility(element, true);
+      } else {
+        element.textContent = '';
+        setElementVisibility(element, false);
+      }
+    });
+
+    if (!isAuthenticated && protectedAreas.length) {
+      const redirectTarget =
+        protectedAreas[0].dataset.requiresAuth ||
+        protectedAreas[0].dataset.authRedirect ||
+        './login/';
+      window.location.href = redirectTarget;
+    }
+  };
+
+  document.addEventListener('auth:changed', syncAuthVisibility);
+  syncAuthVisibility();
+
+  document.querySelectorAll('[data-logout]').forEach((element) => {
+    element.addEventListener('click', (event) => {
+      event.preventDefault();
+      clearSessionEmail();
+      const redirect = element.getAttribute('data-logout-redirect');
+      if (redirect) {
+        window.location.href = redirect;
+      }
+    });
+  });
+};
+
+/* =========================
+   Login (form demo)
+   ========================= */
 const initLoginForm = () => {
   const loginForm = document.querySelector('#login-form');
   if (!loginForm) return;
@@ -135,8 +271,34 @@ const initLoginForm = () => {
   const submitButton = loginForm.querySelector('button[type="submit"]');
   const toggleButton = loginForm.querySelector('[data-toggle-password]');
 
-  const REMEMBER_KEY = 'mefit-remember-email';
-  const SESSION_KEY = 'mefit-session-email';
+  const REMEMBER_KEY = AUTH_REMEMBER_KEY;
+
+  const getRememberedEmail = () => {
+    try {
+      return localStorage.getItem(REMEMBER_KEY) ?? '';
+    } catch (error) {
+      console.warn('Não foi possível carregar preferências de login salvas.', error);
+      return '';
+    }
+  };
+
+  const setRememberedEmail = (email) => {
+    try {
+      if (email) {
+        localStorage.setItem(REMEMBER_KEY, email);
+      }
+    } catch (error) {
+      console.warn('Não foi possível salvar preferências de login.', error);
+    }
+  };
+
+  const clearRememberedEmail = () => {
+    try {
+      localStorage.removeItem(REMEMBER_KEY);
+    } catch (error) {
+      console.warn('Não foi possível limpar preferências de login.', error);
+    }
+  };
 
   const clearFeedback = () => {
     if (!feedbackEl) return;
@@ -177,13 +339,13 @@ const initLoginForm = () => {
     });
   }
 
-  const savedEmail = localStorage.getItem(REMEMBER_KEY);
+  const savedEmail = getRememberedEmail();
   if (savedEmail && emailInput) {
     emailInput.value = savedEmail;
     if (rememberInput) rememberInput.checked = true;
   }
 
-  const sessionEmail = sessionStorage.getItem(SESSION_KEY);
+  const sessionEmail = readSessionEmail();
   if (sessionEmail) {
     showFeedback(`Você está conectado como ${sessionEmail}.`, 'success');
   }
@@ -224,16 +386,16 @@ const initLoginForm = () => {
         return;
       }
 
-      sessionStorage.setItem(SESSION_KEY, email);
+      setSessionEmail(email);
       if (rememberInput?.checked) {
-        localStorage.setItem(REMEMBER_KEY, email);
+        setRememberedEmail(email);
       } else {
-        localStorage.removeItem(REMEMBER_KEY);
+        clearRememberedEmail();
       }
 
-      showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a página inicial.', 'success');
+      showFeedback('Login realizado com sucesso! Em instantes você será redirecionado para a área do cliente.', 'success');
       window.setTimeout(() => {
-        window.location.href = '../';
+        window.location.href = '../perfil-cliente.html';
       }, 1000);
     } catch (error) {
       console.error('Falha ao simular login:', error);
@@ -244,8 +406,12 @@ const initLoginForm = () => {
   });
 };
 
+/* =========================
+   Boot
+   ========================= */
 ready(() => {
   updateYear();
+  initAuthState();
   initLoginForm();
   initCartBadge();
 });
