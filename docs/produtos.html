@@ -1,112 +1,66 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M.E FIT | Catálogo de Produtos</title>
-  <link rel="stylesheet" href="./assets/css/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>M.E FIT — Produtos</title>
+  <link href="./assets/css/style.css" rel="stylesheet" />
+  <link rel="icon" href="./assets/img/favicon.png" type="image/png" />
+  <meta name="description" content="Catálogo de produtos M.E FIT." />
+
+  <!-- Estilos mínimos para os componentes do catálogo (mantém a página funcional
+       mesmo sem ajustes no style.css). Se já estiver no seu CSS, você pode remover. -->
   <style>
-    /* Estilos básicos para demonstração */
-    body {
-      font-family: "Poppins", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fafafa;
-    }
-    header {
-      background: linear-gradient(90deg, #7d2ae8, #b854ff);
-      color: #fff;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.4rem;
-    }
-    header .cart {
-      position: relative;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    [data-cart-count] {
-      background: #fff;
-      color: #7d2ae8;
-      border-radius: 50%;
-      font-size: 0.7rem;
-      padding: 0.25rem 0.5rem;
-      position: absolute;
-      top: -6px;
-      right: -10px;
-    }
-
-    main {
-      padding: 2rem;
-      max-width: 1100px;
-      margin: auto;
-    }
-
+    main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
     form[data-product-filters] {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      gap: 1rem; margin-bottom: 1.5rem;
     }
-
+    .btn {
+      display: inline-block; margin-top: 0.5rem; background: #7d2ae8; color: #fff;
+      border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; transition: 0.3s;
+    }
+    .btn.is-active { background: #b854ff; }
+    .btn:hover { opacity: 0.85; }
+    [data-product-grid] {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;
+    }
     .p-card {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 1rem;
-      text-align: center;
-      transition: transform 0.2s;
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 1rem; text-align: center; transition: transform 0.2s;
     }
     .p-card:hover { transform: scale(1.02); }
-
-    .p-thumb img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
+    .p-thumb img { max-width: 100%; height: auto; border-radius: 8px; }
+    [data-product-empty], [data-product-loading] { text-align: center; margin-top: 1rem; }
+    /* contador do carrinho dentro do link da nav (opcional) */
+    .cart-badge {
+      display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 6px;
+      font-size: 12px; line-height: 18px; text-align: center; border-radius: 999px;
+      background: #b388ff; color: #0f0a12;
     }
-
-    .btn {
-      display: inline-block;
-      margin-top: 0.5rem;
-      background: #7d2ae8;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .btn.is-active {
-      background: #b854ff;
-    }
-    .btn:hover {
-      opacity: 0.85;
-    }
-
-    [data-product-grid] {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-
-    [data-product-empty],
-    [data-product-loading] {
-      text-align: center;
-      margin-top: 1rem;
-    }
+    .cart-badge[hidden] { display: none; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>M.E FIT – Catálogo</h1>
-    <div class="cart">
-      🛒 Carrinho
-      <span data-cart-count hidden>0</span>
+  <header class="site-header">
+    <div class="container header-grid">
+      <div class="brand">
+        <a href="./index.html" class="brand-link">M.E <span>FIT</span></a>
+      </div>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="./index.html">Início</a>
+        <a href="./produtos.html" class="active">
+          Produtos
+          <!-- badge de contagem do carrinho (atualizado via JS) -->
+          <span class="cart-badge" data-cart-count hidden>0</span>
+        </a>
+        <a href="./carrinho.html">Carrinho</a>
+        <a href="./perfil-cliente.html">Perfil</a>
+        <a href="./sobre.html">Sobre</a>
+        <a href="./contato.html">Contato</a>
+        <a href="./login/">Login</a>
+      </nav>
     </div>
   </header>
 
