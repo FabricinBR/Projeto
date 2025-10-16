@@ -1,9 +1,137 @@
-const onDocumentReady = (callback) => {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', callback, { once: true });
-  } else {
-    callback();
+const namespace = window.MEFIT || {};
+const readyFn =
+  namespace.utils?.ready ||
+  ((callback) => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', callback, { once: true });
+    } else {
+      callback();
+    }
+  });
+
+const cartModule = namespace.cart || null;
+const uiModule = namespace.ui || null;
+
+const fallbackNormalizeId = (value) => (value ?? '').toString();
+const fallbackCoerceQuantity = (value) => {
+  const numeric = Number.parseInt(value, 10);
+  return Number.isFinite(numeric) && numeric > 0 ? Math.min(numeric, 99) : 1;
+};
+
+const normalizeId = cartModule?.normalizeId || fallbackNormalizeId;
+const ensureCartBadgeFallback = () => {
+  let badge = document.querySelector('[data-cart-count]');
+  if (badge) return badge;
+
+  const navLink = document.querySelector('.nav a[href$="carrinho.html"]');
+  if (!navLink) return null;
+
+  badge = document.createElement('span');
+  badge.className = 'cart-count-badge';
+  badge.dataset.cartCount = '';
+  badge.hidden = true;
+  badge.textContent = '0';
+  badge.setAttribute('role', 'status');
+  badge.setAttribute('aria-live', 'polite');
+  badge.setAttribute('aria-label', 'Itens no carrinho');
+  navLink.appendChild(badge);
+  return badge;
+};
+
+const CART_KEY = cartModule?.STORAGE_KEY || 'mefit-cart-items';
+
+const loadSharedCart = () => {
+  if (cartModule?.load) {
+    return cartModule.load({ maxQuantity: 99 });
   }
+
+  if (typeof window === 'undefined' || !('localStorage' in window)) {
+    return [];
+  }
+
+  try {
+    const stored = window.localStorage.getItem(CART_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    const seen = new Set();
+    return parsed
+      .map((entry) => {
+        if (entry == null) return null;
+
+        if (typeof entry === 'string' || typeof entry === 'number') {
+          const id = fallbackNormalizeId(entry);
+          return id ? { id, quantidade: 1 } : null;
+        }
+
+        if (typeof entry === 'object') {
+          const id = fallbackNormalizeId(entry.id);
+          if (!id) return null;
+          return {
+            ...entry,
+            id,
+            quantidade: fallbackCoerceQuantity(entry.quantidade)
+          };
+        }
+
+        return null;
+      })
+      .filter((item) => {
+        if (!item?.id) return false;
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+  } catch (error) {
+    console.warn('Não foi possível carregar o carrinho salvo.', error);
+    return [];
+  }
+};
+
+const persistSharedCart = (items, { silent = false, origin = 'catalog' } = {}) => {
+  if (cartModule?.persist) {
+    return cartModule.persist(items, { dispatch: !silent, origin, maxQuantity: 99 });
+  }
+
+  const sanitized = Array.isArray(items)
+    ? items
+        .map((entry) => {
+          if (entry == null) return null;
+          if (typeof entry === 'object') {
+            const id = fallbackNormalizeId(entry.id);
+            if (!id) return null;
+            return { ...entry, id, quantidade: fallbackCoerceQuantity(entry.quantidade) };
+          }
+          const id = fallbackNormalizeId(entry);
+          return id ? { id, quantidade: 1 } : null;
+        })
+        .filter((item, index, list) => {
+          if (!item?.id) return false;
+          return list.findIndex((candidate) => candidate?.id === item.id) === index;
+        })
+    : [];
+
+  if (typeof window !== 'undefined' && 'localStorage' in window) {
+    try {
+      window.localStorage.setItem(CART_KEY, JSON.stringify(sanitized));
+    } catch (error) {
+      console.warn('Não foi possível salvar o carrinho.', error);
+    }
+  }
+
+  if (!silent) {
+    window.dispatchEvent(
+      new CustomEvent('cart:changed', {
+        detail: {
+          origin,
+          items: sanitized.map((item) => ({ ...item }))
+        }
+      })
+    );
+  }
+
+  return sanitized;
 };
 
 const initProducts = () => {
@@ -11,26 +139,13 @@ const initProducts = () => {
   if (!productGrid || productGrid.dataset.enhanced === 'true') return;
   productGrid.dataset.enhanced = 'true';
 
-  const CART_KEY = 'mefit-cart-items';
-  let cartItems = [];
+  let cartItems = loadSharedCart();
 
   const ensureCartBadge = () => {
-    let badge = document.querySelector('[data-cart-count]');
-    if (badge) return badge;
-
-    const navLink = document.querySelector('.nav a[href$="carrinho.html"]');
-    if (!navLink) return null;
-
-    badge = document.createElement('span');
-    badge.className = 'cart-count-badge';
-    badge.dataset.cartCount = '';
-    badge.hidden = true;
-    badge.textContent = '0';
-    badge.setAttribute('role', 'status');
-    badge.setAttribute('aria-live', 'polite');
-    badge.setAttribute('aria-label', 'Itens no carrinho');
-    navLink.appendChild(badge);
-    return badge;
+    if (uiModule?.ensureCartBadge) {
+      return uiModule.ensureCartBadge();
+    }
+    return ensureCartBadgeFallback();
   };
 
   const animateAddToCart = (productCard) => {
@@ -116,89 +231,18 @@ const initProducts = () => {
   const source = productGrid.getAttribute('data-source');
   let allProducts = [];
 
-  // ---------- Utilidades de normalização ----------
-  const normalizeId = (value) => (value ?? '').toString();
-
-  const coerceQuantity = (value) => {
-    const numeric = Number.parseInt(value, 10);
-    return Number.isFinite(numeric) && numeric > 0 ? numeric : 1;
-  };
-
-  const normalizeStoredItem = (entry) => {
-    if (entry == null) return null;
-
-    if (typeof entry === 'string' || typeof entry === 'number') {
-      const id = normalizeId(entry);
-      return id ? { id, quantidade: 1 } : null;
-    }
-
-    if (typeof entry === 'object') {
-      const id = 'id' in entry ? normalizeId(entry.id) : '';
-      if (!id) return null;
-      return {
-        ...entry,
-        id,
-        quantidade: coerceQuantity(entry.quantidade)
-      };
-    }
-
-    return null;
-  };
-
-  const cloneCartItems = () => cartItems.map((item) => ({ ...item }));
-
-  const dispatchCartEvent = () => {
-    window.dispatchEvent(
-      new CustomEvent('cart:changed', {
-        detail: {
-          origin: 'catalog',
-          items: cloneCartItems()
-        }
-      })
-    );
-  };
-
   // ---------- Persistência do carrinho ----------
-  const loadCart = () => {
-    if (typeof window === 'undefined' || !('localStorage' in window)) {
-      return [];
-    }
-    try {
-      const stored = localStorage.getItem(CART_KEY);
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      if (!Array.isArray(parsed)) return [];
-
-      const seen = new Set();
-      return parsed
-        .map(normalizeStoredItem)
-        .filter((item) => {
-          if (!item?.id) return false;
-          if (seen.has(item.id)) return false;
-          seen.add(item.id);
-          return true;
-        });
-    } catch (error) {
-      console.warn('Não foi possível carregar o carrinho salvo.', error);
-      return [];
-    }
-  };
+  const loadCart = () => loadSharedCart();
 
   const persistCart = ({ silent = false } = {}) => {
-    if (typeof window === 'undefined' || !('localStorage' in window)) {
-      return;
-    }
-    try {
-      localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
-    } catch (error) {
-      console.warn('Não foi possível salvar o carrinho.', error);
-    }
-    if (!silent) dispatchCartEvent();
+    cartItems = persistSharedCart(cartItems, { silent, origin: 'catalog' });
   };
 
   const updateCartBadge = () => {
     if (!cartCountBadge) return;
-    const total = cartItems.reduce((sum, item) => sum + (Number(item.quantidade) || 1), 0);
+    const total = cartModule?.count
+      ? cartModule.count(cartItems)
+      : cartItems.reduce((sum, item) => sum + (Number(item.quantidade) || 1), 0);
     cartCountBadge.textContent = String(total);
     cartCountBadge.hidden = total === 0;
   };
@@ -547,4 +591,4 @@ const initProducts = () => {
   });
 };
 
-onDocumentReady(initProducts);
+readyFn(initProducts);
