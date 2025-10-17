@@ -92,8 +92,13 @@ main{padding:2rem 0}
   backdrop-filter:saturate(115%) blur(6px);
 }
 .header-grid{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:14px 0}
-.brand-link{font-family:var(--ff-heading); font-weight:800; letter-spacing:.6px; font-size:1.25rem; color:#fff}
-.brand-link span{color:var(--primary)}
+.brand-link{display:inline-flex;align-items:center;gap:.75rem;font-family:var(--ff-heading);font-weight:800;letter-spacing:.6px;font-size:1.25rem;color:#fff;text-decoration:none}
+.brand-link:hover{color:#fff}
+.brand-link:focus-visible{outline:2px solid var(--primary);outline-offset:4px}
+.brand-mark{width:2.5rem;height:auto;display:block}
+.brand-text{display:inline-flex;align-items:baseline;gap:.35rem;color:inherit}
+.brand-text strong{color:var(--primary);font-weight:800}
+
 
 .nav{display:flex; gap:1rem; align-items:center}
 .nav a{padding:.5rem .75rem;border-radius:10px}

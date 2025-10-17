@@ -7,7 +7,7 @@
     "tamanhos": ["P", "M", "G"],
     "cores": ["Preto", "Roxo"],
     "descricao": "Legging com compressão graduada e tecido respirável para treinos de alta intensidade.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 2,
@@ -17,7 +17,7 @@
     "tamanhos": ["PP", "P", "M"],
     "cores": ["Uva"],
     "descricao": "Top com recortes em mesh e bojo removível, ideal para treinos em dias quentes.",
-    "imagem": "./assets/img/sample2.png"
+    "imagem": "./assets/img/sample2.svg"
   },
   {
     "id": 3,
@@ -27,7 +27,7 @@
     "tamanhos": ["P", "M", "G", "GG"],
     "cores": ["Lilás", "Preto"],
     "descricao": "Tecnologia dry fit que afasta o suor e mantém o conforto durante a corrida.",
-    "imagem": "./assets/img/sample3.png"
+    "imagem": "./assets/img/sample3.svg"
   },
   {
     "id": 4,
@@ -37,7 +37,7 @@
     "tamanhos": ["P", "M", "G"],
     "cores": ["Preto"],
     "descricao": "Shorts com bolso interno para chaves e detalhes refletivos para treinos noturnos.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 5,
@@ -47,7 +47,7 @@
     "tamanhos": ["M", "G", "GG"],
     "cores": ["Grafite"],
     "descricao": "Jaqueta corta-vento impermeável com interior em fleece leve para aquecimento rápido.",
-    "imagem": "./assets/img/sample2.png"
+    "imagem": "./assets/img/sample2.svg"
   },
   {
     "id": 6,
@@ -57,7 +57,7 @@
     "tamanhos": ["P", "M"],
     "cores": ["Roxo"],
     "descricao": "Macacão de alta sustentação com recortes estratégicos para modelagem natural.",
-    "imagem": "./assets/img/sample3.png"
+    "imagem": "./assets/img/sample3.svg"
   },
   {
     "id": 7,
@@ -67,7 +67,7 @@
     "tamanhos": ["PP", "P", "M", "G"],
     "cores": ["Branco", "Vinho"],
     "descricao": "Regata com microperfurações que aumentam a circulação de ar em treinos outdoor.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 8,
@@ -77,7 +77,7 @@
     "tamanhos": ["M", "G", "GG"],
     "cores": ["Preto", "Azul"],
     "descricao": "Bermuda com bolsos laterais estruturados para levar celular sem perder estabilidade.",
-    "imagem": "./assets/img/sample2.png"
+    "imagem": "./assets/img/sample2.svg"
   },
   {
     "id": 9,
@@ -87,7 +87,7 @@
     "tamanhos": ["P", "M", "G", "GG"],
     "cores": ["Cinza"],
     "descricao": "Jogger com toque macio e punhos ajustáveis para pré e pós-treino.",
-    "imagem": "./assets/img/sample3.png"
+    "imagem": "./assets/img/sample3.svg"
   },
   {
     "id": 10,
@@ -97,7 +97,7 @@
     "tamanhos": ["P", "M", "G"],
     "cores": ["Preto", "Magenta"],
     "descricao": "Top com zíper frontal e faixa elástica interna que garante suporte de impacto alto.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 101,
@@ -107,7 +107,7 @@
     "tamanhos": ["Único"],
     "cores": ["Cinza"],
     "descricao": "Item fictício utilizado para validar o fluxo de adicionar ao carrinho.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 102,
@@ -117,7 +117,7 @@
     "tamanhos": ["Único"],
     "cores": ["Azul"],
     "descricao": "Produto simulado para garantir compatibilidade com o carrinho e cálculo de totais.",
-    "imagem": "./assets/img/sample2.png"
+    "imagem": "./assets/img/sample2.svg"
   },
   {
     "id": 103,
@@ -127,7 +127,7 @@
     "tamanhos": ["Único"],
     "cores": ["Vermelho"],
     "descricao": "Entrada de catálogo criada apenas para cenários de QA do carrinho.",
-    "imagem": "./assets/img/sample3.png"
+    "imagem": "./assets/img/sample3.svg"
   },
   {
     "id": 104,
@@ -137,7 +137,7 @@
     "tamanhos": ["Único"],
     "cores": ["Preto"],
     "descricao": "Recurso auxiliar para testar limites mínimos de preço e estoque.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 105,
@@ -147,7 +147,7 @@
     "tamanhos": ["Único"],
     "cores": ["Branco", "Preto"],
     "descricao": "Produto fictício com múltiplas cores para avaliar renderização de atributos.",
-    "imagem": "./assets/img/sample2.png"
+    "imagem": "./assets/img/sample2.svg"
   },
   {
     "id": 106,
@@ -157,7 +157,7 @@
     "tamanhos": ["Único"],
     "cores": ["Laranja"],
     "descricao": "Serve para exercícios automatizados que cobrem descontos e cupons no carrinho.",
-    "imagem": "./assets/img/sample3.png"
+    "imagem": "./assets/img/sample3.svg"
   },
   {
     "id": 107,
@@ -167,7 +167,7 @@
     "tamanhos": ["Único"],
     "cores": ["Azul", "Verde"],
     "descricao": "Entrada extra focada em validar atualização do badge de itens.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   },
   {
     "id": 108,
@@ -177,7 +177,7 @@
     "tamanhos": ["Único"],
     "cores": ["Preto", "Amarelo"],
     "descricao": "Produto de QA para testar volumes maiores de itens no carrinho.",
-    "imagem": "./assets/img/sample2.png"
+    "imagem": "./assets/img/sample2.svg"
   },
   {
     "id": 109,
@@ -187,7 +187,7 @@
     "tamanhos": ["Único"],
     "cores": ["Rosa"],
     "descricao": "Item fictício de baixo custo pensado para testes de frete gratuito e promoções.",
-    "imagem": "./assets/img/sample3.png"
+    "imagem": "./assets/img/sample3.svg"
   },
   {
     "id": 110,
@@ -197,6 +197,6 @@
     "tamanhos": ["Único"],
     "cores": ["Verde"],
     "descricao": "Produto dedicado para validar persistência e recuperação do carrinho entre sessões.",
-    "imagem": "./assets/img/sample1.png"
+    "imagem": "./assets/img/sample1.svg"
   }
 ]

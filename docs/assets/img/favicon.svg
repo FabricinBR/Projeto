@@ -1,0 +1,7 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Ícone da M.E FIT</title>
+  <desc id="desc">Plano roxo escuro com símbolo geométrico lilás da marca M.E FIT.</desc>
+  <rect width="512" height="512" rx="116" fill="#12052A"/>
+  <path fill="#7C4DFF" d="M101 341l86.6-156.7c12.3-22.3 35.7-36.1 61.1-36.1H310L235.4 341z"/>
+  <path fill="#7C4DFF" d="M265.7 207.8l57.7-99.9c9.6-16.6 27.7-27 47.1-27h111.1c22.5 0 36.9 23.2 27 43.1L424.3 341H298.4c-36.8 0-60.5-40.9-32.7-73.2z"/>
+</svg>

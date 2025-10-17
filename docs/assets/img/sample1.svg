@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustração do produto M.E FIT</title>
+  <desc id="desc">Forma abstrata com gradiente lilás representando uma peça da coleção M.E FIT.</desc>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e6e1ff" />
+      <stop offset="100%" stop-color="#a27bff" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="48" fill="url(#grad1)" />
+  <path d="M120 320c20-80 40-160 120-160s100 80 20 160" fill="#fff6" />
+  <circle cx="160" cy="160" r="64" fill="#fff9" />
+</svg>
