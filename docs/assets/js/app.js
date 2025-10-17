@@ -137,7 +137,7 @@
       } else {
         memoryStore.set(key, value);
       }
-      return false;
+      return true;
     };
 
     const remove = (key) => {
@@ -154,7 +154,7 @@
       }
       if (!memoryStore) return false;
       memoryStore.delete(key);
-      return false;
+      return true;
     };
 
     return {
