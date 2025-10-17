@@ -360,7 +360,7 @@ readyFn(() => {
         const meta = [item.categoria, sizes ? `Tamanhos: ${sizes}` : null]
           .filter(Boolean)
           .join(' • ');
-        const imageSrc = item.imagem || './assets/img/sample1.png';
+        const imageSrc = item.imagem || './assets/img/sample1.svg';
         const itemLabel = `Quantidade de ${item.nome ?? 'produto'}`;
         return `
         <li class="cart-item" data-cart-item="${escapeHtml(productId)}">

@@ -16,7 +16,7 @@
 - **Reutilização de layout**: como os cabeçalhos e rodapés são idênticos, considerar extrair para includes (via gerador estático ou JS) evitaria duplicação futura.
 - **Aprimoramentos de SEO**: apenas as páginas principais possuem `meta description`; é possível expandir com Open Graph e títulos mais descritivos.
 - **Validação do formulário**: o `contato.html` apenas previne o envio e mostra um `alert`. Uma futura integração deve lidar com estados de erro/sucesso diretamente na interface.
-- **Performance**: as imagens de produtos (`sample*.png`) não estão otimizadas (ausentes no repositório). Ao adicioná-las, priorize formatos leves (WebP/AVIF) e `loading="lazy"`.
+- **Performance**: as imagens de produtos (`sample*.svg`) são vetores leves, mantendo o `loading="lazy"` para eficiência.
 
 ## Sugestões
 1. Criar um arquivo JS compartilhado para a navegação e rodapé, evitando repetir o mesmo HTML em todas as páginas.
