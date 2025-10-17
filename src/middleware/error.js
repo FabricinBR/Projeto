@@ -4,6 +4,17 @@ export function notFound(_req, res, _next) {
 
 export function errorHandler(err, _req, res, _next) {
   console.error(err);
-  const status = /not found|insufficient stock/i.test(err.message) ? 400 : 500;
-  res.status(status).json({ error: err.message || 'Internal Server Error' });
+
+  const message = err?.message || 'Internal Server Error';
+
+  let status = 500;
+  if (typeof err?.status === 'number') {
+    status = err.status;
+  } else if (/not found/i.test(message)) {
+    status = 404;
+  } else if (/insufficient stock/i.test(message)) {
+    status = 409;
+  }
+
+  res.status(status).json({ error: message });
 }
