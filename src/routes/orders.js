@@ -4,15 +4,27 @@ import { pool } from '../db.js';
 
 const router = Router();
 
+const positiveIntFromInput = (field) =>
+  z.coerce
+    .number({ invalid_type_error: `${field} must be a number` })
+    .int(`${field} must be an integer`)
+    .positive(`${field} must be greater than zero`);
+
+const currencyFromInput = (field) =>
+  z.coerce
+    .number({ invalid_type_error: `${field} must be a number` })
+    .min(0, `${field} cannot be negative`)
+    .transform((value) => Number(value.toFixed(2)));
+
 const OrderItemSchema = z.object({
-  variant_id: z.number().int().positive(),
-  qty: z.number().int().positive(),
+  variant_id: positiveIntFromInput('variant_id'),
+  qty: positiveIntFromInput('qty'),
 });
 
 const CreateOrderSchema = z.object({
-  user_id: z.number().int().positive().nullable().optional(),
+  user_id: z.union([positiveIntFromInput('user_id'), z.null()]).optional(),
   items: z.array(OrderItemSchema).min(1),
-  shipping_total: z.number().nonnegative().default(25),
+  shipping_total: currencyFromInput('shipping_total').default(25),
 });
 
 // POST /api/orders
@@ -57,14 +69,16 @@ router.post('/', async (req, res, next) => {
       });
     }
 
+    subtotal = Number(subtotal.toFixed(2));
     const discount_total = 0;
-    const grand_total = Number((subtotal - discount_total + shipping_total).toFixed(2));
+    const normalized_shipping_total = Number(shipping_total.toFixed(2));
+    const grand_total = Number((subtotal - discount_total + normalized_shipping_total).toFixed(2));
 
     // create order
     const [orderResult] = await conn.query(
       `INSERT INTO orders (user_id, status, subtotal, discount_total, shipping_total, grand_total, payment_status)
        VALUES (?, 'NEW', ?, ?, ?, ?, 'PENDING')`,
-      [user_id, subtotal, discount_total, shipping_total, grand_total]
+      [user_id, subtotal, discount_total, normalized_shipping_total, grand_total]
     );
     const order_id = orderResult.insertId;
 
@@ -82,7 +96,16 @@ router.post('/', async (req, res, next) => {
     }
 
     await conn.commit();
-    res.status(201).json({ order_id, subtotal, discount_total, shipping_total, grand_total, items: pricedItems });
+    res
+      .status(201)
+      .json({
+        order_id,
+        subtotal,
+        discount_total,
+        shipping_total: normalized_shipping_total,
+        grand_total,
+        items: pricedItems,
+      });
   } catch (err) {
     await conn.rollback();
     next(err);
