@@ -320,6 +320,95 @@ main{padding:2rem 0}
   font-weight:700;
 }
 
+.promo-carousel{
+  --carousel-gap:1.5rem;
+  --items-per-view:1;
+  display:grid;
+  gap:1rem;
+}
+.promo-carousel .carousel-viewport{
+  position:relative;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  border-radius:var(--radius-lg);
+  touch-action:pan-y;
+}
+.promo-carousel .carousel-viewport::-webkit-scrollbar{display:none}
+.promo-carousel .carousel-track{
+  display:grid;
+  grid-auto-flow:row;
+  gap:var(--carousel-gap);
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.promo-carousel .carousel-track>.banner-card{
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+}
+.promo-carousel.is-ready .carousel-track{
+  display:flex;
+  gap:var(--carousel-gap);
+}
+.promo-carousel.is-ready .carousel-track>.banner-card{
+  flex:0 0 calc((100% - (var(--items-per-view) - 1) * var(--carousel-gap)) / var(--items-per-view));
+}
+.promo-carousel .carousel-controls{display:none}
+.promo-carousel.is-ready .carousel-controls{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.75rem;
+  padding:0 .25rem;
+}
+.promo-carousel.is-static .carousel-controls{display:none}
+.carousel-control{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid var(--border);
+  background:rgba(21,16,38,.72);
+  color:var(--text);
+  font-size:1.4rem;
+  line-height:1;
+  cursor:pointer;
+  transition:background var(--speed), transform var(--speed);
+}
+.carousel-control:hover{background:rgba(124,77,255,.25);transform:translateY(-1px)}
+.carousel-control:active{transform:translateY(0)}
+.carousel-control:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  transform:none;
+}
+.carousel-control span[aria-hidden="true"]{display:block;transform:translateY(-2px)}
+.carousel-indicator{
+  min-width:4.25rem;
+  text-align:center;
+  font-size:.9rem;
+  color:var(--muted);
+}
+@media (max-width:599px){
+  .promo-carousel.is-ready .carousel-controls{
+    justify-content:space-between;
+    padding:0;
+  }
+}
+@media (min-width:640px){
+  .promo-carousel{--items-per-view:2}
+}
+@media (min-width:960px){
+  .promo-carousel{--items-per-view:3}
+}
+@media (prefers-reduced-motion:reduce){
+  .promo-carousel .carousel-viewport{scroll-behavior:auto}
+}
+
 /* ------------------------------
    6.2) Vitrines e combos
 ------------------------------ */
