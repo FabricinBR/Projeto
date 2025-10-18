@@ -157,11 +157,16 @@
       return true;
     };
 
+    const isSupported = () => {
+      ensureStorage();
+      return supported;
+    };
+
     return {
       get,
       set,
       remove,
-      isSupported: () => supported
+      isSupported
     };
   };
 
