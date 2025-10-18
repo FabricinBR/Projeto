@@ -706,6 +706,217 @@
   };
 
   /* =========================
+     Carrossel de banners
+     ========================= */
+  const initPromoCarousel = () => {
+    if (!doc) return;
+
+    const carousels = Array.from(doc.querySelectorAll('[data-carousel]'));
+    if (!carousels.length) return;
+
+    const requestFrame = typeof global.requestAnimationFrame === 'function'
+      ? global.requestAnimationFrame.bind(global)
+      : (callback) => global.setTimeout(callback, 16);
+    const cancelFrame = typeof global.cancelAnimationFrame === 'function'
+      ? global.cancelAnimationFrame.bind(global)
+      : global.clearTimeout.bind(global);
+
+    let prefersReducedMotion = false;
+    const motionQuery = (() => {
+      if (!global.matchMedia) return null;
+      try {
+        return global.matchMedia('(prefers-reduced-motion: reduce)');
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    if (motionQuery) {
+      prefersReducedMotion = !!motionQuery.matches;
+      const onMotionPreferenceChange = (event) => {
+        prefersReducedMotion = !!event.matches;
+      };
+
+      if (typeof motionQuery.addEventListener === 'function') {
+        motionQuery.addEventListener('change', onMotionPreferenceChange);
+      } else if (typeof motionQuery.addListener === 'function') {
+        motionQuery.addListener(onMotionPreferenceChange);
+      }
+    }
+
+    const clamp = (value, min, max) => {
+      if (Number.isNaN(value)) return min;
+      return Math.min(Math.max(value, min), max);
+    };
+
+    const getItemsPerView = (element) => {
+      if (!element) return 1;
+      try {
+        const styles = global.getComputedStyle(element);
+        const raw = styles.getPropertyValue('--items-per-view');
+        const parsed = Number.parseFloat(raw);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          return Math.max(1, Math.round(parsed));
+        }
+      } catch (error) {
+        /* noop */
+      }
+      return 1;
+    };
+
+    const getBaseOffset = (items) => (items.length ? items[0].offsetLeft : 0);
+
+    carousels.forEach((carousel) => {
+      const viewport = carousel.querySelector('[data-carousel-viewport]');
+      const track = carousel.querySelector('[data-carousel-track]');
+      const controls = carousel.querySelector('[data-carousel-controls]');
+      const prevButton = carousel.querySelector('[data-carousel-prev]');
+      const nextButton = carousel.querySelector('[data-carousel-next]');
+      const indicator = carousel.querySelector('[data-carousel-indicator]');
+
+      if (!viewport || !track) return;
+
+      const items = Array.from(track.children).filter((child) => child instanceof global.HTMLElement);
+      if (items.length <= 1) {
+        if (controls) setElementVisibility(controls, false);
+        carousel.classList.add('is-static');
+        return;
+      }
+
+      const state = {
+        page: 0,
+        itemsPerView: 1,
+        maxPage: 0
+      };
+
+      let resizeRaf = null;
+      let scrollRaf = null;
+      let animationTimeout = null;
+      let isAnimating = false;
+
+      const updateButtons = () => {
+        if (prevButton) prevButton.disabled = state.page <= 0;
+        if (nextButton) nextButton.disabled = state.page >= state.maxPage;
+      };
+
+      const updateIndicator = () => {
+        if (!indicator) return;
+        const total = state.maxPage + 1;
+        const current = Math.min(total, state.page + 1);
+        indicator.textContent = `${current} de ${total}`;
+      };
+
+      const refreshStaticState = () => {
+        const shouldHideControls = state.maxPage === 0;
+        carousel.classList.toggle('is-static', shouldHideControls);
+        if (controls) setElementVisibility(controls, !shouldHideControls);
+      };
+
+      const getFirstIndexForPage = () => {
+        if (!items.length) return 0;
+        const theoretical = state.page * state.itemsPerView;
+        const maxFirstIndex = Math.max(0, items.length - state.itemsPerView);
+        return clamp(theoretical, 0, maxFirstIndex);
+      };
+
+      const scrollToPage = (page, { smooth = true } = {}) => {
+        const targetPage = clamp(page, 0, state.maxPage);
+        state.page = targetPage;
+
+        const firstIndex = getFirstIndexForPage();
+        const targetItem = items[firstIndex];
+        if (!targetItem) return;
+
+        const baseOffset = getBaseOffset(items);
+        const offset = targetItem.offsetLeft - baseOffset;
+
+        const shouldSmooth = smooth && !prefersReducedMotion;
+
+        isAnimating = true;
+        viewport.scrollTo({ left: offset, behavior: shouldSmooth ? 'smooth' : 'auto' });
+        updateButtons();
+        updateIndicator();
+
+        if (animationTimeout) global.clearTimeout(animationTimeout);
+        animationTimeout = global.setTimeout(() => {
+          isAnimating = false;
+        }, shouldSmooth ? 360 : 0);
+      };
+
+      const updateMetrics = () => {
+        state.itemsPerView = getItemsPerView(carousel);
+        state.maxPage = Math.max(0, Math.ceil(items.length / state.itemsPerView) - 1);
+        state.page = clamp(state.page, 0, state.maxPage);
+        refreshStaticState();
+      };
+
+      const findNearestPage = () => {
+        if (!items.length) return 0;
+        const baseOffset = getBaseOffset(items);
+        const scrollLeft = viewport.scrollLeft;
+
+        let nearestIndex = 0;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+
+        items.forEach((item, index) => {
+          const distance = Math.abs(item.offsetLeft - baseOffset - scrollLeft);
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = index;
+          }
+        });
+
+        const computedPage = Math.floor(nearestIndex / state.itemsPerView);
+        return clamp(computedPage, 0, state.maxPage);
+      };
+
+      const handleResize = () => {
+        if (resizeRaf) cancelFrame(resizeRaf);
+        resizeRaf = requestFrame(() => {
+          updateMetrics();
+          scrollToPage(state.page, { smooth: false });
+        });
+      };
+
+      const handleScroll = () => {
+        if (isAnimating) return;
+        const nearestPage = findNearestPage();
+        if (nearestPage !== state.page) {
+          state.page = nearestPage;
+          updateButtons();
+          updateIndicator();
+        }
+      };
+
+      if (prevButton) {
+        prevButton.addEventListener('click', () => {
+          scrollToPage(state.page - 1);
+        });
+      }
+
+      if (nextButton) {
+        nextButton.addEventListener('click', () => {
+          scrollToPage(state.page + 1);
+        });
+      }
+
+      viewport.addEventListener('scroll', () => {
+        if (scrollRaf) cancelFrame(scrollRaf);
+        scrollRaf = requestFrame(() => {
+          scrollRaf = null;
+          handleScroll();
+        });
+      });
+
+      global.addEventListener('resize', handleResize);
+
+      updateMetrics();
+      carousel.classList.add('is-ready');
+      scrollToPage(state.page, { smooth: false });
+    });
+  };
+
+  /* =========================
      Boot
      ========================= */
   namespace.utils = {
@@ -729,5 +940,6 @@
     initAuthState();
     initLoginForm();
     initCartBadge();
+    initPromoCarousel();
   });
 })(typeof window !== 'undefined' ? window : globalThis);
