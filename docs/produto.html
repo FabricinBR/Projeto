@@ -1,25 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>M.E FIT — Rastrear pedido</title>
-  <link href="assets/css/style.css" rel="stylesheet">
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" sizes="any">
-  <link rel="apple-touch-icon" href="assets/img/me-fit-icon.svg">
-  <meta name="description" content="Acompanhe o status do seu pedido M.E FIT.">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>M.E FIT — Produto</title>
+  <link href="./assets/css/style.css" rel="stylesheet" />
+  <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="apple-touch-icon" href="./assets/img/me-fit-icon.svg">
+  <meta name="description" content="Detalhes do produto selecionado na M.E FIT." />
 </head>
 <body>
   <header class="site-header">
     <div class="container header-grid">
       <div class="brand">
-        <a href="./" class="brand-link">
+        <a href="./index.html" class="brand-link">
           <img src="assets/img/me-fit-icon.svg" alt="" class="brand-mark" loading="lazy" decoding="async">
           <span class="brand-text">M.E <strong>FIT</strong></span>
         </a>
       </div>
       <nav class="nav" aria-label="Navegação principal">
-        <a href="./">Início</a>
+        <a href="./index.html">Início</a>
         <a href="./produtos.html">Produtos</a>
         <a href="./carrinho.html">Carrinho</a>
         <a href="./perfil-cliente.html" data-auth-visible="signed-in">Perfil</a>
@@ -31,19 +31,61 @@
     </div>
   </header>
 
-  <main class="container">
-    <h1>Rastrear pedido</h1>
-    <p>Insira o código informado no e-mail de confirmação para acompanhar a entrega em tempo real.</p>
+  <main class="product-page container" data-product-page data-product-source="./assets/data/produtos.json">
+    <nav class="breadcrumbs" aria-label="Você está em:">
+      <a href="./index.html">Início</a>
+      <span aria-hidden="true">›</span>
+      <a href="./produtos.html">Produtos</a>
+      <span aria-hidden="true">›</span>
+      <span data-product-breadcrumb>Carregando...</span>
+    </nav>
 
-    <form class="form" onsubmit="event.preventDefault(); alert('Rastreamento demonstrativo — integre com sua transportadora.');">
-      <label>Código de rastreio
-        <input type="text" name="codigo" placeholder="MEFIT123456BR" required>
-      </label>
-      <button class="btn btn-primary" type="submit">Consultar</button>
-    </form>
+    <div class="product-loading" data-product-loading>Carregando detalhes do produto...</div>
+    <p class="product-empty-message" data-product-empty hidden>Não encontramos este produto. Explore outras opções no catálogo.</p>
 
-    <p>Se você ainda não recebeu o código, confira a área <a href="./login/">Meus pedidos</a> ou entre em contato com nossa equipe.</p>
+    <article class="product-layout" data-product-layout hidden>
+      <div class="product-gallery">
+        <img src="./assets/img/sample1.svg" alt="" loading="lazy" data-product-image>
+      </div>
+      <div class="product-summary">
+        <h1 data-product-name>Carregando...</h1>
+        <p class="product-description" data-product-description></p>
+        <p class="product-price"><span data-product-price></span></p>
+
+        <div class="product-variants" aria-label="Seleção de variantes">
+          <div class="variant-group">
+            <span class="variant-label">Cor</span>
+            <div class="variant-options" data-variant-colors></div>
+          </div>
+          <div class="variant-group">
+            <span class="variant-label">Tamanho</span>
+            <div class="variant-options" data-variant-sizes></div>
+          </div>
+          <p class="low-stock-alert" data-low-stock hidden></p>
+        </div>
+
+        <div class="product-actions">
+          <button class="btn btn-primary" type="button" data-add-to-cart>Adicionar ao carrinho</button>
+          <button class="btn btn-outline" type="button" data-go-to-cart>Ir para o carrinho</button>
+        </div>
+        <p class="add-feedback" data-add-feedback hidden role="status" aria-live="polite"></p>
+
+        <ul class="product-perks">
+          <li>Frete grátis acima de R$ 299 em todo o Brasil.</li>
+          <li>Troca facilitada em até 30 dias.</li>
+          <li>Pagamento seguro com criptografia completa.</li>
+        </ul>
+      </div>
+    </article>
   </main>
+
+  <div class="buy-now-bar" data-buy-now-bar hidden>
+    <div class="buy-now-info">
+      <strong>Comprar agora</strong>
+      <span data-buy-now-variant>Selecione cor e tamanho para finalizar.</span>
+    </div>
+    <button class="btn btn-accent" type="button" data-buy-now>Comprar agora</button>
+  </div>
 
   <footer class="site-footer" aria-label="Rodapé">
     <div class="container">
@@ -70,10 +112,9 @@
           </div>
         </article>
       </div>
-
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="./" class="brand-link">
+          <a href="./index.html" class="brand-link">
             <img src="assets/img/me-fit-icon.svg" alt="" class="brand-mark" loading="lazy" decoding="async">
             <span class="brand-text">M.E <strong>FIT</strong></span>
           </a>
@@ -90,7 +131,7 @@
         <div class="footer-column">
           <h3>Comprar</h3>
           <ul class="footer-links">
-            <li><a href="./">Início</a></li>
+            <li><a href="./index.html">Início</a></li>
             <li><a href="./produtos.html">Catálogo completo</a></li>
             <li><a href="./carrinho.html">Carrinho</a></li>
             <li><a href="./perfil-cliente.html" data-auth-visible="signed-in">Perfil</a></li>
@@ -138,6 +179,7 @@
     </div>
   </footer>
 
-  <script src="assets/js/app.js"></script>
+  <script src="./assets/js/app.js" defer></script>
+  <script src="./assets/js/produto.js" defer></script>
 </body>
 </html>
