@@ -43,25 +43,123 @@
             <a class="btn btn-outline" href="./sobre.html">Conheça a marca</a>
           </div>
         </div>
-        <aside class="hero-feature" aria-label="Destaque da semana">
-          <div class="hero-badge">Edição limitada</div>
-          <div class="hero-thumb">
-            <img src="assets/img/sample3.svg" alt="Conjunto Boreal com jaqueta corta-vento e calça térmica" loading="lazy">
+        <aside
+          class="hero-rotator"
+          data-hero-rotator
+          data-hero-interval="5000"
+          aria-label="Produtos em destaque"
+        >
+          <div class="hero-slides" data-hero-slides>
+            <article class="hero-slide is-active" data-hero-slide aria-hidden="false">
+              <div class="hero-badge">Tecnologia climática</div>
+              <div class="hero-thumb">
+                <img
+                  src="assets/img/sample3.svg"
+                  alt="Jaqueta Storm Shield roxa em destaque"
+                  loading="lazy"
+                >
+              </div>
+              <div class="hero-details">
+                <h2>Jaqueta Storm Shield</h2>
+                <p>Camada impermeável com interior em fleece leve para manter o aquecimento sem perder mobilidade.</p>
+                <ul class="hero-specs">
+                  <li>Selagem térmica nas costuras</li>
+                  <li>Capuz regulável 3 pontos</li>
+                  <li>Compacta para levar na mochila</li>
+                </ul>
+                <div class="hero-bottom">
+                  <span class="price">R$ 259,90</span>
+                  <a class="btn btn-primary" href="./produto.html?slug=jaqueta-storm-shield">Comprar agora</a>
+                </div>
+              </div>
+            </article>
+            <article class="hero-slide" data-hero-slide aria-hidden="true">
+              <div class="hero-badge">Edição especial</div>
+              <div class="hero-thumb">
+                <img
+                  src="assets/img/sample1.svg"
+                  alt="Legging UltraFlex lilás dobrada"
+                  loading="lazy"
+                >
+              </div>
+              <div class="hero-details">
+                <h2>Legging UltraFlex</h2>
+                <p>Compressão graduada e tecido respirável que acompanha movimentos intensos do HIIT ao pilates.</p>
+                <ul class="hero-specs">
+                  <li>Proteção UV50+</li>
+                  <li>Bolsos laterais invisíveis</li>
+                  <li>Modelagem cintura alta</li>
+                </ul>
+                <div class="hero-bottom">
+                  <span class="price">R$ 189,90</span>
+                  <a class="btn btn-primary" href="./produto.html?slug=legging-ultraflex">Comprar agora</a>
+                </div>
+              </div>
+            </article>
+            <article class="hero-slide" data-hero-slide aria-hidden="true">
+              <div class="hero-badge">Impacto elevado</div>
+              <div class="hero-thumb">
+                <img
+                  src="assets/img/sample2.svg"
+                  alt="Top Impact Zip com zíper frontal"
+                  loading="lazy"
+                >
+              </div>
+              <div class="hero-details">
+                <h2>Top Impact Zip</h2>
+                <p>Suporte firme com zíper frontal e faixa elástica interna para treinos de alto rendimento.</p>
+                <ul class="hero-specs">
+                  <li>Bojo removível respirável</li>
+                  <li>Acabamento antiatrito</li>
+                  <li>Detalhes refletivos 360º</li>
+                </ul>
+                <div class="hero-bottom">
+                  <span class="price">R$ 139,90</span>
+                  <a class="btn btn-primary" href="./produto.html?slug=top-impact-zip">Comprar agora</a>
+                </div>
+              </div>
+            </article>
           </div>
-          <div class="hero-details">
-            <h2>Boreal Set</h2>
-            <p>Conjunto premium para treinos outdoor com ajuste térmico inteligente e acabamento repelente.</p>
-            <ul class="hero-specs">
-              <li>Resistente à água</li>
-              <li>Forro térmico respirável</li>
-              <li>Parcelamento em até 8x</li>
-            </ul>
-            <div class="hero-bottom">
-              <span class="price">R$ 389,90</span>
-              <a class="btn btn-primary" href="./produtos.html#boreal-set">Comprar agora</a>
-            </div>
+          <div class="hero-rotator-controls">
+            <button type="button" class="hero-rotator-control" data-hero-prev aria-label="Produto anterior">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <p class="hero-rotator-indicator" data-hero-indicator role="status" aria-live="polite">1 / 3</p>
+            <button type="button" class="hero-rotator-control" data-hero-next aria-label="Próximo produto">
+              <span aria-hidden="true">›</span>
+            </button>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <section class="trust-strip container" aria-labelledby="trust-strip-title">
+      <header class="trust-strip__header">
+        <h2 id="trust-strip-title">Compromissos de confiança</h2>
+        <p>Benefícios que acompanham todas as compras na M.E FIT.</p>
+      </header>
+      <div class="trust-badges" role="list">
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🔒</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Compra segura</h3>
+            <p class="trust-badge__text">Pagamento criptografado com verificação antifraude em tempo real.</p>
+          </div>
+        </article>
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🚚</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Frete grátis acima de R$ 299</h3>
+            <p class="trust-badge__text">Envios prioritários para todo o Brasil com rastreio atualizado.</p>
+          </div>
+        </article>
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🔁</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Troca em até 30 dias</h3>
+            <p class="trust-badge__text">Processo simplificado direto pelo perfil do cliente ou WhatsApp.</p>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -240,6 +338,30 @@
 
   <footer class="site-footer" aria-label="Rodapé">
     <div class="container">
+      <div class="footer-trust trust-badges" role="list" aria-label="Compromissos de confiança">
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🔒</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Compra segura</h3>
+            <p class="trust-badge__text">Checkout com criptografia e monitoramento antifraude.</p>
+          </div>
+        </article>
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🚚</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Frete grátis acima de R$ 299</h3>
+            <p class="trust-badge__text">Envios rápidos com rastreamento em tempo real.</p>
+          </div>
+        </article>
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🔁</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Troca em até 30 dias</h3>
+            <p class="trust-badge__text">Processo simplificado direto pelo seu perfil.</p>
+          </div>
+        </article>
+      </div>
+
       <div class="footer-grid">
         <div class="footer-brand">
           <a href="./" class="brand-link">

@@ -9,49 +9,6 @@
   <link rel="apple-touch-icon" href="./assets/img/me-fit-icon.svg">
   <meta name="description" content="Catálogo de produtos M.E FIT." />
 
-  <!-- Estilos mínimos para os componentes do catálogo (mantém a página funcional
-       mesmo sem ajustes no style.css). Se já estiver no seu CSS, você pode remover. -->
-  <style>
-    main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
-    form[data-product-filters] {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem; margin-bottom: 1.5rem;
-    }
-    .btn {
-      display: inline-block; margin-top: 0.5rem; background: #7d2ae8; color: #fff;
-      border: none; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; transition: 0.3s;
-    }
-    .btn.is-active { background: #b854ff; }
-    .btn:hover { opacity: 0.85; }
-    [data-product-grid] {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;
-    }
-    .p-card {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 1rem; text-align: center; transition: transform 0.2s;
-    }
-    .p-card:hover { transform: scale(1.02); }
-    .p-thumb img { max-width: 100%; height: auto; border-radius: 8px; }
-    [data-product-empty], [data-product-loading] { text-align: center; margin-top: 1rem; }
-    /* contador do carrinho dentro do link da nav (opcional) */
-    .cart-badge {
-      display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 6px;
-      font-size: 12px; line-height: 18px; text-align: center; border-radius: 999px;
-      background: #b388ff; color: #0f0a12;
-    }
-    .cart-badge[hidden] { display: none; }
-    .product-fly-clone {
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
-      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease;
-      will-change: transform, opacity;
-    }
-  </style>
 </head>
 <body>
   <header class="site-header">
@@ -79,17 +36,26 @@
     </div>
   </header>
 
-  <main>
+  <main class="catalog-page container">
     <form data-product-filters>
-      <input type="text" placeholder="Buscar produto..." data-product-search />
-      <select data-filter-category>
+      <input type="text" placeholder="Buscar produto..." data-product-search aria-label="Buscar por nome" />
+      <select data-filter-category aria-label="Filtrar por categoria">
         <option value="">Todas as categorias</option>
       </select>
-      <select data-filter-size>
+      <select data-filter-color aria-label="Filtrar por cor">
+        <option value="">Todas as cores</option>
+      </select>
+      <select data-filter-size aria-label="Filtrar por tamanho">
         <option value="">Todos os tamanhos</option>
       </select>
-      <input type="number" step="0.01" placeholder="Preço mínimo" data-filter-min-price />
-      <input type="number" step="0.01" placeholder="Preço máximo" data-filter-max-price />
+      <input type="number" step="0.01" placeholder="Preço mínimo" data-filter-min-price aria-label="Preço mínimo" />
+      <input type="number" step="0.01" placeholder="Preço máximo" data-filter-max-price aria-label="Preço máximo" />
+      <select data-sort-products aria-label="Ordenar produtos">
+        <option value="relevance">Ordenar por</option>
+        <option value="newest">Novidades</option>
+        <option value="price-asc">Menor preço</option>
+        <option value="price-desc">Maior preço</option>
+      </select>
       <button type="reset" class="btn" data-product-clear>Limpar</button>
     </form>
 
@@ -102,6 +68,30 @@
 
   <footer class="site-footer" aria-label="Rodapé">
     <div class="container">
+      <div class="footer-trust trust-badges" role="list" aria-label="Compromissos de confiança">
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🔒</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Compra segura</h3>
+            <p class="trust-badge__text">Checkout com criptografia e monitoramento antifraude.</p>
+          </div>
+        </article>
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🚚</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Frete grátis acima de R$ 299</h3>
+            <p class="trust-badge__text">Envios rápidos com rastreamento em tempo real.</p>
+          </div>
+        </article>
+        <article class="trust-badge" role="listitem">
+          <span class="trust-badge__icon" aria-hidden="true">🔁</span>
+          <div class="trust-badge__content">
+            <h3 class="trust-badge__title">Troca em até 30 dias</h3>
+            <p class="trust-badge__text">Processo simplificado direto pelo seu perfil.</p>
+          </div>
+        </article>
+      </div>
+
       <div class="footer-grid">
         <div class="footer-brand">
           <a href="./index.html" class="brand-link">

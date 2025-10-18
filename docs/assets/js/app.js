@@ -711,6 +711,125 @@
   };
 
   /* =========================
+     Hero rotativo
+     ========================= */
+  const initHeroRotator = () => {
+    if (!doc) return;
+    const rotator = doc.querySelector('[data-hero-rotator]');
+    if (!rotator) return;
+
+    const slides = Array.from(rotator.querySelectorAll('[data-hero-slide]'));
+    if (slides.length <= 1) return;
+
+    const indicator = rotator.querySelector('[data-hero-indicator]');
+    const prevButton = rotator.querySelector('[data-hero-prev]');
+    const nextButton = rotator.querySelector('[data-hero-next]');
+    const intervalAttr = Number(rotator.getAttribute('data-hero-interval'));
+    const intervalMs = Number.isFinite(intervalAttr) && intervalAttr >= 3000 ? intervalAttr : 5000;
+
+    let currentIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+    if (currentIndex < 0) currentIndex = 0;
+
+    const motionQuery = typeof global.matchMedia === 'function'
+      ? global.matchMedia('(prefers-reduced-motion: reduce)')
+      : null;
+
+    const shouldAutoRotate = () => !(motionQuery && motionQuery.matches);
+
+    let timerId = null;
+
+    const updateIndicator = () => {
+      if (!indicator) return;
+      indicator.textContent = `${currentIndex + 1} / ${slides.length}`;
+    };
+
+    const setActiveSlide = (index) => {
+      const normalized = ((index % slides.length) + slides.length) % slides.length;
+      slides.forEach((slide, idx) => {
+        const isActive = idx === normalized;
+        slide.classList.toggle('is-active', isActive);
+        slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+      });
+      currentIndex = normalized;
+      updateIndicator();
+    };
+
+    const goToNext = () => {
+      setActiveSlide(currentIndex + 1);
+    };
+
+    const goToPrevious = () => {
+      setActiveSlide(currentIndex - 1);
+    };
+
+    const clearTimer = () => {
+      if (timerId) {
+        global.clearInterval(timerId);
+        timerId = null;
+      }
+    };
+
+    const startTimer = () => {
+      if (!shouldAutoRotate()) {
+        clearTimer();
+        return;
+      }
+      clearTimer();
+      timerId = global.setInterval(goToNext, intervalMs);
+    };
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        goToPrevious();
+        startTimer();
+      });
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        goToNext();
+        startTimer();
+      });
+    }
+
+    rotator.addEventListener('mouseenter', clearTimer);
+    rotator.addEventListener('mouseleave', () => {
+      startTimer();
+    });
+    rotator.addEventListener('focusin', clearTimer);
+    rotator.addEventListener('focusout', () => {
+      startTimer();
+    });
+
+    if (motionQuery) {
+      const handleMotionChange = (event) => {
+        if (event.matches) {
+          clearTimer();
+        } else {
+          startTimer();
+        }
+      };
+
+      if (typeof motionQuery.addEventListener === 'function') {
+        motionQuery.addEventListener('change', handleMotionChange);
+      } else if (typeof motionQuery.addListener === 'function') {
+        motionQuery.addListener(handleMotionChange);
+      }
+    }
+
+    doc.addEventListener('visibilitychange', () => {
+      if (doc.hidden) {
+        clearTimer();
+      } else {
+        startTimer();
+      }
+    });
+
+    setActiveSlide(currentIndex);
+    startTimer();
+  };
+
+  /* =========================
      Carrossel de banners
      ========================= */
   const initPromoCarousel = () => {
@@ -945,6 +1064,7 @@
     initAuthState();
     initLoginForm();
     initCartBadge();
+    initHeroRotator();
     initPromoCarousel();
   });
 })(typeof window !== 'undefined' ? window : globalThis);

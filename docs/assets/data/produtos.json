@@ -4,199 +4,329 @@
     "nome": "Legging UltraFlex",
     "categoria": "Legging",
     "preco": 189.9,
-    "tamanhos": ["P", "M", "G"],
-    "cores": ["Preto", "Roxo"],
+    "tamanhos": [
+      "P",
+      "M",
+      "G"
+    ],
+    "cores": [
+      "Preto",
+      "Roxo"
+    ],
     "descricao": "Legging com compressão graduada e tecido respirável para treinos de alta intensidade.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "legging-ultraflex"
   },
   {
     "id": 2,
     "nome": "Top Energy Mesh",
     "categoria": "Top",
     "preco": 119.5,
-    "tamanhos": ["PP", "P", "M"],
-    "cores": ["Uva"],
+    "tamanhos": [
+      "PP",
+      "P",
+      "M"
+    ],
+    "cores": [
+      "Uva"
+    ],
     "descricao": "Top com recortes em mesh e bojo removível, ideal para treinos em dias quentes.",
-    "imagem": "./assets/img/sample2.svg"
+    "imagem": "./assets/img/sample2.svg",
+    "slug": "top-energy-mesh"
   },
   {
     "id": 3,
     "nome": "Camiseta Dry Move",
     "categoria": "Camiseta",
     "preco": 99.9,
-    "tamanhos": ["P", "M", "G", "GG"],
-    "cores": ["Lilás", "Preto"],
+    "tamanhos": [
+      "P",
+      "M",
+      "G",
+      "GG"
+    ],
+    "cores": [
+      "Lilás",
+      "Preto"
+    ],
     "descricao": "Tecnologia dry fit que afasta o suor e mantém o conforto durante a corrida.",
-    "imagem": "./assets/img/sample3.svg"
+    "imagem": "./assets/img/sample3.svg",
+    "slug": "camiseta-dry-move"
   },
   {
     "id": 4,
     "nome": "Shorts Run Free",
     "categoria": "Shorts",
     "preco": 139.0,
-    "tamanhos": ["P", "M", "G"],
-    "cores": ["Preto"],
+    "tamanhos": [
+      "P",
+      "M",
+      "G"
+    ],
+    "cores": [
+      "Preto"
+    ],
     "descricao": "Shorts com bolso interno para chaves e detalhes refletivos para treinos noturnos.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "shorts-run-free"
   },
   {
     "id": 5,
     "nome": "Jaqueta Storm Shield",
     "categoria": "Jaqueta",
     "preco": 259.9,
-    "tamanhos": ["M", "G", "GG"],
-    "cores": ["Grafite"],
+    "tamanhos": [
+      "M",
+      "G",
+      "GG"
+    ],
+    "cores": [
+      "Grafite"
+    ],
     "descricao": "Jaqueta corta-vento impermeável com interior em fleece leve para aquecimento rápido.",
-    "imagem": "./assets/img/sample2.svg"
+    "imagem": "./assets/img/sample2.svg",
+    "slug": "jaqueta-storm-shield"
   },
   {
     "id": 6,
     "nome": "Macacão Sculpt",
     "categoria": "Macacão",
     "preco": 229.9,
-    "tamanhos": ["P", "M"],
-    "cores": ["Roxo"],
+    "tamanhos": [
+      "P",
+      "M"
+    ],
+    "cores": [
+      "Roxo"
+    ],
     "descricao": "Macacão de alta sustentação com recortes estratégicos para modelagem natural.",
-    "imagem": "./assets/img/sample3.svg"
+    "imagem": "./assets/img/sample3.svg",
+    "slug": "macacao-sculpt"
   },
   {
     "id": 7,
     "nome": "Regata Breeze",
     "categoria": "Regata",
     "preco": 79.9,
-    "tamanhos": ["PP", "P", "M", "G"],
-    "cores": ["Branco", "Vinho"],
+    "tamanhos": [
+      "PP",
+      "P",
+      "M",
+      "G"
+    ],
+    "cores": [
+      "Branco",
+      "Vinho"
+    ],
     "descricao": "Regata com microperfurações que aumentam a circulação de ar em treinos outdoor.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "regata-breeze"
   },
   {
     "id": 8,
     "nome": "Bermuda Pocket Fit",
     "categoria": "Bermuda",
     "preco": 149.9,
-    "tamanhos": ["M", "G", "GG"],
-    "cores": ["Preto", "Azul"],
+    "tamanhos": [
+      "M",
+      "G",
+      "GG"
+    ],
+    "cores": [
+      "Preto",
+      "Azul"
+    ],
     "descricao": "Bermuda com bolsos laterais estruturados para levar celular sem perder estabilidade.",
-    "imagem": "./assets/img/sample2.svg"
+    "imagem": "./assets/img/sample2.svg",
+    "slug": "bermuda-pocket-fit"
   },
   {
     "id": 9,
     "nome": "Calça Jogger Soft",
     "categoria": "Calça",
     "preco": 199.0,
-    "tamanhos": ["P", "M", "G", "GG"],
-    "cores": ["Cinza"],
+    "tamanhos": [
+      "P",
+      "M",
+      "G",
+      "GG"
+    ],
+    "cores": [
+      "Cinza"
+    ],
     "descricao": "Jogger com toque macio e punhos ajustáveis para pré e pós-treino.",
-    "imagem": "./assets/img/sample3.svg"
+    "imagem": "./assets/img/sample3.svg",
+    "slug": "calca-jogger-soft"
   },
   {
     "id": 10,
     "nome": "Top Impact Zip",
     "categoria": "Top",
     "preco": 139.9,
-    "tamanhos": ["P", "M", "G"],
-    "cores": ["Preto", "Magenta"],
+    "tamanhos": [
+      "P",
+      "M",
+      "G"
+    ],
+    "cores": [
+      "Preto",
+      "Magenta"
+    ],
     "descricao": "Top com zíper frontal e faixa elástica interna que garante suporte de impacto alto.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "top-impact-zip"
   },
   {
     "id": 101,
     "nome": "Produto Teste Essentials",
     "categoria": "Teste",
     "preco": 10.0,
-    "tamanhos": ["Único"],
-    "cores": ["Cinza"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Cinza"
+    ],
     "descricao": "Item fictício utilizado para validar o fluxo de adicionar ao carrinho.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "produto-teste-essentials"
   },
   {
     "id": 102,
     "nome": "Produto Teste Flex",
     "categoria": "Teste",
     "preco": 12.5,
-    "tamanhos": ["Único"],
-    "cores": ["Azul"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Azul"
+    ],
     "descricao": "Produto simulado para garantir compatibilidade com o carrinho e cálculo de totais.",
-    "imagem": "./assets/img/sample2.svg"
+    "imagem": "./assets/img/sample2.svg",
+    "slug": "produto-teste-flex"
   },
   {
     "id": 103,
     "nome": "Produto Teste Power",
     "categoria": "Teste",
     "preco": 15.75,
-    "tamanhos": ["Único"],
-    "cores": ["Vermelho"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Vermelho"
+    ],
     "descricao": "Entrada de catálogo criada apenas para cenários de QA do carrinho.",
-    "imagem": "./assets/img/sample3.svg"
+    "imagem": "./assets/img/sample3.svg",
+    "slug": "produto-teste-power"
   },
   {
     "id": 104,
     "nome": "Produto Teste Lite",
     "categoria": "Teste",
     "preco": 9.99,
-    "tamanhos": ["Único"],
-    "cores": ["Preto"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Preto"
+    ],
     "descricao": "Recurso auxiliar para testar limites mínimos de preço e estoque.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "produto-teste-lite"
   },
   {
     "id": 105,
     "nome": "Produto Teste Duo",
     "categoria": "Teste",
     "preco": 19.9,
-    "tamanhos": ["Único"],
-    "cores": ["Branco", "Preto"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Branco",
+      "Preto"
+    ],
     "descricao": "Produto fictício com múltiplas cores para avaliar renderização de atributos.",
-    "imagem": "./assets/img/sample2.svg"
+    "imagem": "./assets/img/sample2.svg",
+    "slug": "produto-teste-duo"
   },
   {
     "id": 106,
     "nome": "Produto Teste Pro",
     "categoria": "Teste",
     "preco": 24.9,
-    "tamanhos": ["Único"],
-    "cores": ["Laranja"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Laranja"
+    ],
     "descricao": "Serve para exercícios automatizados que cobrem descontos e cupons no carrinho.",
-    "imagem": "./assets/img/sample3.svg"
+    "imagem": "./assets/img/sample3.svg",
+    "slug": "produto-teste-pro"
   },
   {
     "id": 107,
     "nome": "Produto Teste Wave",
     "categoria": "Teste",
     "preco": 14.5,
-    "tamanhos": ["Único"],
-    "cores": ["Azul", "Verde"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Azul",
+      "Verde"
+    ],
     "descricao": "Entrada extra focada em validar atualização do badge de itens.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "produto-teste-wave"
   },
   {
     "id": 108,
     "nome": "Produto Teste Max",
     "categoria": "Teste",
     "preco": 29.9,
-    "tamanhos": ["Único"],
-    "cores": ["Preto", "Amarelo"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Preto",
+      "Amarelo"
+    ],
     "descricao": "Produto de QA para testar volumes maiores de itens no carrinho.",
-    "imagem": "./assets/img/sample2.svg"
+    "imagem": "./assets/img/sample2.svg",
+    "slug": "produto-teste-max"
   },
   {
     "id": 109,
     "nome": "Produto Teste Mini",
     "categoria": "Teste",
     "preco": 8.5,
-    "tamanhos": ["Único"],
-    "cores": ["Rosa"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Rosa"
+    ],
     "descricao": "Item fictício de baixo custo pensado para testes de frete gratuito e promoções.",
-    "imagem": "./assets/img/sample3.svg"
+    "imagem": "./assets/img/sample3.svg",
+    "slug": "produto-teste-mini"
   },
   {
     "id": 110,
     "nome": "Produto Teste Prime",
     "categoria": "Teste",
     "preco": 34.9,
-    "tamanhos": ["Único"],
-    "cores": ["Verde"],
+    "tamanhos": [
+      "Único"
+    ],
+    "cores": [
+      "Verde"
+    ],
     "descricao": "Produto dedicado para validar persistência e recuperação do carrinho entre sessões.",
-    "imagem": "./assets/img/sample1.svg"
+    "imagem": "./assets/img/sample1.svg",
+    "slug": "produto-teste-prime"
   }
 ]

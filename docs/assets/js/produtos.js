@@ -219,9 +219,11 @@ const initProducts = () => {
   const filtersForm = document.querySelector('[data-product-filters]');
   const searchInput = document.querySelector('[data-product-search]');
   const categorySelect = document.querySelector('[data-filter-category]');
+  const colorSelect = document.querySelector('[data-filter-color]');
   const sizeSelect = document.querySelector('[data-filter-size]');
   const minPriceInput = document.querySelector('[data-filter-min-price]');
   const maxPriceInput = document.querySelector('[data-filter-max-price]');
+  const sortSelect = document.querySelector('[data-sort-products]');
   const clearButton = document.querySelector('[data-product-clear]');
   const countEl = document.querySelector('[data-product-count]');
   const emptyEl = document.querySelector('[data-product-empty]');
@@ -387,18 +389,25 @@ const initProducts = () => {
       .map((product) => {
         const productId = normalizeId(product.id);
         const sizes = Array.isArray(product.tamanhos) ? product.tamanhos.join(', ') : '';
-        const meta = [product.categoria, sizes ? `Tamanhos: ${sizes}` : null]
-          .filter(Boolean)
-          .join(' • ');
+        const colors = Array.isArray(product.cores) ? product.cores.join(', ') : '';
+        const metaParts = [
+          product.categoria,
+          sizes ? `Tamanhos: ${sizes}` : null,
+          colors ? `Cores: ${colors}` : null
+        ].filter(Boolean);
+        const meta = metaParts.join(' • ');
         const inCart = isInCart(productId);
         const buttonClass = inCart ? 'btn btn-primary is-active' : 'btn btn-primary';
         const buttonLabel = inCart ? 'Remover do carrinho' : 'Adicionar ao carrinho';
         const ariaPressed = inCart ? 'true' : 'false';
+        const detailUrl = product.slug
+          ? `./produto.html?slug=${encodeURIComponent(product.slug)}`
+          : './produto.html';
         return `
         <article class="p-card">
-          <div class="p-thumb"><img src="${product.imagem}" alt="${product.nome}" loading="lazy"></div>
-          <h3>${product.nome}</h3>
-          <p class="product-meta">${meta}</p>
+          <a class="p-thumb" href="${detailUrl}"><img src="${product.imagem}" alt="${product.nome}" loading="lazy"></a>
+          <h3><a href="${detailUrl}">${product.nome}</a></h3>
+          <p class="product-meta">${meta || ''}</p>
           <p class="price">${formatCurrency(product.preco)}</p>
           <button class="${buttonClass}" type="button" data-cart-toggle data-product-id="${productId}" aria-pressed="${ariaPressed}">${buttonLabel}</button>
         </article>
@@ -422,6 +431,13 @@ const initProducts = () => {
       filtered = filtered.filter((product) => product.categoria === category);
     }
 
+    const color = colorSelect?.value;
+    if (color) {
+      filtered = filtered.filter(
+        (product) => Array.isArray(product.cores) && product.cores.includes(color)
+      );
+    }
+
     const size = sizeSelect?.value;
     if (size) {
       filtered = filtered.filter(
@@ -438,7 +454,27 @@ const initProducts = () => {
       filtered = filtered.filter((product) => Number(product.preco) <= maxPrice);
     }
 
-    return filtered;
+    const sortValue = sortSelect?.value || 'relevance';
+    const sorted = [...filtered];
+
+    const byOriginalOrder = (a, b) => (a._index ?? 0) - (b._index ?? 0);
+    const toNumber = (value) => Number(value) || 0;
+
+    switch (sortValue) {
+      case 'price-asc':
+        sorted.sort((a, b) => toNumber(a.preco) - toNumber(b.preco));
+        break;
+      case 'price-desc':
+        sorted.sort((a, b) => toNumber(b.preco) - toNumber(a.preco));
+        break;
+      case 'newest':
+        sorted.sort((a, b) => (b.ordemRecente ?? toNumber(b.id)) - (a.ordemRecente ?? toNumber(a.id)));
+        break;
+      default:
+        sorted.sort(byOriginalOrder);
+    }
+
+    return sorted;
   };
 
   const populateFilters = () => {
@@ -464,6 +500,20 @@ const initProducts = () => {
         sizes.map((s) => `<option value="${s}">${s}</option>`).join('');
     }
 
+    const colors = Array.from(
+      new Set(
+        allProducts.flatMap((p) => (Array.isArray(p.cores) ? p.cores : []))
+      )
+    )
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    if (colorSelect) {
+      colorSelect.innerHTML =
+        '<option value="">Todas as cores</option>' +
+        colors.map((color) => `<option value="${color}">${color}</option>`).join('');
+    }
+
     const prices = allProducts
       .map((p) => Number(p.preco))
       .filter((price) => !Number.isNaN(price));
@@ -481,6 +531,10 @@ const initProducts = () => {
         maxPriceInput.max = String(max);
       }
     }
+
+    if (sortSelect) {
+      sortSelect.value = 'relevance';
+    }
   };
 
   const handleFiltersChange = () => {
@@ -491,7 +545,15 @@ const initProducts = () => {
   };
 
   const attachListeners = () => {
-    [searchInput, categorySelect, sizeSelect, minPriceInput, maxPriceInput].forEach(
+    [
+      searchInput,
+      categorySelect,
+      colorSelect,
+      sizeSelect,
+      minPriceInput,
+      maxPriceInput,
+      sortSelect
+    ].forEach(
       (input) => {
         if (!input) return;
         const eventName = input.tagName === 'INPUT' ? 'input' : 'change';
@@ -501,7 +563,10 @@ const initProducts = () => {
 
     if (filtersForm) {
       filtersForm.addEventListener('reset', () => {
-        window.requestAnimationFrame(handleFiltersChange);
+        window.requestAnimationFrame(() => {
+          if (sortSelect) sortSelect.value = 'relevance';
+          handleFiltersChange();
+        });
       });
     }
 
@@ -510,6 +575,7 @@ const initProducts = () => {
         if (filtersForm) {
           filtersForm.reset();
         }
+        if (sortSelect) sortSelect.value = 'relevance';
       });
     }
 
@@ -558,7 +624,11 @@ const initProducts = () => {
         throw new Error('Formato de produtos inválido.');
       }
 
-      allProducts = data;
+      allProducts = data.map((product, index) => ({
+        ...product,
+        _index: index,
+        ordemRecente: Number(product?.ordemRecente ?? product?.id ?? index)
+      }));
       hydrateCartItems();
       populateFilters();
       handleFiltersChange();
