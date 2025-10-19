@@ -55,5 +55,6 @@ export const comboPriceSQL = `
          CASE
            WHEN discount_type='PERCENT' THEN ROUND(subtotal * (1 - discount_value/100), 2)
            WHEN discount_type='AMOUNT'  THEN ROUND(GREATEST(subtotal - discount_value,0), 2)
+           ELSE ROUND(subtotal, 2)
          END AS combo_price
   FROM base`;

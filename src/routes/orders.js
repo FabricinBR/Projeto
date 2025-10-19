@@ -49,7 +49,8 @@ router.post('/', async (req, res, next) => {
                 COALESCE(v.price_override, p.price) AS unit_price
          FROM product_variants v
          JOIN products p ON p.id=v.product_id
-         WHERE v.id=? AND v.active=1`,
+         WHERE v.id=? AND v.active=1
+         FOR UPDATE`,
         [variant_id]
       );
       if (!rows.length) throw new Error(`Variant ${variant_id} not found/active`);
@@ -89,10 +90,15 @@ router.post('/', async (req, res, next) => {
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [order_id, it.product_id, it.variant_id, it.name, it.sku, it.qty, it.unit_price, it.total_price]
       );
-      await conn.query(
-        `UPDATE product_variants SET stock_qty = stock_qty - ? WHERE id=?`,
-        [it.qty, it.variant_id]
+      const [updateResult] = await conn.query(
+        `UPDATE product_variants
+            SET stock_qty = stock_qty - ?
+          WHERE id=? AND stock_qty >= ?`,
+        [it.qty, it.variant_id, it.qty]
       );
+      if (updateResult.affectedRows !== 1) {
+        throw new Error(`Failed to decrement stock for variant ${it.variant_id}`);
+      }
     }
 
     await conn.commit();
